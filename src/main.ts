@@ -11,7 +11,6 @@ async function bootstrap() {
     .setTitle('lootie-backend')
     .setDescription('lootie API for interacting with th client app')
     .setVersion('0.0.1')
-    .addTag('lootie')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
