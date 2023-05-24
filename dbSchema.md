@@ -20,6 +20,7 @@ erDiagram
     int openedCount "Times lootbox has been opened, can determine popularity"
     enum categoryId FK
     enum collectionId FK
+    string[] items
     timestamp createdAt
     timestamp updatedAt
   }
@@ -31,11 +32,13 @@ erDiagram
   Item {
     string Id PK
     string name
-    string type FK
     string details
     string price
     string lowestPrice
     string highestPrice
+    float dropChance "Item drop rate expressed as a decimal"
+    string type FK
+    string lootboxId FK
     timestamp createdAt
     timestamp updatedAt
   }
