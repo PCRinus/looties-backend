@@ -5,6 +5,9 @@
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "vscode-icons-team.vscode-icons",
-    "shardulm94.trailing-spaces"
+    "shardulm94.trailing-spaces",
+    "bierner.markdown-mermaid",
+    "yzhang.markdown-all-in-one",
+    "bpruitt-goddard.mermaid-markdown-syntax-highlighting"
   ]
 }
