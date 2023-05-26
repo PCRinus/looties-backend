@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@item/*": ["./src/item/*"],
-      "@prisma/*": ["./src/prisma/*"],
+      "@shared/*": ["./src/shared/*"],
     }
   }
 }
