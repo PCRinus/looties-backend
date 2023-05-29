@@ -52,4 +52,15 @@ erDiagram
   }
 
   LootBox one to one or more Item : contains
+
+  Message {
+    string Id PK
+    string userId FK
+    string message
+    int likes
+    timestamp createdAt
+    timestamp updatedAt
+  }
+
+  User only one to one or more Message : posts
 ```
