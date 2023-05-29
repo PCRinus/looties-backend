@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   nest-api:
     container_name: looties-api
@@ -10,6 +11,10 @@ services:
       - postgres
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@looties-postgres:5432/${POSTGRES_DB}?schema=public
+    volumes:
+      - ./:/app
 
   postgres:
     container_name: looties-postgres
