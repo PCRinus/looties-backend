@@ -6,13 +6,32 @@ title: Db schema
 erDiagram
   User {
     string Id PK
-    string email
-    string passwordHash
-    string passwordSalt
-    string walletAddress "Address of user's wallet"
+    string walletKey "Address of user's wallet"
     timestamp createdAt
     timestamp updatedAt
   }
+
+  Profile {
+    string Id PK
+    string userId FK
+    string userName
+    int level
+    int xp
+    int gamesPlayed
+    int gamesWon
+    int gamesLost
+    int lootboxesOpened
+    int referrals
+    float totalWagered
+    float netProfit
+    string facebookLink
+    string twitterLink
+    string instagramLink
+    timestamp createdAt
+    timestamp updatedAt
+  }
+
+  User one to one Profile : has
 
   Inventory {
     string Id PK
