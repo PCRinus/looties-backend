@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@item/*": ["./src/item/*"],
+      "@chat/*": ["./src/chat/*"],
       "@shared/*": ["./src/shared/*"],
     }
   }
