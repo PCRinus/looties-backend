@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@item/*": ["./src/item/*"],
+      "@chat/*": ["./src/chat/*"],
+      "@profile/*": ["./src/profile/*"],
+      "@shared/*": ["./src/shared/*"]
+    }
+  }
+}

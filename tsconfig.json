@@ -1,5 +1,7 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
+    "types": ["@types/jest"],
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -9,7 +11,6 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -17,11 +18,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@item/*": ["./src/item/*"],
-      "@chat/*": ["./src/chat/*"],
-      "@profile/*": ["./src/profile/*"],
-      "@shared/*": ["./src/shared/*"],
-    }
+    "resolveJsonModule": true
   }
 }
