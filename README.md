@@ -29,3 +29,11 @@ docker-compose up --build -V -d
 
 The `-V` flag will remove any anonymous volumes that are attached to the container, such as the one were the `node_modules` are stored.
 
+## Running tests
+
+Tests are run with Jest. You can run them with the following command:
+
+```bash
+npm run test
+```
+
