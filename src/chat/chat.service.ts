@@ -1,15 +1,47 @@
 import { Injectable } from '@nestjs/common';
+import { Message } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
-
 @Injectable()
 export class ChatService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async saveMessage({ message, userId }): Promise<void> {
+  async getMessages(): Promise<Message[]> {
+    return await this.prismaService.message.findMany({
+      take: 20,
+    });
+  }
+
+  async saveMessage(userId: string, message: string): Promise<void> {
     await this.prismaService.message.create({
       data: {
         message,
         userId,
+      },
+    });
+  }
+
+  async likeMessage(messageId: string): Promise<void> {
+    await this.prismaService.message.update({
+      where: {
+        id: messageId,
+      },
+      data: {
+        likes: {
+          increment: 1,
+        },
+      },
+    });
+  }
+
+  async removeLikeMessage(messageId: string): Promise<void> {
+    await this.prismaService.message.update({
+      where: {
+        id: messageId,
+      },
+      data: {
+        likes: {
+          decrement: 1,
+        },
       },
     });
   }
