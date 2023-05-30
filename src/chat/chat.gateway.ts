@@ -35,14 +35,14 @@ export class ChatGateway implements OnGatewayConnection {
     this.server.emit('connected', messages);
   }
 
-  @SubscribeMessage('send')
+  @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: SendMessageDto): Promise<void> {
     const { userId, message } = data;
 
     this.logger.log(`Received message from ${userId}: ${message}`);
 
     await this.chatService.saveMessage(userId, message);
-    this.server.emit('send', data.message);
+    this.server.emit('message', data.message);
   }
 
   @SubscribeMessage('like')
