@@ -7,17 +7,10 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from '@chat/chat.service';
-import { Logger } from '@nestjs/common';
-
-interface SendMessage {
-  userId: string;
-  message: string;
-}
-
-interface LikeMessage {
-  userId: string;
-  messageId: string;
-}
+import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import { SendMessageDto } from '@chat/dtos/send-message.dto';
+import { LikeMessageDto } from './dtos/like-message.dto';
+import { UnlikeMessageDto } from './dtos/unlike-message.to';
 
 interface ReplyToMessage {
   userId: string;
@@ -25,6 +18,7 @@ interface ReplyToMessage {
   reply: string;
 }
 
+@UsePipes(new ValidationPipe())
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection {
   constructor(private readonly chatService: ChatService) {}
@@ -42,7 +36,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('send')
-  async handleMessage(@MessageBody() data: SendMessage): Promise<void> {
+  async handleMessage(@MessageBody() data: SendMessageDto): Promise<void> {
     const { userId, message } = data;
 
     this.logger.log(`Received message from ${userId}: ${message}`);
@@ -52,19 +46,19 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('like')
-  async handleLike(@MessageBody() data: LikeMessage): Promise<void> {
+  async handleLike(@MessageBody() data: LikeMessageDto): Promise<void> {
     this.logger.log(`User ${data.userId} liked ${data.messageId}`);
 
     await this.chatService.likeMessage(data.messageId);
     this.server.emit('like', data.messageId);
   }
 
-  @SubscribeMessage('removeLike')
-  async handleRemoveLike(@MessageBody() data: LikeMessage): Promise<void> {
+  @SubscribeMessage('unlike')
+  async handleRemoveLike(@MessageBody() data: UnlikeMessageDto): Promise<void> {
     this.logger.log(`User ${data.userId} unliked ${data.messageId}`);
 
-    await this.chatService.removeLikeMessage(data.messageId);
-    this.server.emit('removeLike', data.messageId);
+    await this.chatService.removeLikeFromMessage(data.messageId);
+    this.server.emit('unlike', data.messageId);
   }
 
   @SubscribeMessage('reply')

@@ -33,7 +33,7 @@ export class ChatService {
     });
   }
 
-  async removeLikeMessage(messageId: string): Promise<void> {
+  async removeLikeFromMessage(messageId: string): Promise<void> {
     await this.prismaService.message.update({
       where: {
         id: messageId,
