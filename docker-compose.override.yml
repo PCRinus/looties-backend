@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  nest-api:
+    build:
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    # Run in dev Mode: npm run start:dev
+    command: npm run start:migrate:dev
+    # Run in interactive mode
+    stdin_open: true
+    tty: true

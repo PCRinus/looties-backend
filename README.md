@@ -37,3 +37,15 @@ Tests are run with Jest. You can run them with the following command:
 npm run test
 ```
 
+## Troubleshooting
+
+Sometimes you might get this message in the docker logs:
+
+```
+Error: Prisma Migrate has detected that the environment is non-interactive, which is not supported.
+
+`prisma migrate dev` is an interactive command designed to create new migrations and evolve the database in development.
+To apply existing migrations in deployments, use prisma migrate deploy.
+See https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy
+```
+This is because prisma thinks the shell it is being run from is non interactive. To fix this, run the docker-compose in interactive mode.
