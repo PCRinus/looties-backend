@@ -9,7 +9,7 @@ services:
       - .:/app
       - /app/node_modules
     # Run in dev Mode: npm run start:dev
-    command: npm run start:migrate:dev
+    command: npm run start:generate:migrate:dev
     # Run in interactive mode
     stdin_open: true
     tty: true

@@ -3,3 +3,8 @@ Dockerfile
 node_modules
 npm-debug.log
 dist
+.git
+.vscode
+.gitignore
+.env.example
+README.md
