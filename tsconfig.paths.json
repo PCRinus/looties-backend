@@ -2,9 +2,11 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
+      "@app/*": ["./src/app/*"],
       "@item/*": ["./src/item/*"],
       "@chat/*": ["./src/chat/*"],
       "@profile/*": ["./src/profile/*"],
+      "@game-responsibly/*": ["./src/game-responsibly/*"],
       "@shared/*": ["./src/shared/*"]
     }
   }
