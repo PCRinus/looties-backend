@@ -12,6 +12,8 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@looties-postgres:5432/${POSTGRES_DB}?schema=public
     ports:
       - 3000:3000
+      - 3001:3001 #Chat websocket
+      - 3002:3002 #Live drops websocket
     depends_on:
       - postgres
       - pgadmin

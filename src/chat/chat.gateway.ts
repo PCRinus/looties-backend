@@ -19,7 +19,7 @@ interface ReplyToMessage {
 }
 
 @UsePipes(new ValidationPipe())
-@WebSocketGateway()
+@WebSocketGateway(3001)
 export class ChatGateway implements OnGatewayConnection {
   constructor(private readonly chatService: ChatService) {}
 

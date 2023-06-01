@@ -7,6 +7,7 @@
       "@chat/*": ["./src/chat/*"],
       "@profile/*": ["./src/profile/*"],
       "@game-responsibly/*": ["./src/game-responsibly/*"],
+      "@live-drops/*": ["./src/live-drops/*"],
       "@shared/*": ["./src/shared/*"]
     }
   }

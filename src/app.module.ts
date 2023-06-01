@@ -5,8 +5,9 @@ import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
 import { SharedModule } from './shared/shared.module';
 import { GameResponsiblyModule } from './game-responsibly/game-responsibly.module';
+import { LiveDropsModule } from './live-drops/live-drops.module';
 
 @Module({
-  imports: [ItemModule, LootboxModule, ChatModule, ProfileModule, SharedModule, GameResponsiblyModule],
+  imports: [ItemModule, LootboxModule, ChatModule, ProfileModule, SharedModule, GameResponsiblyModule, LiveDropsModule],
 })
 export class AppModule {}
