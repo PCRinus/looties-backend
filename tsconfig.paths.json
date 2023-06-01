@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
+      "@app/*": ["./src/app/*"],
       "@item/*": ["./src/item/*"],
       "@chat/*": ["./src/chat/*"],
       "@profile/*": ["./src/profile/*"],
