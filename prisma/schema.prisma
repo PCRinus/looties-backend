@@ -52,20 +52,21 @@ model Inventory {
 }
 
 model Item {
-  id           String    @id @default(uuid())
-  name         String    @unique //Maybe unique? TBD
-  details      String?   @db.Text
+  id           String      @id @default(uuid())
+  name         String      @unique //Maybe unique? TBD
+  details      String?     @db.Text
   type         ItemsType
   price        Decimal //String might also ba an option for prices
   lowestPrice  Decimal
   highestPrice Decimal
   dropChance   Decimal
-  inventory    Inventory @relation(fields: [inventoryId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  inventory    Inventory   @relation(fields: [inventoryId], references: [id])
   inventoryId  String
-  Lootbox      Lootbox?  @relation(fields: [lootboxId], references: [id])
+  Lootbox      Lootbox?    @relation(fields: [lootboxId], references: [id])
   lootboxId    String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  LiveDrops    LiveDrops[]
 }
 
 model Lootbox {
@@ -75,6 +76,12 @@ model Lootbox {
   items       Item[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model LiveDrops {
+  id     String @id @default(uuid())
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String
 }
 
 model Message {
