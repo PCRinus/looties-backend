@@ -17,7 +17,19 @@ After you have Docker installed, run the following command:
 docker-compose up -d
 ```
 
-This will start the Postgres database and the NestJS API in watch mode. Any changes you make to the source code will be reflected in the container using webpack HMR. It will also run the Prisma migrations and seed the database. There is also a pgAdmin container running, that you can access at `localhost:5050`.
+This will start the Postgres database and the NestJS API in watch mode. Any changes you make to the source code will be reflected in the container using webpack HMR. It will also run the Prisma migrations and seed the database.
+
+## Ports
+
+The ports that are exposed are:
+
+- 3000: NestJS API
+- 3001: Chat websocket server
+- 3002: Live Drops websocket server
+
+Going to `localhost:3000/api` will also open up the swagger page.
+
+There is also a pgAdmin container running, that you can access at `localhost:5050`.
 
 ## Installing dependencies
 
