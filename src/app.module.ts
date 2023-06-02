@@ -9,6 +9,15 @@ import { LiveDropsModule } from './live-drops/live-drops.module';
 import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
-  imports: [ItemModule, LootboxModule, ChatModule, ProfileModule, SharedModule, GameResponsiblyModule, LiveDropsModule, TransactionsModule],
+  imports: [
+    ItemModule,
+    LootboxModule,
+    ChatModule,
+    ProfileModule,
+    SharedModule,
+    GameResponsiblyModule,
+    LiveDropsModule,
+    TransactionsModule,
+  ],
 })
 export class AppModule {}
