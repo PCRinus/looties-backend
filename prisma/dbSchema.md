@@ -33,6 +33,28 @@ erDiagram
 
   User one to one Profile : has
 
+  Transactions {
+    int Id PK
+    enum type "DEPOSIT, WITHDRAWAL"
+    string method
+    enum status "PENDING, DECLINED, APPROVED"
+    string userId FK
+    timestamp createdAt
+    timestamp updatedAt
+  }
+
+  User one to one or more Transactions : has
+
+  GameHistory {
+    int Id PK
+    enum gameType "CLASSIC, LOOTBOXES"
+    timestamp date "now"
+    float betAmount
+    string userId FK
+  }
+
+  User one to one or more GameHistory : has
+
   Inventory {
     string Id PK
     string userId FK
