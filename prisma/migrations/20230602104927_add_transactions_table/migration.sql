@@ -5,7 +5,7 @@
 
 */
 -- CreateEnum
-CREATE TYPE "TransactionType" AS ENUM ('DEPOSIT', 'WITHDRAWL');
+CREATE TYPE "TransactionType" AS ENUM ('DEPOSIT', 'WITHDRAWAL');
 
 -- CreateEnum
 CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'APPROVED', 'DECLINED');
