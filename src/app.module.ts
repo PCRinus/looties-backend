@@ -9,6 +9,7 @@ import { LootboxModule } from './lootbox/lootbox.module';
 import { ProfileModule } from './profile/profile.module';
 import { SharedModule } from './shared/shared.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     LiveDropsModule,
     TransactionsModule,
     GameHistoryModule,
+    UserModule,
   ],
 })
 export class AppModule {}

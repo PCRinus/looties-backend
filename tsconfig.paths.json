@@ -3,6 +3,7 @@
     "baseUrl": "./",
     "paths": {
       "@app/*": ["./src/app/*"],
+      "@user/*": ["./src/user/*"],
       "@item/*": ["./src/item/*"],
       "@chat/*": ["./src/chat/*"],
       "@profile/*": ["./src/profile/*"],
