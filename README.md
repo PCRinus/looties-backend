@@ -54,10 +54,12 @@ This works locally, but not in docker for some reason. So instead, you will need
 
   - Have the container already running
   - Change the schema file
-  - Run `prisma migrate` fom inside the container with the name of the new migration
+  - Run `npx prisma migrate dev --name NameOfMigration` fom inside the container with the name of the new migration
   - Restart the container
 
 This will ensure that everything works as expected.
+
+To reset the db, run `npx prisma migrate reset` inside the docker container terminal.
 
 ## Running tests
 
