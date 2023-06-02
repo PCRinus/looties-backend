@@ -1,9 +1,14 @@
 {
   "cSpell.words": [
+    "datasource",
     "dtos",
     "lootbox",
     "lootboxes",
     "lootie",
+    "Timestamptz",
     "websockets"
+  ],
+  "cSpell.enableFiletypes": [
+    "prisma"
   ]
 }
