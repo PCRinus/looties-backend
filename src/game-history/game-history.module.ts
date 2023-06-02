@@ -4,6 +4,7 @@ import { GameHistoryController } from './game-history.controller';
 
 @Module({
   providers: [GameHistoryService],
-  controllers: [GameHistoryController]
+  controllers: [GameHistoryController],
+  exports: [GameHistoryService],
 })
 export class GameHistoryModule {}
