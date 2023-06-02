@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   nest-api:
+    image: looties-api-dev
     build:
       # Only will build development stage from our dockerfile
       target: development
