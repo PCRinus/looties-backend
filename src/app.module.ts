@@ -7,6 +7,7 @@ import { SharedModule } from './shared/shared.module';
 import { GameResponsiblyModule } from './game-responsibly/game-responsibly.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { GameHistoryModule } from '@game-history/game-history.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     GameResponsiblyModule,
     LiveDropsModule,
     TransactionsModule,
+    GameHistoryModule,
   ],
 })
 export class AppModule {}

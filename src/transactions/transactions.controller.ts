@@ -5,7 +5,7 @@ import { TransactionsService } from '@transactions/transactions.service';
 export const TRANSACTION_TYPES = ['DEPOSIT', 'WITHDRAWAL'] as const;
 export type TransactionTypes = (typeof TRANSACTION_TYPES)[number];
 
-@ApiTags('transactions')
+@ApiTags('Transactions')
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
