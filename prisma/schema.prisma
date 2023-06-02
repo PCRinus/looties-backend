@@ -38,6 +38,7 @@ model Profile {
   facebookLink    String?
   twitterLink     String?
   instagramLink   String?
+  isAnonymous     Boolean @default(false)
   user            User    @relation(fields: [userId], references: [id])
   userId          String  @unique
 }
