@@ -9,6 +9,8 @@
 
 ## Running locally
 
+First install the vscode extensions for a better dev experience. You can find them in the `.vscode/extensions.json` file. To install them, go to the Extensions tab, filter by Recommended and click on the `Workspace Recommendations` tab. [Docs if you need help](https://code.visualstudio.com/docs/editor/extension-marketplace#_extensions-view-filter-and-commands)
+
 Setup the environment variables. There is an `.env.example` file in the root of the project. Copy it and rename it to `.env`. Fill in the values.
 
 After you have Docker installed, run the following command:
