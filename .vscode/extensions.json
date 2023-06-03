@@ -8,6 +8,7 @@
     "shardulm94.trailing-spaces",
     "bierner.markdown-mermaid",
     "yzhang.markdown-all-in-one",
-    "bpruitt-goddard.mermaid-markdown-syntax-highlighting"
+    "bpruitt-goddard.mermaid-markdown-syntax-highlighting",
+    "ms-azuretools.vscode-docker"
   ]
 }

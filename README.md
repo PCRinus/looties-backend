@@ -21,6 +21,20 @@ docker-compose up -d
 
 This will start the Postgres database and the NestJS API in watch mode. Any changes you make to the source code will be reflected in the container using webpack HMR. It will also run the Prisma migrations and seed the database.
 
+## Deploying manually to the DigitalOcean droplet
+
+We already have a droplet setup in DigitalOcean [here](https://cloud.digitalocean.com/droplets/358593516/graphs?i=6686cd&period=hour).
+
+To deploy the docker-compose file manually to the droplet, do the following
+
+- Setup a docker remote context for the droplet: `docker context create remote --docker "host=ssh://deployer@64.226.91.7"`.
+- Switch to the remote context: `docker context use remote`.
+- Run `docker compose -f docker-compose.yml up --build -dV` to deploy the docker-compose file to the droplet.
+- Inspect changes with `docker compose ps`
+- Change your context back to local with `docker context use default`
+
+[Deploy guide](https://danielwachtel.com/devops/deploying-multiple-dockerized-apps-digitalocean-docker-compose-contexts)
+
 ## Ports
 
 The ports that are exposed are:
