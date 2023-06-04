@@ -61,8 +61,8 @@ build-docker-image:
     # File is outside of build context, so make local copy.
     - cp $ENV_FILE .env
     - docker compose up --build -dV
-    # - docker tag looties-api-dev:latest "$CI_REGISTRY_IMAGE:latest"
-    - docker push looties-api-dev:latest #name of the docker image
+    - docker tag looties-api-dev:latest "$CI_REGISTRY_IMAGE:latest"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
