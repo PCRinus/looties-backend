@@ -1,5 +1,5 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { GameHistory } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import type { GameHistory } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
 
 @Injectable()

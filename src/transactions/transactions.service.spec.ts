@@ -1,6 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TransactionsService } from './transactions.service';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { SharedModule } from '@shared/shared.module';
+
+import { TransactionsService } from './transactions.service';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;

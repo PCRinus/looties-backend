@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
 import { DateTime } from 'luxon';
 
@@ -10,7 +10,7 @@ export class GameResponsiblyService {
   async isUserExcluded(userId: string): Promise<any> {
     const { excludedUntil } = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { excludedUntil: true}
+      select: { excludedUntil: true },
     });
 
     return DateTime.fromJSDate(excludedUntil) > DateTime.now();

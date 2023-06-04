@@ -52,6 +52,10 @@ build-docker-image:
   needs:
     - run-tests-with-coverage
     - run-linter
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - docker-compose.yml
   services:
     - docker:dind
   before_script:
@@ -63,16 +67,12 @@ build-docker-image:
     - docker compose up --build -dV
     - docker tag looties-api-dev:latest "$CI_REGISTRY_IMAGE:latest"
     - docker push "$CI_REGISTRY_IMAGE:latest"
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
-        - docker-compose.yml
 
 deploy-to-dev:
   stage: dev-deploy
   needs:
     - build-docker-image
-  extends:
-    - .standard-rules
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - echo "Dummy deploy to dev"

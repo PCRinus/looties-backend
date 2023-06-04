@@ -1,6 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { GameResponsiblyService } from './game-responsibly.service';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
+
+import { GameResponsiblyService } from './game-responsibly.service';
 
 describe('GameResponsiblyService', () => {
   let service: GameResponsiblyService;

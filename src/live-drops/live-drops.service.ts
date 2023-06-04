@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LiveDrops } from '@prisma/client';
+import type { LiveDrops } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class LiveDropsService {
     return await this.prisma.liveDrops.create({
       data: {
         itemId,
-      }
-    })
+      },
+    });
   }
 }

@@ -1,7 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { SharedModule } from '@shared/shared.module';
+
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
-import { SharedModule } from '@shared/shared.module';
 
 describe('ChatGateway', () => {
   let gateway: ChatGateway;

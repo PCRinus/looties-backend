@@ -1,6 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { LiveDropsService } from './live-drops.service';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { SharedModule } from '@shared/shared.module';
+
+import { LiveDropsService } from './live-drops.service';
 
 describe('LiveDropsService', () => {
   let service: LiveDropsService;

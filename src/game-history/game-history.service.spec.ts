@@ -1,6 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { GameHistoryService } from './game-history.service';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { SharedModule } from '@shared/shared.module';
+
+import { GameHistoryService } from './game-history.service';
 
 describe('GameHistoryService', () => {
   let service: GameHistoryService;

@@ -1,7 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { GameResponsiblyController } from './game-responsibly.controller';
 import { GameResponsiblyService } from '@game-responsibly/game-responsibly.service';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
+
+import { GameResponsiblyController } from './game-responsibly.controller';
 
 describe('GameResponsiblyController', () => {
   let controller: GameResponsiblyController;

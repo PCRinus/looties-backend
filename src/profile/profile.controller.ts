@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ProfileService } from '@profile/profile.service';
 
 @ApiTags('Profile')
