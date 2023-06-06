@@ -16,7 +16,7 @@ interface ReplyToMessage {
 }
 
 @UsePipes(new ValidationPipe())
-@WebSocketGateway(3001)
+@WebSocketGateway(3001, { cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private readonly server: Server;
