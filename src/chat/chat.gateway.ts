@@ -1,7 +1,7 @@
 import { ChatService } from '@chat/chat.service';
 import { SendMessageDto } from '@chat/dtos/send-message.dto';
 import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
-import type { OnGatewayConnection } from '@nestjs/websockets';
+import type { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import type { Socket } from 'socket.io';
 import { Server } from 'socket.io';
@@ -17,19 +17,32 @@ interface ReplyToMessage {
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway(3001)
-export class ChatGateway implements OnGatewayConnection {
-  constructor(private readonly chatService: ChatService) {}
-
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private readonly server: Server;
 
   private readonly logger = new Logger(ChatGateway.name);
 
+  private connectedUsersCount = 0;
+
+  constructor(private readonly chatService: ChatService) {}
+
   async handleConnection(client: Socket) {
     this.logger.log(`User connected: ${client.id}`);
 
     const messages = await this.chatService.getMessages();
-    this.server.emit('connected', messages);
+    this.connectedUsersCount++;
+
+    this.server.emit('connected', { messages });
+    this.server.emit('get-users-count', { connectedUsersCount: this.connectedUsersCount });
+  }
+
+  handleDisconnect(client: Socket) {
+    this.logger.log(`User disconnected: ${client.id}`);
+
+    this.connectedUsersCount--;
+
+    this.server.emit('get-users-count', { connectedUsersCount: this.connectedUsersCount });
   }
 
   @SubscribeMessage('message')
