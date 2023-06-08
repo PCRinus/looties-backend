@@ -26,7 +26,6 @@ install-deps:
       when: always
   script:
     - npm install
-    - npx prisma generate
 
 run-tests-with-coverage:
   stage: test
@@ -36,6 +35,7 @@ run-tests-with-coverage:
   needs:
     - install-deps
   script:
+    - npx prisma generate
     - npm run test:cov
 
 run-linter:
