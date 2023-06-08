@@ -26,6 +26,7 @@ install-deps:
       when: always
   script:
     - npm install
+    - npx prisma generate
 
 run-tests-with-coverage:
   stage: test
