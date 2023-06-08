@@ -1,5 +1,4 @@
-import { PrismaClient, User } from '@prisma/client';
-import { log } from 'console';
+import { PrismaClient } from '@prisma/client';
 import { DateTime } from 'luxon';
 
 const prisma = new PrismaClient();
@@ -26,7 +25,7 @@ const seedUsers = async () => {
   const userIds = await prisma.user.findMany({
     select: {
       id: true,
-    }
+    },
   });
 
   return userIds.map((userId) => userId.id);
@@ -80,9 +79,9 @@ const seedTransactions = async (userIds: string[]) => {
         method: 'SOL',
         type: 'WITHDRAWAL',
         status: 'APPROVED',
-      }
-    ]
-  })
+      },
+    ],
+  });
 };
 
 seed()

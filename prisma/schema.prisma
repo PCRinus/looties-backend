@@ -111,7 +111,8 @@ model LiveDrops {
 model Message {
   id        String   @id @default(uuid())
   message   String
-  likes     Int      @default(0)
+  likedBy   String[]
+  repliedTo String? //Still a messageId
   User      User?    @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())

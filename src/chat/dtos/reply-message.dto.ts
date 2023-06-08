@@ -5,11 +5,11 @@ export class ReplyMessageDto {
   @IsNotEmpty()
   readonly userId: string;
 
-  @IsUUID(4)
-  @IsNotEmpty()
-  readonly messageId: string;
-
   @IsString()
   @IsNotEmpty()
   readonly reply: string;
+
+  @IsUUID(4)
+  @IsNotEmpty()
+  readonly originalMessageId: string;
 }

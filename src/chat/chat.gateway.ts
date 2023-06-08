@@ -1,4 +1,5 @@
 import { ChatService } from '@chat/chat.service';
+import { ReplyMessageDto } from '@chat/dtos/reply-message.dto';
 import { SendMessageDto } from '@chat/dtos/send-message.dto';
 import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import type { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
@@ -8,12 +9,6 @@ import { Server } from 'socket.io';
 
 import { LikeMessageDto } from './dtos/like-message.dto';
 import { UnlikeMessageDto } from './dtos/unlike-message.to';
-
-interface ReplyToMessage {
-  userId: string;
-  messageId: string;
-  reply: string;
-}
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway(3001, { cors: true })
@@ -59,7 +54,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleLike(@MessageBody() data: LikeMessageDto): Promise<void> {
     this.logger.log(`User ${data.userId} liked ${data.messageId}`);
 
-    await this.chatService.likeMessage(data.messageId);
+    await this.chatService.likeMessage(data.messageId, data.userId);
     this.server.emit('like', data.messageId);
   }
 
@@ -67,17 +62,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleRemoveLike(@MessageBody() data: UnlikeMessageDto): Promise<void> {
     this.logger.log(`User ${data.userId} unliked ${data.messageId}`);
 
-    await this.chatService.removeLikeFromMessage(data.messageId);
+    await this.chatService.removeLikeFromMessage(data.messageId, data.userId);
     this.server.emit('unlike', data.messageId);
   }
 
   @SubscribeMessage('reply')
-  async handleReply(@MessageBody() data: ReplyToMessage): Promise<void> {
-    const { userId, messageId, reply } = data;
+  async handleReply(@MessageBody() data: ReplyMessageDto): Promise<void> {
+    const { userId, reply, originalMessageId } = data;
 
-    this.logger.log(`User ${userId} replied to ${messageId} with ${reply}`);
+    const originalMessage = await this.chatService.getMessageById(originalMessageId);
 
-    await this.chatService.saveMessage(userId, reply);
-    this.server.emit('reply', reply);
+    this.logger.log(`User ${userId} replied to ${originalMessageId} with ${reply}`);
+
+    await this.chatService.saveMessage(userId, reply, originalMessageId);
+
+    this.server.emit('reply', {
+      reply,
+      originalMessage,
+    });
   }
 }
