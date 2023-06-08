@@ -111,7 +111,7 @@ model LiveDrops {
 model Message {
   id        String   @id @default(uuid())
   message   String
-  likedBy   String[]
+  likedBy   String[] @default([])
   repliedTo String? //Still a messageId
   User      User?    @relation(fields: [userId], references: [id])
   userId    String
