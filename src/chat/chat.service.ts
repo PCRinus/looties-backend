@@ -19,8 +19,8 @@ export class ChatService {
     });
   }
 
-  async saveMessage(userId: string, message: string, originalMessageId: string = undefined): Promise<void> {
-    await this.prismaService.message.create({
+  async saveMessage(userId: string, message: string, originalMessageId: string = undefined): Promise<Message> {
+    return await this.prismaService.message.create({
       data: {
         message,
         userId,

@@ -46,8 +46,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.logger.log(`Received message from ${userId}: ${message}`);
 
-    await this.chatService.saveMessage(userId, message);
-    this.server.emit('message', data.message);
+    const newMessage = await this.chatService.saveMessage(userId, message);
+    this.server.emit('message', newMessage);
   }
 
   @SubscribeMessage('like')
@@ -74,10 +74,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.logger.log(`User ${userId} replied to ${originalMessageId} with ${reply}`);
 
-    await this.chatService.saveMessage(userId, reply, originalMessageId);
+    const newMessage = await this.chatService.saveMessage(userId, reply, originalMessageId);
 
     this.server.emit('reply', {
-      reply,
+      newMessage,
       originalMessage,
     });
   }
