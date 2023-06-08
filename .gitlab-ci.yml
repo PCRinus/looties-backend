@@ -36,6 +36,7 @@ run-tests-with-coverage:
   needs:
     - install-deps
   script:
+    - npx prisma generate
     - npm run test:cov
 
 run-linter:
