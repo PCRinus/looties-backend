@@ -6,7 +6,8 @@ import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
 
 describe('ChatGateway', () => {
-  let gateway: ChatGateway;
+  let chatGateway: ChatGateway;
+  let chatService: ChatService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,10 +15,15 @@ describe('ChatGateway', () => {
       providers: [ChatGateway, ChatService],
     }).compile();
 
-    gateway = module.get<ChatGateway>(ChatGateway);
+    chatGateway = module.get<ChatGateway>(ChatGateway);
+    chatService = module.get<ChatService>(ChatService);
   });
 
   it('should be defined', () => {
-    expect(gateway).toBeDefined();
+    expect(chatGateway).toBeDefined();
+  });
+
+  it('should be defined too', () => {
+    expect(chatService).toBeDefined();
   });
 });
