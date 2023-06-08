@@ -77,6 +77,8 @@ This will ensure that everything works as expected.
 
 To reset the db, run `npx prisma migrate reset` inside the docker container terminal.
 
+To seed the db, run `npx prisma db seed` inside the docker container terminal.
+
 ## Running tests
 
 Tests are run with Jest. You can run them with the following command:
