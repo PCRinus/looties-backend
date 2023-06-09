@@ -1,8 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Message } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
+
+const MAX_MESSAGE_COUNT = 5000;
+
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
+
   constructor(private readonly prismaService: PrismaService) {}
 
   async getMessageById(messageId: string): Promise<Message> {
@@ -64,5 +70,40 @@ export class ChatService {
         },
       },
     });
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async deleteOldMessages(): Promise<string> {
+    this.logger.log('Deleting old messages...');
+
+    const currentMessageCount = await this.prismaService.message.count();
+
+    if (currentMessageCount < MAX_MESSAGE_COUNT) {
+      this.logger.log('No messages to delete.');
+      return 'No messages to delete.';
+    }
+
+    const messageCountToDelete = currentMessageCount - MAX_MESSAGE_COUNT;
+    const messageIdsToDelete = (
+      await this.prismaService.message.findMany({
+        select: {
+          id: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+        take: messageCountToDelete,
+      })
+    ).map(({ id }) => id);
+
+    await this.prismaService.message.deleteMany({
+      where: {
+        id: {
+          in: messageIdsToDelete,
+        },
+      },
+    });
+
+    return `Deleted ${messageCountToDelete} messages.`;
   }
 }
