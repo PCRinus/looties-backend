@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Message } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
@@ -12,11 +12,17 @@ export class ChatService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getMessageById(messageId: string): Promise<Message> {
-    return await this.prismaService.message.findUnique({
+    const message = await this.prismaService.message.findUnique({
       where: {
         id: messageId,
       },
     });
+
+    if (!message) {
+      throw new NotFoundException(`Message with id ${messageId} not found`);
+    }
+
+    return message;
   }
 
   async getMessages(): Promise<Message[]> {
@@ -25,7 +31,7 @@ export class ChatService {
     });
   }
 
-  async saveMessage(userId: string, message: string, originalMessageId: string = undefined): Promise<Message> {
+  async saveMessage(userId: string, message: string, originalMessageId?: string): Promise<Message> {
     return await this.prismaService.message.create({
       data: {
         message,
@@ -49,7 +55,7 @@ export class ChatService {
   }
 
   async removeLikeFromMessage(messageId: string, userId: string): Promise<void> {
-    const { likedBy: existingLikedBy } = await this.prismaService.message.findFirst({
+    const likedBy = await this.prismaService.message.findFirst({
       where: {
         id: messageId,
       },
@@ -57,7 +63,7 @@ export class ChatService {
         likedBy: true,
       },
     });
-
+    const existingLikedBy = likedBy?.likedBy ?? [];
     const filteredLikedBy = existingLikedBy.filter((id) => id !== userId);
 
     await this.prismaService.message.update({

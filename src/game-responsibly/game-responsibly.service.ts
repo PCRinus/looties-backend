@@ -8,10 +8,14 @@ export class GameResponsiblyService {
   constructor(private readonly prisma: PrismaService) {}
 
   async isUserExcluded(userId: string): Promise<any> {
-    const { excludedUntil } = await this.prisma.user.findUnique({
+    const excludedUntilDo = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { excludedUntil: true },
     });
+
+    const excludedUntil = excludedUntilDo?.excludedUntil;
+
+    if (!excludedUntil) return false;
 
     return DateTime.fromJSDate(excludedUntil) > DateTime.now();
   }

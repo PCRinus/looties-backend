@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Item } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
 
@@ -11,7 +11,7 @@ export class ItemService {
   }
 
   async selectItemNameAndPriceById(id: string): Promise<Pick<Item, 'name' | 'price'>> {
-    return await this.prisma.item.findUnique({
+    const item = await this.prisma.item.findUnique({
       where: {
         id,
       },
@@ -20,5 +20,11 @@ export class ItemService {
         price: true,
       },
     });
+
+    if (!item) {
+      throw new NotFoundException(`Item with id ${id} not found`);
+    }
+
+    return item;
   }
 }
