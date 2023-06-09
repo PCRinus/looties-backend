@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Message } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
 
-const MAX_MESSAGE_COUNT = 5000;
+export const MAX_MESSAGE_COUNT = 5000;
 
 @Injectable()
 export class ChatService {
@@ -25,9 +25,9 @@ export class ChatService {
     return message;
   }
 
-  async getMessages(): Promise<Message[]> {
+  async getMessages(limit = 20): Promise<Message[]> {
     return await this.prismaService.message.findMany({
-      take: 20,
+      take: limit,
     });
   }
 
@@ -110,6 +110,7 @@ export class ChatService {
       },
     });
 
+    this.logger.log(`Deleted ${messageCountToDelete} messages.`);
     return `Deleted ${messageCountToDelete} messages.`;
   }
 }
