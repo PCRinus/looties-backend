@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
-    "types": ["@types/jest", "@types/node", "@quramy/jest-prisma"],
+    "types": ["@types/jest", "@types/node"],
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
