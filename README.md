@@ -87,6 +87,12 @@ Tests are run with Jest. You can run them with the following command:
 npm run test
 ```
 
+E2E test are run with:
+
+```bash
+npm run test:e2e
+```
+
 ## Troubleshooting
 
 Sometimes you might get this message in the docker logs:
