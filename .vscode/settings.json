@@ -2,10 +2,12 @@
   "cSpell.words": [
     "autoincrement",
     "datasource",
+    "datasources",
     "dtos",
     "lootbox",
     "lootboxes",
     "lootie",
+    "PGADMIN",
     "Timestamptz",
     "websockets"
   ],
