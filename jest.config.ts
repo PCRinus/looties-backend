@@ -1,4 +1,6 @@
-import { pathsToModuleNameMapper, JestConfigWithTsJest } from 'ts-jest';
+import type { JestConfigWithTsJest } from 'ts-jest';
+import { pathsToModuleNameMapper } from 'ts-jest';
+
 import { compilerOptions } from './tsconfig.paths.json';
 
 const jestConfig: JestConfigWithTsJest = {
@@ -12,7 +14,7 @@ const jestConfig: JestConfigWithTsJest = {
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
-  testEnvironment: 'node',
+  testEnvironment: '@quramy/jest-prisma/environment',
   moduleDirectories: ['node_modules', '<rootDir>'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
 };
