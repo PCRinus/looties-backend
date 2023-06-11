@@ -14,7 +14,8 @@ const jestConfig: JestConfigWithTsJest = {
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
-  testEnvironment: '@quramy/jest-prisma/environment',
+  // testEnvironment: '@quramy/jest-prisma/environment',
+  testEnvironment: 'node',
   moduleDirectories: ['node_modules', '<rootDir>'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
 };
