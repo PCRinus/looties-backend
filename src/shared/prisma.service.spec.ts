@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -8,6 +9,7 @@ describe('PrismaService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule],
       providers: [PrismaService],
     }).compile();
 
