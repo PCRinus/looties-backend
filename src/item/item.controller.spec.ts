@@ -1,7 +1,8 @@
-import { ItemService } from '@item/item.service';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { SharedModule } from '@shared/shared.module';
+
+import { ItemService } from '@@item/item.service';
+import { SharedModule } from '@@shared/shared.module';
 
 import { ItemController } from './item.controller';
 

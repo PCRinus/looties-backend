@@ -1,5 +1,6 @@
-import { ItemModule } from '@item/item.module';
 import { Module } from '@nestjs/common';
+
+import { ItemModule } from '@@item/item.module';
 
 import { LiveDropsGateway } from './live-drops.gateway';
 import { LiveDropsService } from './live-drops.service';

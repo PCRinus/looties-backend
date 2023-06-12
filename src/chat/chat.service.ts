@@ -1,7 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Message } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
+
+import { PrismaService } from '@@shared/prisma.service';
 
 export const MAX_MESSAGE_COUNT = 5000;
 

@@ -1,7 +1,8 @@
-import { ItemService } from '@item/item.service';
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { Item } from '@prisma/client';
+
+import { ItemService } from '@@item/item.service';
 
 @ApiTags('Items')
 @Controller('items')

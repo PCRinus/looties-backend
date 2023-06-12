@@ -1,7 +1,8 @@
-import { GameResponsiblyService } from '@game-responsibly/game-responsibly.service';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
+
+import { GameResponsiblyService } from '@@game-responsibly/game-responsibly.service';
 
 import { GameResponsiblyController } from './game-responsibly.controller';
 

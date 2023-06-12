@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ProfileService } from '@profile/profile.service';
+
+import { ProfileService } from '@@profile/profile.service';
 
 @ApiTags('Profile')
 @Controller('profile')

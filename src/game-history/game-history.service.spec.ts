@@ -1,6 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { SharedModule } from '@shared/shared.module';
+
+import { SharedModule } from '@@shared/shared.module';
 
 import { GameHistoryService } from './game-history.service';
 

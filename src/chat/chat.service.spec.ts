@@ -2,9 +2,10 @@ import { NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { PrismaClient } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
-import { SharedModule } from '@shared/shared.module';
 import { type DeepMockProxy, mockDeep } from 'jest-mock-extended';
+
+import { PrismaService } from '@@shared/prisma.service';
+import { SharedModule } from '@@shared/shared.module';
 
 import { ChatService, MAX_MESSAGE_COUNT } from './chat.service';
 

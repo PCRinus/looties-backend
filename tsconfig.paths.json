@@ -2,16 +2,17 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@app/*": ["./src/app/*"],
-      "@user/*": ["./src/user/*"],
-      "@item/*": ["./src/item/*"],
-      "@chat/*": ["./src/chat/*"],
-      "@profile/*": ["./src/profile/*"],
-      "@transactions/*": ["./src/transactions/*"],
-      "@game-history/*": ["./src/game-history/*"],
-      "@game-responsibly/*": ["./src/game-responsibly/*"],
-      "@live-drops/*": ["./src/live-drops/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@@app/*": ["./src/app/*"],
+      "@@auth/*": ["./src/auth/*"],
+      "@@user/*": ["./src/user/*"],
+      "@@item/*": ["./src/item/*"],
+      "@@chat/*": ["./src/chat/*"],
+      "@@profile/*": ["./src/profile/*"],
+      "@@transactions/*": ["./src/transactions/*"],
+      "@@game-history/*": ["./src/game-history/*"],
+      "@@game-responsibly/*": ["./src/game-responsibly/*"],
+      "@@live-drops/*": ["./src/live-drops/*"],
+      "@@shared/*": ["./src/shared/*"]
     }
   }
 }

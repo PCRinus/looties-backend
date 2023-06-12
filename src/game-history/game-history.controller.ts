@@ -1,6 +1,7 @@
-import { GameHistoryService } from '@game-history/game-history.service';
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { GameHistoryService } from '@@game-history/game-history.service';
 
 @ApiTags('Game History')
 @Controller('game-history')
