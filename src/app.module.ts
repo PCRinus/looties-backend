@@ -12,6 +12,7 @@ import { ProfileModule } from './profile/profile.module';
 import { SharedModule } from './shared/shared.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { UserModule } from './user/user.module';
       }),
       expandVariables: true,
     }),
+    AuthModule,
   ],
 })
 export class AppModule {}
