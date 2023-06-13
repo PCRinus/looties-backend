@@ -34,12 +34,12 @@ export class ItemService {
   }
 
   async selectItemsLiveDropsData(
-    liveDrops: LiveDrops[],
+    liveDropIds: string[],
   ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId'>[]> {
     const items = await this.prisma.item.findMany({
       where: {
         id: {
-          in: liveDrops.map((drop) => drop.itemId),
+          in: liveDropIds,
         },
       },
       select: {
@@ -51,7 +51,7 @@ export class ItemService {
       },
     });
 
-    if (!items) {
+    if (!items.length) {
       throw new NotFoundException('Item data not found');
     }
 

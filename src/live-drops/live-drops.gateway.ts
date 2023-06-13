@@ -16,7 +16,8 @@ export class LiveDropsGateway implements OnGatewayConnection {
 
   async handleConnection() {
     const liveDrops = await this.liveDropsService.getDrops();
-    const previousDrops = await this.itemService.selectItemsLiveDropsData(liveDrops);
+    const liveDropIds = liveDrops.map((drop) => drop.itemId);
+    const previousDrops = await this.itemService.selectItemsLiveDropsData(liveDropIds);
 
     this.server.emit('connected', previousDrops);
   }

@@ -6,9 +6,9 @@ import { PrismaService } from '@shared/prisma.service';
 export class LiveDropsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getDrops(): Promise<LiveDrops[]> {
+  async getDrops(limit = 50): Promise<LiveDrops[]> {
     return await this.prisma.liveDrops.findMany({
-      take: 50,
+      take: limit,
     });
   }
 
