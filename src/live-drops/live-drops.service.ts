@@ -6,16 +6,17 @@ import { PrismaService } from '@shared/prisma.service';
 export class LiveDropsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getDrops(): Promise<any> {
+  async getDrops(limit = 50): Promise<LiveDrops[]> {
     return await this.prisma.liveDrops.findMany({
-      take: 50,
+      take: limit,
     });
   }
 
-  async saveDropData(itemId: string): Promise<LiveDrops> {
+  async saveDropData(itemId: string, lootboxId: string): Promise<LiveDrops> {
     return await this.prisma.liveDrops.create({
       data: {
         itemId,
+        lootboxId,
       },
     });
   }

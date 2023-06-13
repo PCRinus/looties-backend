@@ -1,7 +1,11 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class ItemDroppedDto {
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly itemId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  readonly lootboxId: string;
 }
