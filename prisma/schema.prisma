@@ -73,12 +73,13 @@ model Item {
 }
 
 model Lootbox {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   price       Decimal
-  openedCount Int      @default(0)
+  openedCount Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   items       Item[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  LiveDrops   LiveDrops[]
 }
 
 model Transactions {
@@ -103,9 +104,13 @@ model GameHistory {
 }
 
 model LiveDrops {
-  id     String @id @default(uuid())
-  item   Item   @relation(fields: [itemId], references: [id])
-  itemId String
+  id        String   @id @default(uuid())
+  item      Item     @relation(fields: [itemId], references: [id])
+  itemId    String
+  lootbox   Lootbox  @relation(fields: [lootboxId], references: [id])
+  lootboxId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Message {

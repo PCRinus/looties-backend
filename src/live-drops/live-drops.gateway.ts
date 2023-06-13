@@ -7,7 +7,7 @@ import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from
 import { Server } from 'socket.io';
 
 @UsePipes(new ValidationPipe())
-@WebSocketGateway(3002)
+@WebSocketGateway(3002, { cors: true })
 export class LiveDropsGateway implements OnGatewayConnection {
   @WebSocketServer()
   private readonly server: Server;
@@ -22,7 +22,7 @@ export class LiveDropsGateway implements OnGatewayConnection {
   @SubscribeMessage('itemDropped')
   async handleItemDrop(@MessageBody() data: ItemDroppedDto): Promise<void> {
     const itemNameAndPrice = await this.itemService.selectItemNameAndPriceById(data.itemId);
-    await this.liveDropsService.saveDropData(data.itemId);
+    await this.liveDropsService.saveDropData(data.itemId, data.lootboxId);
 
     this.server.emit('itemDropped', itemNameAndPrice);
   }
