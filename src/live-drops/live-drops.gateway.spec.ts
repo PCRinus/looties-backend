@@ -1,9 +1,10 @@
-import { ItemModule } from '@item/item.module';
-import { ItemService } from '@item/item.service';
-import { LiveDropsService } from '@live-drops/live-drops.service';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { SharedModule } from '@shared/shared.module';
+
+import { ItemModule } from '@@item/item.module';
+import { ItemService } from '@@item/item.service';
+import { LiveDropsService } from '@@live-drops/live-drops.service';
+import { SharedModule } from '@@shared/shared.module';
 
 import { LiveDropsGateway } from './live-drops.gateway';
 

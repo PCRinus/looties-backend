@@ -1,7 +1,8 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { ProfileService } from '@profile/profile.service';
-import { SharedModule } from '@shared/shared.module';
+
+import { ProfileService } from '@@profile/profile.service';
+import { SharedModule } from '@@shared/shared.module';
 
 describe('ProfileService', () => {
   let service: ProfileService;

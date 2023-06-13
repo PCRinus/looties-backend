@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { TransactionsService } from '@transactions/transactions.service';
+
+import { TransactionsService } from '@@transactions/transactions.service';
 
 export const TRANSACTION_TYPES = ['DEPOSIT', 'WITHDRAWAL'] as const;
 export type TransactionTypes = (typeof TRANSACTION_TYPES)[number];

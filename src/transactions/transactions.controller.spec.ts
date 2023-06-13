@@ -1,7 +1,8 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { SharedModule } from '@shared/shared.module';
-import { TransactionsService } from '@transactions/transactions.service';
+
+import { SharedModule } from '@@shared/shared.module';
+import { TransactionsService } from '@@transactions/transactions.service';
 
 import { TransactionsController } from './transactions.controller';
 

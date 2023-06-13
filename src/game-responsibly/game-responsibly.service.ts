@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import type { User } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
 import { DateTime } from 'luxon';
+
+import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
 export class GameResponsiblyService {

@@ -1,12 +1,13 @@
-import { ItemService } from '@item/item.service';
 import { NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Item, PrismaClient } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
-import { PrismaService } from '@shared/prisma.service';
-import { SharedModule } from '@shared/shared.module';
 import { type DeepMockProxy, mockDeep } from 'jest-mock-extended';
+
+import { ItemService } from '@@item/item.service';
+import { PrismaService } from '@@shared/prisma.service';
+import { SharedModule } from '@@shared/shared.module';
 
 describe('ChatService', () => {
   let itemService: ItemService;

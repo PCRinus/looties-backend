@@ -1,7 +1,8 @@
-import { SetSelfExclusion } from '@game-responsibly/dtos/set-self-exclusion.dto';
-import { GameResponsiblyService } from '@game-responsibly/game-responsibly.service';
 import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { SetSelfExclusion } from '@@game-responsibly/dtos/set-self-exclusion.dto';
+import { GameResponsiblyService } from '@@game-responsibly/game-responsibly.service';
 
 @ApiTags('Game responsibly')
 @Controller('game-responsibly')

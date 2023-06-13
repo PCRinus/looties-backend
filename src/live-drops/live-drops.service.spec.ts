@@ -1,10 +1,11 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { PrismaClient } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
-import { SharedModule } from '@shared/shared.module';
 import type { DeepMockProxy } from 'jest-mock-extended';
 import { mockDeep } from 'jest-mock-extended';
+
+import { PrismaService } from '@@shared/prisma.service';
+import { SharedModule } from '@@shared/shared.module';
 
 import { LiveDropsService } from './live-drops.service';
 

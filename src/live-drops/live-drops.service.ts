@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { LiveDrops } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
+
+import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
 export class LiveDropsService {
