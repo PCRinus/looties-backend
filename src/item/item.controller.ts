@@ -1,6 +1,7 @@
 import { ItemService } from '@item/item.service';
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import type { Item } from '@prisma/client';
 
 @ApiTags('Items')
 @Controller('items')
@@ -8,12 +9,12 @@ export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
   @Get()
-  async selectAll(): Promise<any> {
+  async selectAll(): Promise<Item[]> {
     return this.itemService.selectItems();
   }
 
   @Get(':id')
-  async selectOne(): Promise<any> {
+  async selectOne(): Promise<string> {
     return 'item';
   }
 }

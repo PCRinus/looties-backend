@@ -16,14 +16,16 @@ export class LiveDropsGateway implements OnGatewayConnection {
 
   async handleConnection() {
     const liveDrops = await this.liveDropsService.getDrops();
-    this.server.emit('connected', liveDrops);
+    const previousDrops = await this.itemService.selectItemsLiveDropsData(liveDrops);
+
+    this.server.emit('connected', previousDrops);
   }
 
   @SubscribeMessage('itemDropped')
   async handleItemDrop(@MessageBody() data: ItemDroppedDto): Promise<void> {
-    const itemNameAndPrice = await this.itemService.selectItemNameAndPriceById(data.itemId);
+    const latestDrop = await this.itemService.selectItemLiveDropData(data.itemId);
     await this.liveDropsService.saveDropData(data.itemId, data.lootboxId);
 
-    this.server.emit('itemDropped', itemNameAndPrice);
+    this.server.emit('itemDropped', latestDrop);
   }
 }

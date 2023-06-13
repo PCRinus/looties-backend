@@ -10,8 +10,9 @@ const seed = async () => {
 
   await seedTransactions(userIds);
   await seedMessages(userIds);
-  const itemIds = await seedItems(inventoryIds);
-  await seedLiveDrops(itemIds);
+  const lootboxIds = await seedLootboxes();
+  const itemIds = await seedItems(inventoryIds, lootboxIds);
+  await seedLiveDrops(itemIds, lootboxIds);
 };
 
 const UUID_NAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341';
@@ -134,7 +135,34 @@ const seedMessages = async (userIds: string[]) => {
   });
 };
 
-const seedItems = async (inventoryIds: string[]) => {
+const seedLootboxes = async () => {
+  await prisma.lootbox.createMany({
+    data: [
+      {
+        id: uuidv5('lootbox1', UUID_NAMESPACE),
+        price: 1000,
+      },
+      {
+        id: uuidv5('lootbox2', UUID_NAMESPACE),
+        price: 2000,
+      },
+      {
+        id: uuidv5('lootbox3', UUID_NAMESPACE),
+        price: 5000,
+      },
+    ],
+  });
+
+  const lootboxIds = await prisma.lootbox.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  return lootboxIds.map((lootboxId) => lootboxId.id);
+};
+
+const seedItems = async (inventoryIds: string[], lootboxIds: string[]) => {
   await prisma.item.createMany({
     data: [
       {
@@ -146,6 +174,7 @@ const seedItems = async (inventoryIds: string[]) => {
         highestPrice: 100,
         lowestPrice: 100,
         inventoryId: inventoryIds[0],
+        lootboxId: lootboxIds[0],
       },
       {
         id: uuidv5('item2', UUID_NAMESPACE),
@@ -156,6 +185,7 @@ const seedItems = async (inventoryIds: string[]) => {
         highestPrice: 300,
         lowestPrice: 100,
         inventoryId: inventoryIds[0],
+        lootboxId: lootboxIds[1],
       },
       {
         id: uuidv5('item3', UUID_NAMESPACE),
@@ -166,6 +196,7 @@ const seedItems = async (inventoryIds: string[]) => {
         highestPrice: 250,
         lowestPrice: 100,
         inventoryId: inventoryIds[1],
+        lootboxId: lootboxIds[1],
       },
     ],
   });
@@ -179,23 +210,23 @@ const seedItems = async (inventoryIds: string[]) => {
   return itemIds.map((itemId) => itemId.id);
 };
 
-const seedLiveDrops = async (itemIds: string[]) => {
+const seedLiveDrops = async (itemIds: string[], lootboxIds: string[]) => {
   await prisma.liveDrops.createMany({
     data: [
       {
         id: uuidv5('liveDrop1', UUID_NAMESPACE),
         itemId: itemIds[0],
-        lootboxId: uuidv5('lootbox1', UUID_NAMESPACE),
+        lootboxId: lootboxIds[0],
       },
       {
         id: uuidv5('liveDrop2', UUID_NAMESPACE),
         itemId: itemIds[1],
-        lootboxId: uuidv5('lootbox1', UUID_NAMESPACE),
+        lootboxId: lootboxIds[1],
       },
       {
         id: uuidv5('liveDrop3', UUID_NAMESPACE),
         itemId: itemIds[2],
-        lootboxId: uuidv5('lootbox2', UUID_NAMESPACE),
+        lootboxId: lootboxIds[1],
       },
     ],
   });
