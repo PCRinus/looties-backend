@@ -13,7 +13,7 @@ export class ItemService {
 
   async selectItemLiveDropData(
     itemId: string,
-  ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId'>> {
+  ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId' | 'createdAt'>> {
     const item = await this.prisma.item.findUnique({
       where: {
         id: itemId,
@@ -24,6 +24,7 @@ export class ItemService {
         name: true,
         price: true,
         lootboxId: true,
+        createdAt: true,
       },
     });
 
@@ -36,7 +37,7 @@ export class ItemService {
 
   async selectItemsLiveDropsData(
     liveDropIds: string[],
-  ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId'>[]> {
+  ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId' | 'createdAt'>[]> {
     const items = await this.prisma.item.findMany({
       where: {
         id: {
@@ -49,6 +50,7 @@ export class ItemService {
         name: true,
         price: true,
         lootboxId: true,
+        createdAt: true,
       },
     });
 
