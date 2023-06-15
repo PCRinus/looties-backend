@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Item, PrismaClient } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Decimal } from 'decimal.js';
 import { type DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { ItemService } from '@@item/item.service';
