@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class ConnectWalletDto {
   @IsNotEmpty()
   @IsString()
-  readonly walletAddress: string;
+  readonly walletPublicKey: string;
 
   @IsNotEmpty()
   @IsString()
