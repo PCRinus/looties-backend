@@ -94,3 +94,64 @@ sequenceDiagram
     Events-->Frontend: dispatch multiwondow event
     deactivate Events
 ```
+
+## New Auth flow
+
+1. Frontend:
+   - When `Connect wallet` button is clicked, make a call to the backend auth controller with the following body:
+     - `walletPublicKey` (string)
+     - `signature` (string)
+
+2. Backend:
+   - `auth/connect-wallet` is called with the incoming body
+   - passes the body to the auth service
+     - makes the same checks to verify the signature, public key as before
+       - returns `Unauthorized` or `Bad Request` if the checks fail
+     - tries to fetch the user by the `walletPublicKey` key
+       - if no user is found, creates a new user with the `walletPublicKey` and a generated name, and returns it
+       - if a user is found, returns the user object
+     - return a JWT token with the `walletPublicKey` and other relevant data as the payload
+   - returns the JWT token to the controller
+   - controller returns the JWT token to the frontend
+
+3: Frontend:
+   - dispatches a Redux action that sets the JWT token in the store, and also in localStorage
+   - for any subsequent requests, the JWT token is sent as a bearer token header. The only public endpoints will be the `auth/connect-wallet` and various GET methods
+
+4: Backend:
+    - all requests will be authenticated with the JWT token and an Auth Guard
+
+```mermaid
+---
+Title: New auth flow
+---
+
+sequenceDiagram
+activate Frontend
+Frontend->>AuthController: { walletPublicKey: string, signature: string }
+Note over Frontend,AuthController: auth/connect-wallet
+deactivate Frontend
+activate AuthController
+AuthController->>AuthService: { walletPublicKey: string, signature: string }
+deactivate AuthController
+activate AuthService
+AuthService-->AuthService: throw 401 if body content checks fail
+AuthService-->UserRepository: find user by walletPublicKey
+deactivate AuthService
+activate UserRepository
+UserRepository-->UserRepository: create a new user if one is not found
+UserRepository->>AuthService: return user object
+deactivate UserRepository
+activate AuthService
+AuthService-->AuthService: sign JWT token with walletPublicKey
+AuthService->>AuthController: return signed JWT token
+deactivate AuthService
+activate AuthController
+AuthController->>Frontend: return JWT token
+deactivate AuthController
+activate Frontend
+Frontend->>Frontend: dispatch Redux action to set JWT token in store
+Frontend->>Frontend: set JWT token in localStorage
+deactivate Frontend
+
+```
