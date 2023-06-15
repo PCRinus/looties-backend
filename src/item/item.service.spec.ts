@@ -2,14 +2,14 @@ import { NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Item, PrismaClient } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Decimal } from 'decimal.js';
 import { type DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { ItemService } from '@@item/item.service';
 import { PrismaService } from '@@shared/prisma.service';
 import { SharedModule } from '@@shared/shared.module';
 
-describe('ChatService', () => {
+describe('ItemService', () => {
   let itemService: ItemService;
   let prisma: DeepMockProxy<PrismaService>;
 
@@ -53,13 +53,14 @@ describe('ChatService', () => {
     });
 
     it('should return the item live drop data', async () => {
-      const { id, name, dropChance, price, lootboxId } = mockItem;
+      const { id, name, dropChance, price, lootboxId, createdAt } = mockItem;
       prisma.item.findUnique.mockResolvedValue({
         id,
         name,
         dropChance,
         price,
         lootboxId,
+        createdAt,
       } as Item);
 
       await expect(itemService.selectItemLiveDropData('id')).resolves.toEqual({
@@ -68,6 +69,7 @@ describe('ChatService', () => {
         dropChance: mockItem.dropChance,
         price: mockItem.price,
         lootboxId: mockItem.lootboxId,
+        createdAt: mockItem.createdAt,
       });
     });
   });
@@ -80,7 +82,7 @@ describe('ChatService', () => {
     });
 
     it('should return the items live drop data', async () => {
-      const { id, name, dropChance, price, lootboxId } = mockItem;
+      const { id, name, dropChance, price, lootboxId, createdAt } = mockItem;
       prisma.item.findMany.mockResolvedValue([
         {
           id,
@@ -88,6 +90,7 @@ describe('ChatService', () => {
           dropChance,
           price,
           lootboxId,
+          createdAt,
         } as Item,
       ]);
 
@@ -98,6 +101,7 @@ describe('ChatService', () => {
           dropChance: mockItem.dropChance,
           price: mockItem.price,
           lootboxId: mockItem.lootboxId,
+          createdAt: mockItem.createdAt,
         },
       ]);
     });
