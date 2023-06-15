@@ -1,15 +1,16 @@
-import { ChatGateway } from '@chat/chat.gateway';
-import { ChatModule } from '@chat/chat.module';
-import { ChatService } from '@chat/chat.service';
 import type { INestApplication } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Message, PrismaClient } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
-import { SharedModule } from '@shared/shared.module';
 import { log } from 'console';
 import type { DeepMockProxy } from 'jest-mock-extended';
 import { mockDeep } from 'jest-mock-extended';
+
+import { ChatGateway } from '@@chat/chat.gateway';
+import { ChatModule } from '@@chat/chat.module';
+import { ChatService } from '@@chat/chat.service';
+import { PrismaService } from '@@shared/prisma.service';
+import { SharedModule } from '@@shared/shared.module';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const SocketMock = require('socket.io-mock');
