@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class ReplyMessageDto {
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly userId: string;
 
@@ -9,7 +9,7 @@ export class ReplyMessageDto {
   @IsNotEmpty()
   readonly reply: string;
 
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly originalMessageId: string;
 }

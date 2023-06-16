@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class SendMessageDto {
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly userId: string;
 
