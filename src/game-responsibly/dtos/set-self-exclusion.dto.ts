@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 export class SetSelfExclusion {
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly userId: string;
 

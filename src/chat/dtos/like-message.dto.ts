@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class LikeMessageDto {
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly userId: string;
 
-  @IsUUID(4)
+  @IsUUID()
   @IsNotEmpty()
   readonly messageId: string;
 }
