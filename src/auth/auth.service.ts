@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async connectWallet({ walletPublicKey, signature }: { walletPublicKey: string; signature: string }): Promise<string> {
+  async connectWallet(walletPublicKey: string, signature: string): Promise<string> {
     return 'jwt';
   }
 

@@ -9,6 +9,7 @@ export class AuthController {
 
   @Post('connect-wallet')
   async connectWallet(@Body() payload: ConnectWalletDto): Promise<string> {
-    return this.authService.connectWallet(payload);
+    const { walletPublicKey, signature } = payload;
+    return this.authService.connectWallet(walletPublicKey, signature);
   }
 }
