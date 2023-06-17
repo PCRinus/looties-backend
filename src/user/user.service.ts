@@ -35,4 +35,11 @@ export class UserService {
 
     return user.redeemedCode;
   }
+
+  async getUserByWalletPublicKey(walletPublicKey: string) {
+    return this.prisma.user.findUnique({
+      //TODO: rename walletAddress to walletPublicKey in a migration script
+      where: { walletAddress: walletPublicKey },
+    });
+  }
 }
