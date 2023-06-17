@@ -23,8 +23,9 @@ model User {
   transactions  Transactions[]
   gameHistory   GameHistory[]
   referrer      Affiliates?    @relation("Referrer")
-  referral      Affiliates?    @relation("Redeemers", fields: [referralCode], references: [referralCode])
-  referralCode  String?
+  affiliate     Affiliates?    @relation("Redeemers", fields: [affiliateId], references: [id])
+  affiliateId   String?
+  redeemedCode  String?
 }
 
 model Profile {
@@ -129,7 +130,7 @@ model Message {
 
 model Affiliates {
   id                  String   @id @default(uuid())
-  referralCode        String   @unique
+  referralCode        String   @default(uuid())
   redeemedCount       Int      @default(0)
   totalWagered        Decimal  @default(0)
   availableCommission Decimal  @default(0)

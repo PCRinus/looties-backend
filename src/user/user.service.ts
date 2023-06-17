@@ -12,13 +12,13 @@ export class UserService {
     });
   }
 
-  async hasUserRedeemedReferralCode(userId: string): Promise<string | null> {
+  async getRedeemedReferralCode(userId: string): Promise<string | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
       select: {
-        referralCode: true,
+        redeemedCode: true,
       },
     });
 
@@ -26,6 +26,6 @@ export class UserService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    return user.referralCode;
+    return user.redeemedCode;
   }
 }
