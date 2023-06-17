@@ -22,6 +22,7 @@ model User {
   messages      Message[]
   Transactions  Transactions[]
   GameHistory   GameHistory[]
+  Affiliates    Affiliates?
 }
 
 model Profile {
@@ -122,6 +123,17 @@ model Message {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Affiliates {
+  id                  String   @id @default(uuid())
+  referralCode        String   @unique
+  redeemedCount       Int      @default(0)
+  availableCommission Decimal  @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  User                User     @relation(fields: [userId], references: [id])
+  userId              String   @unique
 }
 
 enum ItemsType {
