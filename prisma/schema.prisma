@@ -23,6 +23,8 @@ model User {
   transactions  Transactions[]
   gameHistory   GameHistory[]
   referrer      Affiliates?    @relation("Referrer")
+  referral      Affiliates?    @relation("Redeemers", fields: [referralCode], references: [referralCode])
+  referralCode  String?
 }
 
 model Profile {
@@ -135,8 +137,7 @@ model Affiliates {
   updatedAt           DateTime @updatedAt
   referrer            User     @relation("Referrer", fields: [referrerId], references: [id])
   referrerId          String   @unique
-  // TODO: add relationship to users table
-  referredUserIds     String[] @default([])
+  redeemers           User[]   @relation("Redeemers")
 }
 
 enum ItemsType {

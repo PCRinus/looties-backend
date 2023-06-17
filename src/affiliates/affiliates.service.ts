@@ -20,9 +20,6 @@ export class AffiliatesService {
           redeemedCount: {
             increment: 1,
           },
-          referredUserIds: {
-            push: redeemerId,
-          },
         },
       });
     } catch (error) {
@@ -50,6 +47,7 @@ export class AffiliatesService {
       select: {
         //TODO: Add the fields to be selected
         redeemedCount: true,
+        totalWagered: true,
         availableCommission: true,
       },
     });
@@ -61,7 +59,22 @@ export class AffiliatesService {
     return stats;
   }
 
-  // async updateTotalWagered(wagerAmount: Decimal): Promise<void> {
+  async applyReferralBonusToReferrer(referralCode: string): Promise<any> {
+    const affiliate = await this.prisma.affiliates.findUnique({
+      where: {
+        referralCode,
+      },
+      select: {
+        referrerId: true,
+      },
+    });
 
-  // }
+    if (!affiliate) {
+      throw new NotFoundException(`Referral code ${referralCode} not found`);
+    }
+
+    const referrerId = affiliate.referrerId;
+
+    // TODO: with the referrerId, apply a percentage of the winnings from the redeemer to the referrer
+  }
 }
