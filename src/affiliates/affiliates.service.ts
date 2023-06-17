@@ -9,7 +9,7 @@ export class AffiliatesService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async redeemReferralCode(referralCode: string): Promise<void> {
+  async redeemReferralCode(redeemerId: string, referralCode: string): Promise<void> {
     this.logger.log(`Redeeming referral code ${referralCode}`);
     try {
       await this.prisma.affiliates.update({
@@ -19,6 +19,9 @@ export class AffiliatesService {
         data: {
           redeemedCount: {
             increment: 1,
+          },
+          referredUserIds: {
+            push: redeemerId,
           },
         },
       });
@@ -31,7 +34,7 @@ export class AffiliatesService {
   async updateReferralCode(userId: string, newReferralCode: string): Promise<Affiliates> {
     return await this.prisma.affiliates.update({
       where: {
-        userId,
+        referrerId: userId,
       },
       data: {
         referralCode: newReferralCode,
@@ -42,7 +45,7 @@ export class AffiliatesService {
   async getAffiliatesStats(userId: string): Promise<Pick<Affiliates, 'redeemedCount' | 'availableCommission'>> {
     const stats = await this.prisma.affiliates.findUnique({
       where: {
-        userId,
+        referrerId: userId,
       },
       select: {
         //TODO: Add the fields to be selected
@@ -57,4 +60,8 @@ export class AffiliatesService {
 
     return stats;
   }
+
+  // async updateTotalWagered(wagerAmount: Decimal): Promise<void> {
+
+  // }
 }

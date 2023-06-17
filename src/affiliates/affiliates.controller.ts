@@ -19,7 +19,7 @@ export class AffiliatesController {
   @Post('redeem-referral-code')
   async redeemReferralCode(@Body() body: RedeemReferralCodeDto): Promise<void> {
     const { referralCode } = body;
-    await this.affiliateService.redeemReferralCode(referralCode);
+    await this.affiliateService.redeemReferralCode('TODO', referralCode);
   }
 
   @Post('update-referral-code')
