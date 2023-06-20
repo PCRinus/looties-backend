@@ -73,12 +73,15 @@ export class AffiliatesService {
 
   async getAffiliatesStats(
     userId: string,
-  ): Promise<Pick<Affiliates, 'redeemedCount' | 'totalWagered' | 'referralEarnings' | 'availableCommission'>> {
+  ): Promise<
+    Pick<Affiliates, 'referralCode' | 'redeemedCount' | 'totalWagered' | 'referralEarnings' | 'availableCommission'>
+  > {
     const stats = await this.prisma.affiliates.findUnique({
       where: {
         referrerId: userId,
       },
       select: {
+        referralCode: true,
         redeemedCount: true,
         totalWagered: true,
         referralEarnings: true,

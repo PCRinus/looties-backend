@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
@@ -8,6 +8,7 @@ import { RedeemReferralCodeDto } from '@@affiliates/dtos/redeem-referral-code.dt
 import { UpdateReferralCodeDto } from '@@affiliates/dtos/update-referral-code.dto';
 
 type AffiliateStats = {
+  referralCode: string;
   redeemedCount: number;
   totalWagered: Decimal;
   referralEarnings: Decimal;
@@ -19,15 +20,14 @@ type AffiliateStats = {
 export class AffiliatesController {
   constructor(private readonly affiliateService: AffiliatesService) {}
 
-  @Post('redeem-referral-code')
-  async redeemReferralCode(@Body() body: RedeemReferralCodeDto): Promise<void> {
+  @Post(':userId/redeem-referral-code')
+  async redeemReferralCode(@Param('userId') userId: string, @Body() body: RedeemReferralCodeDto): Promise<void> {
     const { referralCode } = body;
-    await this.affiliateService.redeemReferralCode('TODO', referralCode);
+    await this.affiliateService.redeemReferralCode(userId, referralCode);
   }
 
-  @Post('update-referral-code')
-  async updateReferralCode(@Body() body: UpdateReferralCodeDto): Promise<string> {
-    const userId = 'TODO';
+  @Post(':userId/update-referral-code')
+  async updateReferralCode(@Param('userId') userId: string, @Body() body: UpdateReferralCodeDto): Promise<string> {
     const { updatedReferralCode } = body;
 
     const updatedAffiliate = await this.affiliateService.updateReferralCode(userId, updatedReferralCode);
@@ -35,16 +35,19 @@ export class AffiliatesController {
     return updatedAffiliate.referralCode;
   }
 
-  @Post('claim-available-commission')
-  async claimAvailableCommission(@Body() body: ClaimAvailableCommissionDto): Promise<void> {
-    const { userId, availableCommission, referralEarnings } = body;
+  @Post(':userId/claim-available-commission')
+  async claimAvailableCommission(
+    @Param('userId') userId: string,
+    @Body() body: ClaimAvailableCommissionDto,
+  ): Promise<void> {
+    const { availableCommission, referralEarnings } = body;
 
     await this.affiliateService.claimAvailableCommission(userId, availableCommission, referralEarnings);
   }
 
-  @Get('stats')
-  async getAffiliatesStats(): Promise<AffiliateStats> {
-    const stats = await this.affiliateService.getAffiliatesStats('TODO');
+  @Get(':userId/stats')
+  async getAffiliatesStats(@Param('userId') userId: string): Promise<AffiliateStats> {
+    const stats = await this.affiliateService.getAffiliatesStats(userId);
 
     return stats;
   }
