@@ -1,6 +1,5 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Affiliates } from '@prisma/client';
-import type Decimal from 'decimal.js';
 
 import { PrismaService } from '@@shared/prisma.service';
 
@@ -40,6 +39,8 @@ export class AffiliatesService {
   }
 
   async updateReferralCode(userId: string, newReferralCode: string): Promise<Affiliates> {
+    this.logger.log(`Updating referral code for affiliate with user ID ${userId}`);
+
     return await this.prisma.affiliates.update({
       where: {
         referrerId: userId,
@@ -50,12 +51,27 @@ export class AffiliatesService {
     });
   }
 
-  async claimAvailableCommission(
-    userId: string,
-    availableCommission: Decimal,
-    referralEarnings: Decimal,
-  ): Promise<void> {
+  async claimAvailableCommission(userId: string): Promise<void> {
+    this.logger.log(`Claiming available commission for affiliate with user ID ${userId}`);
+
+    const affiliateDo = await this.prisma.affiliates.findUnique({
+      where: {
+        referrerId: userId,
+      },
+    });
+
+    if (!affiliateDo) {
+      throw new NotFoundException(`Affiliate with user ID ${userId} not found`);
+    }
+
+    const { availableCommission, referralEarnings } = affiliateDo;
+
+    if (availableCommission.isZero()) {
+      throw new BadRequestException(`No available commission to claim for affiliate with user ID ${userId}`);
+    }
+
     const totalReferralEarnings = referralEarnings.add(availableCommission);
+
     await this.prisma.affiliates.update({
       where: {
         referrerId: userId,

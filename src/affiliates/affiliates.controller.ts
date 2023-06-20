@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
 import { AffiliatesService } from '@@affiliates/affiliates.service';
-import { ClaimAvailableCommissionDto } from '@@affiliates/dtos/claim-available-commission.dto';
 import { RedeemReferralCodeDto } from '@@affiliates/dtos/redeem-referral-code.dto';
 import { UpdateReferralCodeDto } from '@@affiliates/dtos/update-referral-code.dto';
 
@@ -36,13 +35,8 @@ export class AffiliatesController {
   }
 
   @Post(':userId/claim-available-commission')
-  async claimAvailableCommission(
-    @Param('userId') userId: string,
-    @Body() body: ClaimAvailableCommissionDto,
-  ): Promise<void> {
-    const { availableCommission, referralEarnings } = body;
-
-    await this.affiliateService.claimAvailableCommission(userId, availableCommission, referralEarnings);
+  async claimAvailableCommission(@Param('userId') userId: string): Promise<void> {
+    await this.affiliateService.claimAvailableCommission(userId);
   }
 
   @Get(':userId/stats')
