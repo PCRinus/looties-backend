@@ -130,9 +130,10 @@ model Message {
 
 model Affiliates {
   id                  String   @id @default(uuid())
-  referralCode        String   @default(uuid())
+  referralCode        String   @default(uuid()) @unique
   redeemedCount       Int      @default(0)
   totalWagered        Decimal  @default(0)
+  referralEarnings    Decimal  @default(0)
   availableCommission Decimal  @default(0)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

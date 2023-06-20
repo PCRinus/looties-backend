@@ -3,11 +3,14 @@ import { ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
 import { AffiliatesService } from '@@affiliates/affiliates.service';
+import { ClaimAvailableCommissionDto } from '@@affiliates/dtos/claim-available-commission.dto';
 import { RedeemReferralCodeDto } from '@@affiliates/dtos/redeem-referral-code.dto';
 import { UpdateReferralCodeDto } from '@@affiliates/dtos/update-referral-code.dto';
 
 type AffiliateStats = {
   redeemedCount: number;
+  totalWagered: Decimal;
+  referralEarnings: Decimal;
   availableCommission: Decimal;
 };
 
@@ -32,8 +35,17 @@ export class AffiliatesController {
     return updatedAffiliate.referralCode;
   }
 
+  @Post('claim-available-commission')
+  async claimAvailableCommission(@Body() body: ClaimAvailableCommissionDto): Promise<void> {
+    const { userId, availableCommission, referralEarnings } = body;
+
+    await this.affiliateService.claimAvailableCommission(userId, availableCommission, referralEarnings);
+  }
+
   @Get('stats')
   async getAffiliatesStats(): Promise<AffiliateStats> {
-    return await this.affiliateService.getAffiliatesStats('TODO');
+    const stats = await this.affiliateService.getAffiliatesStats('TODO');
+
+    return stats;
   }
 }

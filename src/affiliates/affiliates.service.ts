@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Affiliates } from '@prisma/client';
+import type Decimal from 'decimal.js';
 
 import { PrismaService } from '@@shared/prisma.service';
 
@@ -49,15 +50,38 @@ export class AffiliatesService {
     });
   }
 
-  async getAffiliatesStats(userId: string): Promise<Pick<Affiliates, 'redeemedCount' | 'availableCommission'>> {
+  async claimAvailableCommission(
+    userId: string,
+    availableCommission: Decimal,
+    referralEarnings: Decimal,
+  ): Promise<void> {
+    const totalReferralEarnings = referralEarnings.add(availableCommission);
+    await this.prisma.affiliates.update({
+      where: {
+        referrerId: userId,
+      },
+      data: {
+        availableCommission: {
+          set: 0,
+        },
+        referralEarnings: {
+          set: totalReferralEarnings,
+        },
+      },
+    });
+  }
+
+  async getAffiliatesStats(
+    userId: string,
+  ): Promise<Pick<Affiliates, 'redeemedCount' | 'totalWagered' | 'referralEarnings' | 'availableCommission'>> {
     const stats = await this.prisma.affiliates.findUnique({
       where: {
         referrerId: userId,
       },
       select: {
-        //TODO: Add the fields to be selected
         redeemedCount: true,
         totalWagered: true,
+        referralEarnings: true,
         availableCommission: true,
       },
     });
