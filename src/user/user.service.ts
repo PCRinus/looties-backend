@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { User } from '@prisma/client';
 
 import { PrismaService } from '@@shared/prisma.service';
 
@@ -6,10 +7,16 @@ import { PrismaService } from '@@shared/prisma.service';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUserById(id: string) {
-    return this.prisma.user.findUnique({
+  async getUserById(id: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
   }
 
   async getRedeemedReferralCode(userId: string): Promise<string | null> {

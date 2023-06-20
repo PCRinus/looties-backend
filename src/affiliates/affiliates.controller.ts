@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
 import { AffiliatesService } from '@@affiliates/affiliates.service';
+import { ApplyCommissionDto } from '@@affiliates/dtos/apply-commission.dto';
 import { RedeemReferralCodeDto } from '@@affiliates/dtos/redeem-referral-code.dto';
 import { UpdateReferralCodeDto } from '@@affiliates/dtos/update-referral-code.dto';
+import { UserService } from '@@user/user.service';
 
 type AffiliateStats = {
   referralCode: string;
@@ -17,7 +19,19 @@ type AffiliateStats = {
 @ApiTags('Affiliates')
 @Controller('affiliates')
 export class AffiliatesController {
-  constructor(private readonly affiliateService: AffiliatesService) {}
+  constructor(private readonly affiliateService: AffiliatesService, private readonly userService: UserService) {}
+
+  @Post(':userId/apply-commission')
+  async applyCommission(@Param('userId') userId: string, @Body() body: ApplyCommissionDto): Promise<void> {
+    const { wagerAmount } = body;
+    const referralCode = await this.userService.getRedeemedReferralCode(userId);
+
+    if (!referralCode) {
+      throw new BadRequestException(`User with ID ${userId} has not redeemed a referral code`);
+    }
+
+    await this.affiliateService.applyCommission(referralCode, wagerAmount);
+  }
 
   @Post(':userId/redeem-referral-code')
   async redeemReferralCode(@Param('userId') userId: string, @Body() body: RedeemReferralCodeDto): Promise<void> {

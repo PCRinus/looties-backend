@@ -1,13 +1,43 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Affiliates } from '@prisma/client';
+import type Decimal from 'decimal.js';
 
 import { PrismaService } from '@@shared/prisma.service';
+
+export const AFFILIATE_COMMISSION_PERCENTAGE = 0.05;
 
 @Injectable()
 export class AffiliatesService {
   private readonly logger = new Logger(AffiliatesService.name);
 
   constructor(private readonly prisma: PrismaService) {}
+
+  async applyCommission(redeemedCode: string, wagerAmount: Decimal): Promise<void> {
+    this.logger.log(`Applying commission for affiliate with referral code ${redeemedCode}`);
+
+    const existingAffiliate = await this.prisma.affiliates.findUnique({
+      where: {
+        referralCode: redeemedCode,
+      },
+    });
+
+    if (!existingAffiliate) {
+      throw new BadRequestException(`Affiliate with referral code ${redeemedCode} does not exist`);
+    }
+
+    const commissionAmount = wagerAmount.mul(AFFILIATE_COMMISSION_PERCENTAGE);
+
+    await this.prisma.affiliates.update({
+      where: {
+        referralCode: redeemedCode,
+      },
+      data: {
+        availableCommission: {
+          set: existingAffiliate.availableCommission.add(commissionAmount),
+        },
+      },
+    });
+  }
 
   async redeemReferralCode(redeemerId: string, referralCode: string): Promise<void> {
     this.logger.log(`Redeeming referral code ${referralCode}`);
