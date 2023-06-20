@@ -12,7 +12,7 @@ import { LikeMessageDto } from './dtos/like-message.dto';
 import { UnlikeMessageDto } from './dtos/unlike-message.to';
 
 @UsePipes(new ValidationPipe())
-@WebSocketGateway({ namespace: 'chat' })
+@WebSocketGateway({ namespace: 'chat', cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private readonly server: Server;

@@ -8,7 +8,7 @@ import { ItemDroppedDto } from '@@live-drops/dtos/item-dropped.dto';
 import { LiveDropsService } from '@@live-drops/live-drops.service';
 
 @UsePipes(new ValidationPipe())
-@WebSocketGateway({ namespace: 'live-drops' })
+@WebSocketGateway({ namespace: 'live-drops', cors: true })
 export class LiveDropsGateway implements OnGatewayConnection {
   @WebSocketServer()
   private readonly server: Server;

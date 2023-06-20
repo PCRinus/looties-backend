@@ -95,6 +95,8 @@ npm run test:e2e
 
 ## Troubleshooting
 
+### Prisma
+
 Sometimes you might get this message in the docker logs:
 
 ```
@@ -106,3 +108,12 @@ See https://www.prisma.io/docs/reference/api-reference/command-reference#migrate
 ```
 
 This is because prisma thinks the shell it is being run from is non interactive. To fix this, run the docker-compose in interactive mode.
+
+### CORS
+
+Be aware that you need 2 cors configurations:
+
+- One for the NestJS API
+- One for the websockets server
+
+There is a [cors middleware in the NestJS API setup](./src/main.ts), but you also need to configure cors in the websockets server [(chat for example)](./src/chat/chat.gateway.ts).
