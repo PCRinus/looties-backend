@@ -38,13 +38,12 @@ model Profile {
   gamesLost       Int     @default(0)
   winRatio        Float   @default(0)
   lootboxesOpened Int     @default(0)
-  referrals       Int     @default(0)
-  totalWagered    Float   @default(0)
-  netProfit       Float   @default(0)
-  facebookLink    String?
+  totalWagered    Decimal @default(0)
+  netProfit       Decimal @default(0)
   twitterLink     String?
-  instagramLink   String?
-  isAnonymous     Boolean @default(false)
+  discordLink     String?
+  // TODO: move to separate settings collection
+  // isAnonymous     Boolean @default(false)
   user            User    @relation(fields: [userId], references: [id])
   userId          String  @unique
 }
@@ -130,7 +129,7 @@ model Message {
 
 model Affiliates {
   id                  String   @id @default(uuid())
-  referralCode        String   @default(uuid()) @unique
+  referralCode        String   @unique @default(uuid())
   redeemedCount       Int      @default(0)
   totalWagered        Decimal  @default(0)
   referralEarnings    Decimal  @default(0)
