@@ -6,6 +6,7 @@
       "@@affiliates/*": ["./src/affiliates/*"],
       "@@auth/*": ["./src/auth/*"],
       "@@user/*": ["./src/user/*"],
+      "@@user-settings/*": ["./src/user-settings/*"],
       "@@item/*": ["./src/item/*"],
       "@@chat/*": ["./src/chat/*"],
       "@@profile/*": ["./src/profile/*"],
