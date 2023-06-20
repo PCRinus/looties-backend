@@ -1,11 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserSettingsService } from './user-settings.service';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+
+import { SharedModule } from '@@shared/shared.module';
+import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 describe('UserSettingsService', () => {
   let service: UserSettingsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [SharedModule],
       providers: [UserSettingsService],
     }).compile();
 
