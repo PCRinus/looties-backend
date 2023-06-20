@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { SetSelfExclusion } from '@@game-responsibly/dtos/set-self-exclusion.dto';
+import { SetSelfExclusionDto } from '@@game-responsibly/dtos/set-self-exclusion.dto';
 import { GameResponsiblyService } from '@@game-responsibly/game-responsibly.service';
 
 @ApiTags('Game responsibly')
@@ -19,7 +19,7 @@ export class GameResponsiblyController {
   }
 
   @Post()
-  async setSelfExclusion(@Body() setSelfExclusionDto: SetSelfExclusion): Promise<any> {
+  async setSelfExclusion(@Body() setSelfExclusionDto: SetSelfExclusionDto): Promise<any> {
     const { userId, timePeriodDays } = setSelfExclusionDto;
     this.logger.log(`Setting self exclusion for user ${userId} for ${timePeriodDays} days`);
 

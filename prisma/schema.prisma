@@ -20,8 +20,12 @@ model User {
   profile       Profile?
   inventory     Inventory?
   messages      Message[]
-  Transactions  Transactions[]
-  GameHistory   GameHistory[]
+  transactions  Transactions[]
+  gameHistory   GameHistory[]
+  referrer      Affiliates?    @relation("Referrer")
+  affiliate     Affiliates?    @relation("Redeemers", fields: [affiliateId], references: [id])
+  affiliateId   String?
+  redeemedCode  String?
 }
 
 model Profile {
@@ -67,9 +71,9 @@ model Item {
   updatedAt    DateTime    @updatedAt
   inventory    Inventory   @relation(fields: [inventoryId], references: [id])
   inventoryId  String
-  Lootbox      Lootbox?    @relation(fields: [lootboxId], references: [id])
+  lootbox      Lootbox?    @relation(fields: [lootboxId], references: [id])
   lootboxId    String?
-  LiveDrops    LiveDrops[]
+  liveDrops    LiveDrops[]
 }
 
 model Lootbox {
@@ -79,7 +83,7 @@ model Lootbox {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   items       Item[]
-  LiveDrops   LiveDrops[]
+  liveDrops   LiveDrops[]
 }
 
 model Transactions {
@@ -122,6 +126,20 @@ model Message {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Affiliates {
+  id                  String   @id @default(uuid())
+  referralCode        String   @default(uuid()) @unique
+  redeemedCount       Int      @default(0)
+  totalWagered        Decimal  @default(0)
+  referralEarnings    Decimal  @default(0)
+  availableCommission Decimal  @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  referrer            User     @relation("Referrer", fields: [referrerId], references: [id])
+  referrerId          String   @unique
+  redeemers           User[]   @relation("Redeemers")
 }
 
 enum ItemsType {

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
-export class SetSelfExclusion {
+export class SetSelfExclusionDto {
   @IsUUID()
   @IsNotEmpty()
   readonly userId: string;

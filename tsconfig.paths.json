@@ -3,6 +3,7 @@
     "baseUrl": "./",
     "paths": {
       "@@app/*": ["./src/app/*"],
+      "@@affiliates/*": ["./src/affiliates/*"],
       "@@auth/*": ["./src/auth/*"],
       "@@user/*": ["./src/user/*"],
       "@@item/*": ["./src/item/*"],
