@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import type { Profile } from '@prisma/client';
 
 import { PrismaService } from '@@shared/prisma.service';
@@ -8,6 +8,8 @@ type ProfileCard = Pick<Profile, 'userName' | 'level' | 'xp' | 'createdAt'>;
 
 @Injectable()
 export class ProfileService {
+  private readonly logger = new Logger(ProfileService.name);
+
   constructor(private readonly prismaService: PrismaService) {}
 
   async getProfile(userId: string): Promise<ProfilePage> {
@@ -53,5 +55,22 @@ export class ProfileService {
     }
 
     return profileCard;
+  }
+
+  async updateUsername(userId: string, username: string): Promise<void> {
+    this.logger.log(`Updating username for user with id ${userId}`);
+
+    try {
+      await this.prismaService.profile.update({
+        where: {
+          userId,
+        },
+        data: {
+          userName: username,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(`Failed to update username for user with id ${userId}`);
+    }
   }
 }

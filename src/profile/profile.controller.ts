@@ -1,7 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
+import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
 
 type Profile = {
@@ -42,5 +43,12 @@ export class ProfileController {
     const profileCard = await this.profileService.getProfileCard(userId);
 
     return profileCard;
+  }
+
+  @Post(':userId/username')
+  async updateUsername(@Param('userId') userId: string, @Body() body: UpdateUsernameDto): Promise<void> {
+    const { newUsername } = body;
+
+    await this.profileService.updateUsername(userId, newUsername);
   }
 }
