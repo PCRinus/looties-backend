@@ -8,6 +8,7 @@ const seed = async () => {
   const userIds = await seedUsers();
   const inventoryIds = await seedInventories(userIds);
 
+  await seedAffiliateLinks(userIds);
   await seedTransactions(userIds);
   await seedMessages(userIds);
   const lootboxIds = await seedLootboxes();
@@ -60,6 +61,19 @@ const seedInventories = async (userIds: string[]) => {
   });
 
   return inventoryIds.map((inventoryId) => inventoryId.id);
+};
+
+const seedAffiliateLinks = async (userIds: string[]) => {
+  await prisma.affiliates.createMany({
+    data: [
+      {
+        referrerId: userIds[0],
+      },
+      {
+        referrerId: userIds[1],
+      },
+    ],
+  });
 };
 
 const seedTransactions = async (userIds: string[]) => {
