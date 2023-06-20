@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
 import { AffiliatesService } from '@@affiliates/affiliates.service';
@@ -17,10 +17,13 @@ type AffiliateStats = {
 };
 
 @ApiTags('Affiliates')
+@ApiCreatedResponse({ description: 'Affiliate commission was successfully applied' })
+@ApiBadRequestResponse({ description: 'Given user has not redeemed a referral code' })
 @Controller('affiliates')
 export class AffiliatesController {
   constructor(private readonly affiliateService: AffiliatesService, private readonly userService: UserService) {}
 
+  @ApiParam({ name: 'userId', description: 'The id of the user who has redeemed a referral code' })
   @Post(':userId/apply-commission')
   async applyCommission(@Param('userId') userId: string, @Body() body: ApplyCommissionDto): Promise<void> {
     const { wagerAmount } = body;
@@ -33,12 +36,14 @@ export class AffiliatesController {
     await this.affiliateService.applyCommission(referralCode, wagerAmount);
   }
 
+  @ApiParam({ name: 'userId', description: 'The id of the user who will redeem a referral code' })
   @Post(':userId/redeem-referral-code')
   async redeemReferralCode(@Param('userId') userId: string, @Body() body: RedeemReferralCodeDto): Promise<void> {
     const { referralCode } = body;
     await this.affiliateService.redeemReferralCode(userId, referralCode);
   }
 
+  @ApiParam({ name: 'userId', description: 'The id of the user who has created a referral code' })
   @Post(':userId/update-referral-code')
   async updateReferralCode(@Param('userId') userId: string, @Body() body: UpdateReferralCodeDto): Promise<string> {
     const { updatedReferralCode } = body;
@@ -48,11 +53,13 @@ export class AffiliatesController {
     return updatedAffiliate.referralCode;
   }
 
+  @ApiParam({ name: 'userId', description: 'The id of the user who has created a referral code' })
   @Post(':userId/claim-available-commission')
   async claimAvailableCommission(@Param('userId') userId: string): Promise<void> {
     await this.affiliateService.claimAvailableCommission(userId);
   }
 
+  @ApiParam({ name: 'userId', description: 'The id of the user who has created a referral code' })
   @Get(':userId/stats')
   async getAffiliatesStats(@Param('userId') userId: string): Promise<AffiliateStats> {
     const stats = await this.affiliateService.getAffiliatesStats(userId);
