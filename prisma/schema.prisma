@@ -26,28 +26,39 @@ model User {
   affiliate     Affiliates?    @relation("Redeemers", fields: [affiliateId], references: [id])
   affiliateId   String?
   redeemedCode  String?
+  UserSettings  UserSettings?
+}
+
+model UserSettings {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  hideStats     Boolean  @default(false)
+  isAnonymous   Boolean  @default(false)
+  soundEffects  Boolean  @default(true)
+  notifications Boolean  @default(true)
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String   @unique
 }
 
 model Profile {
-  id              String  @id @default(uuid())
-  userName        String? @unique
-  level           Int     @default(1)
-  xp              Int     @default(0)
-  gamesPlayed     Int     @default(0)
-  gamesWon        Int     @default(0)
-  gamesLost       Int     @default(0)
-  winRatio        Float   @default(0)
-  lootboxesOpened Int     @default(0)
-  totalWagered    Decimal @default(0)
-  netProfit       Decimal @default(0)
+  id              String   @id @default(uuid())
+  userName        String?  @unique
+  level           Int      @default(1)
+  xp              Int      @default(0)
+  gamesPlayed     Int      @default(0)
+  gamesWon        Int      @default(0)
+  gamesLost       Int      @default(0)
+  winRatio        Float    @default(0)
+  lootboxesOpened Int      @default(0)
+  totalWagered    Decimal  @default(0)
+  netProfit       Decimal  @default(0)
   twitterLink     String?
   discordLink     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  // TODO: move to separate settings collection
-  // isAnonymous     Boolean @default(false)
-  user            User    @relation(fields: [userId], references: [id])
-  userId          String  @unique
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String   @unique
 }
 
 model Inventory {
