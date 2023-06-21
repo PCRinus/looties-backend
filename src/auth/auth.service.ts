@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { User } from '@prisma/client';
 import base58 from 'bs58';
@@ -12,14 +12,7 @@ export class AuthService {
 
   constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
 
-  async connectWallet(walletPublicKey: string, signature: string): Promise<string> {
-    // const isValidated = this.validateCredentials(walletPublicKey, signature);
-
-    // if (!isValidated) {
-    //   // TODO: better message
-    //   throw new UnauthorizedException('Invalid credentials');
-    // }
-
+  async connectWallet(walletPublicKey: string): Promise<string> {
     const user = await this.getOrCreateUser(walletPublicKey);
     const jwt = await this.generateJwt(user.walletAddress);
 

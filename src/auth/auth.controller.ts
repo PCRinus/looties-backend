@@ -11,7 +11,7 @@ export class AuthController {
 
   @Post('connect-wallet')
   async connectWallet(@Body() payload: ConnectWalletDto): Promise<string> {
-    const { walletPublicKey, signature } = payload;
-    return this.authService.connectWallet(walletPublicKey, signature);
+    const { walletPublicKey } = payload;
+    return this.authService.connectWallet(walletPublicKey);
   }
 }
