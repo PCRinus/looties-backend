@@ -13,12 +13,12 @@ export class AuthService {
   constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
 
   async connectWallet(walletPublicKey: string, signature: string): Promise<string> {
-    const isValidated = this.validateCredentials(walletPublicKey, signature);
+    // const isValidated = this.validateCredentials(walletPublicKey, signature);
 
-    if (!isValidated) {
-      // TODO: better message
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    // if (!isValidated) {
+    //   // TODO: better message
+    //   throw new UnauthorizedException('Invalid credentials');
+    // }
 
     const user = await this.getOrCreateUser(walletPublicKey);
     const jwt = await this.generateJwt(user.walletAddress);
@@ -69,6 +69,6 @@ export class AuthService {
   }
 
   private async generateJwt(walletPublicKey: string): Promise<string> {
-    return await this.jwtService.signAsync({ walletAddress: walletPublicKey });
+    return await this.jwtService.signAsync({ walletAddress: walletPublicKey }, { algorithm: 'HS512' });
   }
 }
