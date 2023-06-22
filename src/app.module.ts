@@ -19,6 +19,7 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
 
 @Module({
   imports: [
+    AuthModule,
     ItemModule,
     LootboxModule,
     ChatModule,
@@ -39,10 +40,10 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
         PGADMIN_DEFAULT_EMAIL: Joi.string(),
         PGADMIN_DEFAULT_PASSWORD: Joi.string(),
         DATABASE_URL: Joi.string(),
+        JWT_SECRET: Joi.string(),
       }),
       expandVariables: true,
     }),
-    AuthModule,
     AffiliatesModule,
     UserSettingsModule,
   ],
