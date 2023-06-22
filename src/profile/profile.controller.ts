@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
+import { AuthGuard } from '@@auth/auth.guard';
+import { Public } from '@@auth/public.decorator';
 import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
 
@@ -25,11 +27,13 @@ type ProfileCard = {
 };
 
 @ApiTags('Profile')
+@UseGuards(AuthGuard)
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @ApiParam({ name: 'userId', description: 'The user ID of the profile to retrieve' })
+  @Public()
   @Get(':userId')
   async getProfile(@Param('userId') userId: string): Promise<Profile> {
     const profile = await this.profileService.getProfile(userId);
@@ -38,6 +42,7 @@ export class ProfileController {
   }
 
   @ApiParam({ name: 'userId', description: 'The user ID of the profile card to retrieve' })
+  @Public()
   @Get(':userId/card')
   async getProfileCard(@Param('userId') userId: string): Promise<ProfileCard> {
     const profileCard = await this.profileService.getProfileCard(userId);
@@ -45,6 +50,7 @@ export class ProfileController {
     return profileCard;
   }
 
+  @ApiBearerAuth()
   @Post(':userId/username')
   async updateUsername(@Param('userId') userId: string, @Body() body: UpdateUsernameDto): Promise<void> {
     const { newUsername } = body;

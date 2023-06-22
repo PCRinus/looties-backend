@@ -35,4 +35,17 @@ export class UserService {
 
     return user.redeemedCode;
   }
+
+  async getUserByWalletPublicKey(walletPublicKey: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      //TODO: rename walletAddress to walletPublicKey in a migration script
+      where: { walletAddress: walletPublicKey },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with wallet public key ${walletPublicKey} not found`);
+    }
+
+    return user;
+  }
 }

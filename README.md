@@ -37,11 +37,11 @@ To deploy the docker-compose file manually to the droplet, do the following
 
 ## Ports
 
-The ports that are exposed are:
+The only exposed port is `3000`.
 
-- 3000: NestJS API
-- 3001: Chat websocket server
-- 3002: Live Drops websocket server
+ - To use the REST APIs, call `localhost:3000`
+ - To use the Chat websocket, call `localhost:3000/chat`
+ - To use the Live Drops websocket, call `localhost:3000/live-drops`
 
 Going to `localhost:3000/api` will also open up the swagger page.
 

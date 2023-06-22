@@ -1,3 +1,5 @@
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -13,7 +15,7 @@ describe('GameHistoryController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
       controllers: [GameHistoryController],
-      providers: [GameHistoryService],
+      providers: [GameHistoryService, JwtService, ConfigService],
     }).compile();
 
     controller = module.get<GameHistoryController>(GameHistoryController);

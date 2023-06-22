@@ -1,11 +1,13 @@
-import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
 import { AffiliatesService } from '@@affiliates/affiliates.service';
 import { ApplyCommissionDto } from '@@affiliates/dtos/apply-commission.dto';
 import { RedeemReferralCodeDto } from '@@affiliates/dtos/redeem-referral-code.dto';
 import { UpdateReferralCodeDto } from '@@affiliates/dtos/update-referral-code.dto';
+import { AuthGuard } from '@@auth/auth.guard';
+import { Public } from '@@auth/public.decorator';
 import { UserService } from '@@user/user.service';
 
 type AffiliateStats = {
@@ -19,10 +21,12 @@ type AffiliateStats = {
 @ApiTags('Affiliates')
 @ApiCreatedResponse({ description: 'Affiliate commission was successfully applied' })
 @ApiBadRequestResponse({ description: 'Given user has not redeemed a referral code' })
+@UseGuards(AuthGuard)
 @Controller('affiliates')
 export class AffiliatesController {
   constructor(private readonly affiliateService: AffiliatesService, private readonly userService: UserService) {}
 
+  @ApiBearerAuth()
   @ApiParam({ name: 'userId', description: 'The id of the user who has redeemed a referral code' })
   @Post(':userId/apply-commission')
   async applyCommission(@Param('userId') userId: string, @Body() body: ApplyCommissionDto): Promise<void> {
@@ -36,6 +40,7 @@ export class AffiliatesController {
     await this.affiliateService.applyCommission(referralCode, wagerAmount);
   }
 
+  @ApiBearerAuth()
   @ApiParam({ name: 'userId', description: 'The id of the user who will redeem a referral code' })
   @Post(':userId/redeem-referral-code')
   async redeemReferralCode(@Param('userId') userId: string, @Body() body: RedeemReferralCodeDto): Promise<void> {
@@ -43,6 +48,7 @@ export class AffiliatesController {
     await this.affiliateService.redeemReferralCode(userId, referralCode);
   }
 
+  @ApiBearerAuth()
   @ApiParam({ name: 'userId', description: 'The id of the user who has created a referral code' })
   @Post(':userId/update-referral-code')
   async updateReferralCode(@Param('userId') userId: string, @Body() body: UpdateReferralCodeDto): Promise<string> {
@@ -53,6 +59,7 @@ export class AffiliatesController {
     return updatedAffiliate.referralCode;
   }
 
+  @ApiBearerAuth()
   @ApiParam({ name: 'userId', description: 'The id of the user who has created a referral code' })
   @Post(':userId/claim-available-commission')
   async claimAvailableCommission(@Param('userId') userId: string): Promise<void> {
@@ -60,6 +67,7 @@ export class AffiliatesController {
   }
 
   @ApiParam({ name: 'userId', description: 'The id of the user who has created a referral code' })
+  @Public()
   @Get(':userId/stats')
   async getAffiliatesStats(@Param('userId') userId: string): Promise<AffiliateStats> {
     const stats = await this.affiliateService.getAffiliatesStats(userId);

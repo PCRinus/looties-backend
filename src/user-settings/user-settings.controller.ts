@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { AuthGuard } from '@@auth/auth.guard';
 import { UpdateUserSettingsDto } from '@@user-settings/dtos/update-user-settings.dto';
 import { UserSettingsService } from '@@user-settings/user-settings.service';
 
@@ -11,7 +12,9 @@ type UserSettings = {
   notifications: boolean;
 };
 
+@ApiBearerAuth()
 @ApiTags('User settings')
+@UseGuards(AuthGuard)
 @Controller('user-settings')
 export class UserSettingsController {
   constructor(private readonly userSettingsService: UserSettingsService) {}
