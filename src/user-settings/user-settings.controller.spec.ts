@@ -1,3 +1,5 @@
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -12,7 +14,7 @@ describe('UserSettingsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
       controllers: [UserSettingsController],
-      providers: [UserSettingsService],
+      providers: [UserSettingsService, JwtService, ConfigService],
     }).compile();
 
     controller = module.get<UserSettingsController>(UserSettingsController);
