@@ -14,11 +14,15 @@ export class AuthService {
 
   async connectWallet(walletPublicKey: string): Promise<string> {
     const user = await this.getOrCreateUser(walletPublicKey);
-    const jwt = await this.generateJwt(user.walletAddress);
+    const jwt = await this.generateJwt(user.walletAddress, user.id);
 
     return jwt;
   }
 
+  /**
+   * deprecated
+   * not used, maybe find a use case for this at a later date
+   */
   private validateCredentials(walletPublicKey: string, signature: string): boolean {
     this.logger.log(`Validating credentials for wallet ${walletPublicKey}`);
     this.logger.log(`Decoding signature ${signature}`);
@@ -46,7 +50,7 @@ export class AuthService {
             walletAddress: walletPublicKey,
             profile: {
               create: {
-                userName: 'Dummy name',
+                userName: `${walletPublicKey.slice(0, 5)}...${walletPublicKey.slice(-5)}`,
               },
             },
           },
@@ -61,7 +65,7 @@ export class AuthService {
     return existingUser;
   }
 
-  private async generateJwt(walletPublicKey: string): Promise<string> {
-    return await this.jwtService.signAsync({ walletAddress: walletPublicKey }, { algorithm: 'HS512' });
+  private async generateJwt(walletPublicKey: string, userId: string): Promise<string> {
+    return await this.jwtService.signAsync({ id: userId, walletAddress: walletPublicKey }, { algorithm: 'HS512' });
   }
 }

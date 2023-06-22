@@ -8,8 +8,10 @@
     "lootboxes",
     "lootie",
     "looties",
+    "nacl",
     "PGADMIN",
     "Timestamptz",
+    "tweetnacl",
     "websockets"
   ],
   "cSpell.enableFiletypes": [
