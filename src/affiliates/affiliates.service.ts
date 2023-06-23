@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import type { Affiliates } from '@prisma/client';
 import type Decimal from 'decimal.js';
 
@@ -11,6 +17,21 @@ export class AffiliatesService {
   private readonly logger = new Logger(AffiliatesService.name);
 
   constructor(private readonly prisma: PrismaService) {}
+
+  async createInitialReferralCode(userId: string): Promise<Affiliates> {
+    this.logger.log(`Creating initial referral code for user with ID ${userId}`);
+
+    try {
+      return await this.prisma.affiliates.create({
+        data: {
+          referrerId: userId,
+        },
+      });
+    } catch (error) {
+      this.logger.error(`Error creating initial referral code for user with ID ${userId}: ${error}`);
+      throw new InternalServerErrorException(`Error creating initial referral code for user with ID ${userId}`);
+    }
+  }
 
   async applyCommission(redeemedCode: string, wagerAmount: Decimal): Promise<void> {
     this.logger.log(`Applying commission for affiliate with referral code ${redeemedCode}`);

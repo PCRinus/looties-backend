@@ -80,7 +80,7 @@ model Item {
   name         String      @unique //Maybe unique? TBD
   details      String?     @db.Text
   type         ItemsType
-  price        Decimal //String might also ba an option for prices
+  price        Decimal
   lowestPrice  Decimal
   highestPrice Decimal
   dropChance   Decimal

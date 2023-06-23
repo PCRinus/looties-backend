@@ -1,7 +1,6 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import type { User } from '@prisma/client';
 import base58 from 'bs58';
 import nacl from 'tweetnacl';
 
@@ -16,13 +15,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-
-  async connectWallet(walletPublicKey: string): Promise<string> {
-    const user = await this.getOrCreateUser(walletPublicKey);
-    const jwt = await this.generateJwt(user.walletAddress, user.id);
-
-    return jwt;
-  }
 
   /**
    * deprecated
@@ -41,36 +33,7 @@ export class AuthService {
     return result;
   }
 
-  private async getOrCreateUser(walletPublicKey: string): Promise<User> {
-    const existingUser = await this.prisma.user.findUnique({
-      where: {
-        walletAddress: walletPublicKey,
-      },
-    });
-
-    if (!existingUser) {
-      try {
-        const newUser = await this.prisma.user.create({
-          data: {
-            walletAddress: walletPublicKey,
-            profile: {
-              create: {
-                userName: `${walletPublicKey.slice(0, 5)}...${walletPublicKey.slice(-5)}`,
-              },
-            },
-          },
-        });
-
-        return newUser;
-      } catch (error) {
-        throw new InternalServerErrorException(error);
-      }
-    }
-
-    return existingUser;
-  }
-
-  private async generateJwt(walletPublicKey: string, userId: string): Promise<string> {
+  async generateJwt(walletPublicKey: string, userId: string): Promise<string> {
     const secret = this.configService.get<string>('JWT_SECRET');
 
     return await this.jwtService.signAsync(

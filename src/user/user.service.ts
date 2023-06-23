@@ -1,5 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import type { User } from '@prisma/client';
+import { log } from 'console';
+import { generate } from 'referral-codes';
 
 import { PrismaService } from '@@shared/prisma.service';
 
@@ -47,5 +49,47 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async getOrCreateUserByWalletPublicKey(walletPublicKey: string): Promise<User> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        walletAddress: walletPublicKey,
+      },
+    });
+
+    log('existingUser', existingUser);
+
+    const formattedWalletPublicKey = `${walletPublicKey.slice(0, 5)}...${walletPublicKey.slice(-5)}`;
+
+    if (!existingUser) {
+      try {
+        const newUser = await this.prisma.user.create({
+          data: {
+            walletAddress: walletPublicKey,
+            profile: {
+              create: {
+                userName: formattedWalletPublicKey,
+              },
+            },
+            referrer: {
+              create: {
+                referralCode: generate({
+                  length: 8,
+                  count: 1,
+                  prefix: 'looties-',
+                })[0],
+              },
+            },
+          },
+        });
+
+        return newUser;
+      } catch (error) {
+        throw new InternalServerErrorException(error);
+      }
+    }
+
+    return existingUser;
   }
 }
