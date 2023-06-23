@@ -13,6 +13,8 @@ export class WsGuard implements CanActivate {
     private readonly jwtService: JwtService,
   ) {}
 
+  // NOTE: This guard cannot apply to the `connection` event, but it applies to all other events.
+  // To guard the `connection` event, see https://stackoverflow.com/questions/58670553/nestjs-gateway-websocket-how-to-send-jwt-access-token-through-socket-emit
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.get<boolean>('isPublic', context.getHandler());
 
