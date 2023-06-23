@@ -12,6 +12,7 @@
     "PGADMIN",
     "Timestamptz",
     "tweetnacl",
+    "Unliked",
     "websockets"
   ],
   "cSpell.enableFiletypes": [

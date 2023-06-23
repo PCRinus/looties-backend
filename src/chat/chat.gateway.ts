@@ -56,7 +56,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`User ${data.userId} liked ${data.messageId}`);
 
     await this.chatService.likeMessage(data.messageId, data.userId);
-    this.server.emit('like', data.messageId);
+    this.server.emit('like', { likedMessageId: data.messageId, likedByUserId: data.userId });
   }
 
   @SubscribeMessage('unlike')
@@ -64,7 +64,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`User ${data.userId} unliked ${data.messageId}`);
 
     await this.chatService.removeLikeFromMessage(data.messageId, data.userId);
-    this.server.emit('unlike', data.messageId);
+    this.server.emit('unlike', { unlikedMessageId: data.messageId, unlikedByUserId: data.userId });
   }
 
   @SubscribeMessage('reply')
