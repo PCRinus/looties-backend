@@ -10,6 +10,7 @@
     "yzhang.markdown-all-in-one",
     "bpruitt-goddard.mermaid-markdown-syntax-highlighting",
     "ms-azuretools.vscode-docker",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "prisma.prisma"
   ]
 }
