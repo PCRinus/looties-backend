@@ -1,3 +1,5 @@
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -13,7 +15,7 @@ describe('ChatGateway', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
-      providers: [ChatGateway, ChatService],
+      providers: [ChatGateway, ChatService, ConfigService, JwtService],
     }).compile();
 
     chatGateway = module.get<ChatGateway>(ChatGateway);
