@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { User } from '@prisma/client';
 import base58 from 'bs58';
@@ -10,7 +11,11 @@ import { PrismaService } from '@@shared/prisma.service';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async connectWallet(walletPublicKey: string): Promise<string> {
     const user = await this.getOrCreateUser(walletPublicKey);
@@ -66,6 +71,11 @@ export class AuthService {
   }
 
   private async generateJwt(walletPublicKey: string, userId: string): Promise<string> {
-    return await this.jwtService.signAsync({ id: userId, walletAddress: walletPublicKey }, { algorithm: 'HS512' });
+    const secret = this.configService.get<string>('JWT_SECRET');
+
+    return await this.jwtService.signAsync(
+      { id: userId, walletAddress: walletPublicKey },
+      { algorithm: 'HS512', secret },
+    );
   }
 }

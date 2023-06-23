@@ -32,7 +32,7 @@ export class WsGuard implements CanActivate {
     const jwtSecret = this.configService.get<string>('JWT_SECRET');
 
     try {
-      await this.jwtService.verifyAsync(token, { secret: jwtSecret });
+      await this.jwtService.verifyAsync(token, { secret: jwtSecret, algorithms: ['HS512'] });
     } catch (error) {
       throw new InternalServerErrorException(`Could not validate JWT token`, error.message);
     }
