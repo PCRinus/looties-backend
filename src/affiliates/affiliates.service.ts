@@ -51,6 +51,9 @@ export class AffiliatesService {
             increment: 1,
           },
           redeemers: {
+            connect: {
+              id: redeemerId,
+            },
             update: {
               where: {
                 id: redeemerId,
