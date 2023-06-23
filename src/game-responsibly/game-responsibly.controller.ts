@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { AuthGuard } from '@@auth/auth.guard';
+import { AuthGuard } from '@@auth/guards/auth.guard';
 import { SetSelfExclusionDto } from '@@game-responsibly/dtos/set-self-exclusion.dto';
 import { GameResponsiblyService } from '@@game-responsibly/game-responsibly.service';
 

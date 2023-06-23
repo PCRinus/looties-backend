@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
-import { AuthGuard } from '@@auth/auth.guard';
+import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
 import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
