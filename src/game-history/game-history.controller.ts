@@ -1,7 +1,7 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { AuthGuard } from '@@auth/auth.guard';
+import { AuthGuard } from '@@auth/guards/auth.guard';
 import { GameHistoryService } from '@@game-history/game-history.service';
 
 @ApiBearerAuth()

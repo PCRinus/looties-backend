@@ -1,3 +1,5 @@
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -14,7 +16,7 @@ describe('LiveDropsGateway', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ItemModule, SharedModule],
-      providers: [LiveDropsGateway, ItemService, LiveDropsService],
+      providers: [LiveDropsGateway, ItemService, LiveDropsService, ConfigService, JwtService],
     }).compile();
 
     gateway = module.get<LiveDropsGateway>(LiveDropsGateway);

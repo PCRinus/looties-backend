@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { AuthGuard } from '@@auth/auth.guard';
+import { AuthGuard } from '@@auth/guards/auth.guard';
 import { UpdateUserSettingsDto } from '@@user-settings/dtos/update-user-settings.dto';
 import { UserSettingsService } from '@@user-settings/user-settings.service';
 

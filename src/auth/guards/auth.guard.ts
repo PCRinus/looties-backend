@@ -20,7 +20,6 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const jwtSecret = this.configService.get<string>('JWT_SECRET');
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
 
@@ -28,6 +27,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Invalid JWT token');
     }
 
+    const jwtSecret = this.configService.get<string>('JWT_SECRET');
     const payload = await this.jwtService.verifyAsync(token, { secret: jwtSecret });
     request.user = payload;
 

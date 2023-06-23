@@ -1,13 +1,15 @@
-import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import type { OnGatewayConnection } from '@nestjs/websockets';
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
+import { WsGuard } from '@@auth/guards/ws.guard';
 import { ItemService } from '@@item/item.service';
 import { ItemDroppedDto } from '@@live-drops/dtos/item-dropped.dto';
 import { LiveDropsService } from '@@live-drops/live-drops.service';
 
 @UsePipes(new ValidationPipe())
+@UseGuards(WsGuard)
 @WebSocketGateway({ namespace: 'live-drops', cors: true })
 export class LiveDropsGateway implements OnGatewayConnection {
   @WebSocketServer()
@@ -15,6 +17,10 @@ export class LiveDropsGateway implements OnGatewayConnection {
 
   constructor(private readonly liveDropsService: LiveDropsService, private readonly itemService: ItemService) {}
 
+  /**
+   * @see @@auth/guards/ws.guard
+   * @see https://stackoverflow.com/questions/58670553/nestjs-gateway-websocket-how-to-send-jwt-access-token-through-socket-emit
+   */
   async handleConnection() {
     const liveDrops = await this.liveDropsService.getDrops();
     const liveDropIds = liveDrops.map((drop) => drop.itemId);

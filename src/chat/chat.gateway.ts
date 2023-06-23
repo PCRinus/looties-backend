@@ -1,9 +1,10 @@
-import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Logger, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import type { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import type { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 
+import { WsGuard } from '@@auth/guards/ws.guard';
 import { ChatService } from '@@chat/chat.service';
 import { ReplyMessageDto } from '@@chat/dtos/reply-message.dto';
 import { SendMessageDto } from '@@chat/dtos/send-message.dto';
@@ -12,6 +13,7 @@ import { LikeMessageDto } from './dtos/like-message.dto';
 import { UnlikeMessageDto } from './dtos/unlike-message.to';
 
 @UsePipes(new ValidationPipe())
+@UseGuards(WsGuard)
 @WebSocketGateway({ namespace: 'chat', cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -23,6 +25,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly chatService: ChatService) {}
 
+  /**
+   * @see @@auth/guards/ws.guard
+   * @see https://stackoverflow.com/questions/58670553/nestjs-gateway-websocket-how-to-send-jwt-access-token-through-socket-emit
+   */
   async handleConnection(client: Socket) {
     this.logger.log(`User connected: ${client.id}`);
 

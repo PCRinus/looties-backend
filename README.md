@@ -9,37 +9,25 @@
 
 ## Running locally
 
-First install the vscode extensions for a better dev experience. You can find them in the `.vscode/extensions.json` file. To install them, go to the Extensions tab, filter by Recommended and click on the `Workspace Recommendations` tab. [Docs if you need help](https://code.visualstudio.com/docs/editor/extension-marketplace#_extensions-view-filter-and-commands)
+1. First install the vscode extensions for a better dev experience. You can find them in the `.vscode/extensions.json` file. To install them, go to the Extensions tab, filter by Recommended and click on the `Workspace Recommendations` tab. [Docs if you need help](https://code.visualstudio.com/docs/editor/extension-marketplace#_extensions-view-filter-and-commands)
 
-Setup the environment variables. There is an `.env.example` file in the root of the project. Copy it and rename it to `.env`. Fill in the values.
+2. Setup the environment variables. There is an `.env.example` file in the root of the project. Copy it and rename it to `.env`. Fill in the values.
 
-After you have Docker installed, run the following command:
+3. Install the dependencies with `npm install`.
+
+4. After you have Docker installed, run the following command:
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
-This will start the Postgres database and the NestJS API in watch mode. Any changes you make to the source code will be reflected in the container using webpack HMR. It will also run the Prisma migrations and seed the database.
-
-## Deploying manually to the DigitalOcean droplet
-
-We already have a droplet setup in DigitalOcean [here](https://cloud.digitalocean.com/droplets/358593516/graphs?i=6686cd&period=hour).
-
-To deploy the docker-compose file manually to the droplet, do the following
-
-- Setup a docker remote context for the droplet: `docker context create remote --docker "host=ssh://deployer@64.226.91.7"`.
-- Switch to the remote context: `docker context use remote`.
-- Run `docker compose -f docker-compose.yml up --build -dV` to deploy the docker-compose file to the droplet.
-- Inspect changes with `docker compose ps`
-- Change your context back to local with `docker context use default`
-
-[Deploy guide](https://danielwachtel.com/devops/deploying-multiple-dockerized-apps-digitalocean-docker-compose-contexts)
+This will start the Postgres database and the NestJS API in watch mode. Any changes you make to the source code will be reflected in the container using Webpack HMR. It will also run the Prisma migrations and seed the database.
 
 ## Ports
 
 The only exposed port is `3000`.
 
- - To use the REST APIs, call `localhost:3000`
+ - To use the REST APIs, call `localhost:3000`. There is also a swagger page at `localhost:3000/api`.
  - To use the Chat websocket, call `localhost:3000/chat`
  - To use the Live Drops websocket, call `localhost:3000/live-drops`
 
@@ -47,12 +35,12 @@ Going to `localhost:3000/api` will also open up the swagger page.
 
 There is also a pgAdmin container running, that you can access at `localhost:5050`.
 
-## Installing dependencies
+## Installing new dependencies
 
 When installing new dependencies with npm, you will need to rebuild the Docker container. You can do this by running the following command:
 
 ```bash
-docker-compose up --build -V -d
+docker-compose up --build -dV (note the capital V)
 ```
 
 The `-V` flag will remove any anonymous volumes that are attached to the container, such as the one were the `node_modules` are stored.
@@ -78,6 +66,20 @@ This will ensure that everything works as expected.
 To reset the db, run `npx prisma migrate reset` inside the docker container terminal.
 
 To seed the db, run `npx prisma db seed` inside the docker container terminal.
+
+## Deploying manually to the DigitalOcean droplet
+
+We already have a droplet setup in DigitalOcean [here](https://cloud.digitalocean.com/droplets/358593516/graphs?i=6686cd&period=hour).
+
+To deploy the docker-compose file manually to the droplet, do the following
+
+- Setup a docker remote context for the droplet: `docker context create remote --docker "host=ssh://deployer@64.226.91.7"`.
+- Switch to the remote context: `docker context use remote`.
+- Run `docker compose -f docker-compose.yml up --build -dV` to deploy the docker-compose file to the droplet.
+- Inspect changes with `docker compose ps`
+- Change your context back to local with `docker context use default`
+
+[Deploy guide](https://danielwachtel.com/devops/deploying-multiple-dockerized-apps-digitalocean-docker-compose-contexts)
 
 ## Running tests
 
