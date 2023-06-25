@@ -8,6 +8,7 @@ import { WsGuard } from '@@auth/guards/ws.guard';
 import { ChatService } from '@@chat/chat.service';
 import { ReplyMessageDto } from '@@chat/dtos/reply-message.dto';
 import { SendMessageDto } from '@@chat/dtos/send-message.dto';
+import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 import { LikeMessageDto } from './dtos/like-message.dto';
 import { UnlikeMessageDto } from './dtos/unlike-message.to';
@@ -23,7 +24,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private connectedUsersCount = 0;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService, private readonly userSettingsService: UserSettingsService) {}
 
   /**
    * @see @@auth/guards/ws.guard
@@ -54,23 +55,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Received message from ${userId}: ${message}`);
 
     const newMessage = await this.chatService.saveMessage(userId, message);
-    this.server.emit('message', newMessage);
+    const isAnonymous = await this.userSettingsService.isAnonymousEnabled(userId);
+    this.server.emit('message', { newMessage, isAnonymous });
   }
 
   @SubscribeMessage('like')
   async handleLike(@MessageBody() data: LikeMessageDto): Promise<void> {
-    this.logger.log(`User ${data.userId} liked ${data.messageId}`);
+    const { userId, messageId } = data;
+    this.logger.log(`User ${userId} liked ${messageId}`);
 
-    await this.chatService.likeMessage(data.messageId, data.userId);
-    this.server.emit('like', { likedMessageId: data.messageId, likedByUserId: data.userId });
+    await this.chatService.likeMessage(messageId, userId);
+    this.server.emit('like', { likedMessageId: messageId, likedByUserId: userId });
   }
 
   @SubscribeMessage('unlike')
   async handleRemoveLike(@MessageBody() data: UnlikeMessageDto): Promise<void> {
-    this.logger.log(`User ${data.userId} unliked ${data.messageId}`);
+    const { userId, messageId } = data;
+    this.logger.log(`User ${userId} unliked ${messageId}`);
 
-    await this.chatService.removeLikeFromMessage(data.messageId, data.userId);
-    this.server.emit('unlike', { unlikedMessageId: data.messageId, unlikedByUserId: data.userId });
+    await this.chatService.removeLikeFromMessage(messageId, userId);
+    this.server.emit('unlike', { unlikedMessageId: messageId, unlikedByUserId: userId });
   }
 
   @SubscribeMessage('reply')
@@ -82,10 +86,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`User ${userId} replied to ${originalMessageId} with ${reply}`);
 
     const newMessage = await this.chatService.saveMessage(userId, reply, originalMessageId);
+    const isAnonymous = await this.userSettingsService.isAnonymousEnabled(userId);
 
     this.server.emit('reply', {
       newMessage,
       originalMessage,
+      isAnonymous,
     });
   }
 }

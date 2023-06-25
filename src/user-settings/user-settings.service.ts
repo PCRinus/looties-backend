@@ -50,4 +50,21 @@ export class UserSettingsService {
 
     return settings.hideStats;
   }
+
+  async isAnonymousEnabled(userId: string): Promise<boolean> {
+    const settings = await this.prisma.userSettings.findUnique({
+      where: {
+        userId,
+      },
+      select: {
+        isAnonymous: true,
+      },
+    });
+
+    if (!settings) {
+      throw new InternalServerErrorException('User settings not found for user with id ${userId}');
+    }
+
+    return settings.isAnonymous;
+  }
 }
