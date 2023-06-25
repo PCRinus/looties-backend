@@ -1,4 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+
+import { SharedModule } from '@@shared/shared.module';
+
 import { InventoryService } from './inventory.service';
 
 describe('InventoryService', () => {
@@ -6,6 +10,7 @@ describe('InventoryService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [SharedModule],
       providers: [InventoryService],
     }).compile();
 
