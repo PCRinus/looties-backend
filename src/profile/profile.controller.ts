@@ -1,31 +1,20 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
-import type Decimal from 'decimal.js';
+import type { Profile } from '@prisma/client';
 
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
 import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
 
-type Profile = {
-  gamesPlayed: number;
-  gamesWon: number;
-  gamesLost: number;
-  winRatio: number;
-  lootboxesOpened: number;
-  totalWagered: Decimal;
-  netProfit: Decimal;
-  twitterLink: string | null;
-  discordLink: string | null;
-};
-
-type ProfileCard = {
+type ProfileCoreData = {
   userName: string | null;
   level: number;
   xp: number;
   createdAt: Date;
 };
 
+type ProfileDo = Profile;
 @ApiTags('Profile')
 @UseGuards(AuthGuard)
 @Controller('profile')
@@ -35,8 +24,8 @@ export class ProfileController {
   @ApiParam({ name: 'userId', description: 'The user ID of the profile to retrieve' })
   @Public()
   @Get(':userId')
-  async getProfile(@Param('userId') userId: string): Promise<Profile> {
-    const profile = await this.profileService.getProfile(userId);
+  async getProfile(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
+    const profile = await this.profileService.getProfileStats(userId);
 
     return profile;
   }
@@ -44,7 +33,7 @@ export class ProfileController {
   @ApiParam({ name: 'userId', description: 'The user ID of the profile card to retrieve' })
   @Public()
   @Get(':userId/card')
-  async getProfileCard(@Param('userId') userId: string): Promise<ProfileCard> {
+  async getProfileCard(@Param('userId') userId: string): Promise<ProfileCoreData> {
     const profileCard = await this.profileService.getProfileCard(userId);
 
     return profileCard;
