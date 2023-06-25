@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException, Logger, NotFoundException } f
 import type { Profile } from '@prisma/client';
 
 import { PrismaService } from '@@shared/prisma.service';
-import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 type ProfileCoreData = Pick<Profile, 'userName' | 'level' | 'xp' | 'createdAt'>;
 
@@ -10,10 +9,7 @@ type ProfileCoreData = Pick<Profile, 'userName' | 'level' | 'xp' | 'createdAt'>;
 export class ProfileService {
   private readonly logger = new Logger(ProfileService.name);
 
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly userSettingsService: UserSettingsService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async getProfileCard(userId: string): Promise<ProfileCoreData> {
     const profileCard = await this.prismaService.profile.findFirst({
@@ -35,8 +31,7 @@ export class ProfileService {
     return profileCard;
   }
 
-  async getProfileStats(userId: string): Promise<ProfileCoreData | Profile> {
-    const hideStats = await this.userSettingsService.isHideStatsEnabled(userId);
+  async getProfileStats(userId: string, hideStats: boolean): Promise<ProfileCoreData | Profile> {
     const profile = await this.prismaService.profile.findFirst({
       where: {
         userId,
