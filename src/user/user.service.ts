@@ -72,6 +72,9 @@ export class UserService {
                 userName: formattedWalletPublicKey,
               },
             },
+            inventory: {
+              create: {},
+            },
             referrer: {
               create: {
                 referralCode: generate({
