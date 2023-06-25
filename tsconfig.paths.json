@@ -7,6 +7,7 @@
       "@@auth/*": ["./src/auth/*"],
       "@@user/*": ["./src/user/*"],
       "@@user-settings/*": ["./src/user-settings/*"],
+      "@@inventory/*": ["./src/inventory/*"],
       "@@item/*": ["./src/item/*"],
       "@@chat/*": ["./src/chat/*"],
       "@@profile/*": ["./src/profile/*"],

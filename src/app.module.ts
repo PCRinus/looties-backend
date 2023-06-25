@@ -16,6 +16,7 @@ import { SharedModule } from './shared/shared.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
     }),
     AffiliatesModule,
     UserSettingsModule,
+    InventoryModule,
   ],
 })
 export class AppModule {}
