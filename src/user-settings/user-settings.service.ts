@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import type { UserSettings } from '@prisma/client';
 
 import { PrismaService } from '@@shared/prisma.service';
@@ -15,7 +15,7 @@ export class UserSettingsService {
     });
 
     if (!settings) {
-      throw new NotFoundException('User settings not found');
+      throw new InternalServerErrorException('User settings not found for user with id ${userId}');
     }
 
     return settings;
@@ -32,5 +32,22 @@ export class UserSettingsService {
     } catch (error) {
       throw new InternalServerErrorException(`Failed to update user settings for user with id ${userId}`);
     }
+  }
+
+  async isHideStatsEnabled(userId: string): Promise<boolean> {
+    const settings = await this.prisma.userSettings.findUnique({
+      where: {
+        userId,
+      },
+      select: {
+        hideStats: true,
+      },
+    });
+
+    if (!settings) {
+      throw new InternalServerErrorException('User settings not found for user with id ${userId}');
+    }
+
+    return settings.hideStats;
   }
 }

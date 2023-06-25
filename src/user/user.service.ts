@@ -84,6 +84,9 @@ export class UserService {
                 })[0],
               },
             },
+            UserSettings: {
+              create: {},
+            },
           },
         });
 
