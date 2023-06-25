@@ -26,7 +26,7 @@ export class WsGuard implements CanActivate {
     const token = this.extractTokenFromHeader(client);
 
     if (!token) {
-      throw new UnauthorizedException('Invalid JWT token');
+      throw new UnauthorizedException('Invalid or missing JWT token');
     }
 
     const jwtSecret = this.configService.get<string>('JWT_SECRET');
