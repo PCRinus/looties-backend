@@ -7,6 +7,7 @@ import { WsGuard } from '@@auth/guards/ws.guard';
 import { ItemService } from '@@item/item.service';
 import { ItemDroppedDto } from '@@live-drops/dtos/item-dropped.dto';
 import { LiveDropsService } from '@@live-drops/live-drops.service';
+import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 @UsePipes(new ValidationPipe())
 @UseGuards(WsGuard)
@@ -15,7 +16,11 @@ export class LiveDropsGateway implements OnGatewayConnection {
   @WebSocketServer()
   private readonly server: Server;
 
-  constructor(private readonly liveDropsService: LiveDropsService, private readonly itemService: ItemService) {}
+  constructor(
+    private readonly liveDropsService: LiveDropsService,
+    private readonly itemService: ItemService,
+    private readonly userSettingsService: UserSettingsService,
+  ) {}
 
   /**
    * @see @@auth/guards/ws.guard
@@ -34,6 +39,10 @@ export class LiveDropsGateway implements OnGatewayConnection {
     const latestDrop = await this.itemService.selectItemLiveDropData(data.itemId);
     await this.liveDropsService.saveDropData(data.itemId, data.lootboxId);
 
-    this.server.emit('itemDropped', latestDrop);
+    const isAnonymous = await this.userSettingsService.isAnonymousEnabled(data.userId);
+
+    if (!isAnonymous) {
+      this.server.emit('itemDropped', latestDrop);
+    }
   }
 }

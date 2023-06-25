@@ -7,6 +7,7 @@ import { ItemModule } from '@@item/item.module';
 import { ItemService } from '@@item/item.service';
 import { LiveDropsService } from '@@live-drops/live-drops.service';
 import { SharedModule } from '@@shared/shared.module';
+import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 import { LiveDropsGateway } from './live-drops.gateway';
 
@@ -16,7 +17,7 @@ describe('LiveDropsGateway', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ItemModule, SharedModule],
-      providers: [LiveDropsGateway, ItemService, LiveDropsService, ConfigService, JwtService],
+      providers: [LiveDropsGateway, ItemService, LiveDropsService, ConfigService, JwtService, UserSettingsService],
     }).compile();
 
     gateway = module.get<LiveDropsGateway>(LiveDropsGateway);
