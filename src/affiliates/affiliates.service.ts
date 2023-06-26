@@ -62,6 +62,12 @@ export class AffiliatesService {
 
   async redeemReferralCode(redeemerId: string, referralCode: string): Promise<void> {
     this.logger.log(`Redeeming referral code ${referralCode}`);
+
+    const isAvailable = await this.checkIfReferralCodeIsAvailable(redeemerId, referralCode);
+    if (!isAvailable) {
+      return;
+    }
+
     try {
       await this.prisma.affiliates.update({
         where: {
@@ -181,5 +187,19 @@ export class AffiliatesService {
     }
 
     return affiliate.referrerId;
+  }
+
+  private async checkIfReferralCodeIsAvailable(userId: string, referralCode: string): Promise<boolean> {
+    const affiliate = await this.prisma.affiliates.findUnique({
+      where: {
+        referralCode,
+      },
+    });
+
+    if (!affiliate) {
+      return false;
+    }
+
+    return affiliate.referrerId === userId ? false : true;
   }
 }

@@ -45,6 +45,11 @@ export class AffiliatesController {
   @Post(':userId/redeem-referral-code')
   async redeemReferralCode(@Param('userId') userId: string, @Body() body: RedeemReferralCodeDto): Promise<void> {
     const { referralCode } = body;
+    const referredUser = await this.userService.getUserById(userId);
+    if (referredUser.redeemedCode) {
+      throw new BadRequestException(`User with ID ${userId} has already redeemed a referral code`);
+    }
+
     await this.affiliateService.redeemReferralCode(userId, referralCode);
   }
 
