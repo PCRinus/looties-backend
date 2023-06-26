@@ -1,6 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { AppModule } from 'src/app.module';
+
+import { SharedModule } from '@@shared/shared.module';
 
 import { GameResponsiblyService } from './game-responsibly.service';
 
@@ -9,7 +10,7 @@ describe('GameResponsiblyService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [SharedModule],
       providers: [GameResponsiblyService],
     }).compile();
 

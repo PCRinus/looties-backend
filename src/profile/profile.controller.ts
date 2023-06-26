@@ -39,7 +39,7 @@ export class ProfileController {
   @Public()
   @Get(':userId/card')
   async getProfileCard(@Param('userId') userId: string): Promise<ProfileCoreData> {
-    const profileCard = await this.profileService.getProfileCard(userId);
+    const profileCard = await this.profileService.getProfileCore(userId);
 
     return profileCard;
   }

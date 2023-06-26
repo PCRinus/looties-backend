@@ -11,7 +11,7 @@ export class ProfileService {
 
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getProfileCard(userId: string): Promise<ProfileCoreData> {
+  async getProfileCore(userId: string): Promise<ProfileCoreData> {
     const profileCard = await this.prismaService.profile.findFirst({
       where: {
         userId,

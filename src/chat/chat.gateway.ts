@@ -8,6 +8,7 @@ import { WsGuard } from '@@auth/guards/ws.guard';
 import { ChatService } from '@@chat/chat.service';
 import { ReplyMessageDto } from '@@chat/dtos/reply-message.dto';
 import { SendMessageDto } from '@@chat/dtos/send-message.dto';
+import { ProfileService } from '@@profile/profile.service';
 import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 import { LikeMessageDto } from './dtos/like-message.dto';
@@ -24,7 +25,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private connectedUsersCount = 0;
 
-  constructor(private readonly chatService: ChatService, private readonly userSettingsService: UserSettingsService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly userSettingsService: UserSettingsService,
+    private readonly profileService: ProfileService,
+  ) {}
 
   /**
    * @see @@auth/guards/ws.guard
@@ -55,8 +60,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Received message from ${userId}: ${message}`);
 
     const newMessage = await this.chatService.saveMessage(userId, message);
+    const { userName, level } = await this.profileService.getProfileCore(userId);
     const isAnonymous = await this.userSettingsService.isAnonymousEnabled(userId);
-    this.server.emit('message', { newMessage, isAnonymous });
+
+    const name = isAnonymous ? 'Anonymous' : userName;
+
+    this.server.emit('message', { newMessage, name, level });
   }
 
   @SubscribeMessage('like')
@@ -86,12 +95,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`User ${userId} replied to ${originalMessageId} with ${reply}`);
 
     const newMessage = await this.chatService.saveMessage(userId, reply, originalMessageId);
+    const { userName, level } = await this.profileService.getProfileCore(userId);
     const isAnonymous = await this.userSettingsService.isAnonymousEnabled(userId);
+
+    const name = isAnonymous ? 'Anonymous' : userName;
 
     this.server.emit('reply', {
       newMessage,
       originalMessage,
-      isAnonymous,
+      name,
+      level,
     });
   }
 }
