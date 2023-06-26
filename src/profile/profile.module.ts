@@ -8,5 +8,6 @@ import { UserSettingsModule } from '@@user-settings/user-settings.module';
   imports: [UserSettingsModule],
   controllers: [ProfileController],
   providers: [ProfileService],
+  exports: [ProfileService],
 })
 export class ProfileModule {}
