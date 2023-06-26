@@ -8,4 +8,8 @@ export class ItemDroppedDto {
   @IsUUID()
   @IsNotEmpty()
   readonly lootboxId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  readonly userId: string;
 }

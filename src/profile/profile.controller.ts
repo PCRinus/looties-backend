@@ -6,6 +6,7 @@ import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
 import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
+import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 type ProfileCoreData = {
   userName: string | null;
@@ -19,13 +20,17 @@ type ProfileDo = Profile;
 @UseGuards(AuthGuard)
 @Controller('profile')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(
+    private readonly profileService: ProfileService,
+    private readonly userSettingsService: UserSettingsService,
+  ) {}
 
   @ApiParam({ name: 'userId', description: 'The user ID of the profile to retrieve' })
   @Public()
   @Get(':userId')
   async getProfile(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
-    const profile = await this.profileService.getProfileStats(userId);
+    const hideStats = await this.userSettingsService.isHideStatsEnabled(userId);
+    const profile = await this.profileService.getProfileStats(userId, hideStats);
 
     return profile;
   }
