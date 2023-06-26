@@ -15,7 +15,7 @@ export class UserSettingsService {
     });
 
     if (!settings) {
-      throw new InternalServerErrorException('User settings not found for user with id ${userId}');
+      throw new InternalServerErrorException(`User settings not found for user with id ${userId}`);
     }
 
     return settings;
@@ -45,7 +45,7 @@ export class UserSettingsService {
     });
 
     if (!settings) {
-      throw new InternalServerErrorException('User settings not found for user with id ${userId}');
+      throw new InternalServerErrorException(`User settings not found for user with id ${userId}`);
     }
 
     return settings.hideStats;
@@ -62,7 +62,7 @@ export class UserSettingsService {
     });
 
     if (!settings) {
-      throw new InternalServerErrorException('User settings not found for user with id ${userId}');
+      throw new InternalServerErrorException(`User settings not found for user with id ${userId}`);
     }
 
     return settings.isAnonymous;
