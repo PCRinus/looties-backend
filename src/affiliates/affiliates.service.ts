@@ -65,7 +65,10 @@ export class AffiliatesService {
 
     const isAvailable = await this.checkIfReferralCodeIsAvailable(redeemerId, referralCode);
     if (!isAvailable) {
-      return;
+      this.logger.warn(`Referral code ${referralCode} is not available to be redeemed by user with ID ${redeemerId}`);
+      throw new BadRequestException(
+        `Referral code ${referralCode} is not available to be redeemed by user with ID ${redeemerId}`,
+      );
     }
 
     try {
