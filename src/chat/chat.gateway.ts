@@ -38,7 +38,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: Socket) {
     this.logger.log(`User connected: ${client.id}`);
 
-    const messages = await this.chatService.getMessages();
+    let messages = await this.chatService.getMessages();
+    messages =  await Promise.all(messages.map(async(message)=>{
+      const {userName, level} = await this.profileService.getProfileCore(message.userId);
+      const isAnonymous = await this.userSettingsService.isAnonymousEnabled(message.userId);
+      const name = isAnonymous ? 'Anonymous' : userName;
+      return {...message, name, level}
+    }))
+
     this.connectedUsersCount++;
 
     this.server.emit('connected', { messages });

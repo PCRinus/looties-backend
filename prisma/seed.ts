@@ -10,7 +10,6 @@ const seed = async () => {
 
   await seedAffiliateLinks(userIds);
   await seedTransactions(userIds);
-  await seedMessages(userIds);
   const lootboxIds = await seedLootboxes();
   const itemIds = await seedItems(inventoryIds, lootboxIds);
   await seedLiveDrops(itemIds, lootboxIds);
@@ -124,26 +123,6 @@ const seedTransactions = async (userIds: string[]) => {
         method: 'SOL',
         type: 'WITHDRAWAL',
         status: 'APPROVED',
-      },
-    ],
-  });
-};
-
-const seedMessages = async (userIds: string[]) => {
-  const message1Id = uuidv5('message1', UUID_NAMESPACE);
-  await prisma.message.createMany({
-    data: [
-      {
-        id: message1Id,
-        userId: userIds[0],
-        message: 'Hello World',
-        likedBy: [userIds[1]],
-      },
-      {
-        id: uuidv5('message2', UUID_NAMESPACE),
-        userId: userIds[1],
-        message: 'Hello World Reply',
-        repliedTo: message1Id,
       },
     ],
   });
