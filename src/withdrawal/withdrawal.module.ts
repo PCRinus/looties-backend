@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { WithdrawalController } from './withdrawal.controller';
-import { WithdrawalService } from './withdrawal.service';
+
+import { InventoryModule } from '@@inventory/inventory.module';
+import { WithdrawalController } from '@@withdrawal/withdrawal.controller';
+import { WithdrawalService } from '@@withdrawal/withdrawal.service';
 
 @Module({
+  imports: [InventoryModule],
   controllers: [WithdrawalController],
-  providers: [WithdrawalService]
+  providers: [WithdrawalService],
 })
 export class WithdrawalModule {}
