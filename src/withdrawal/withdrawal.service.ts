@@ -49,12 +49,16 @@ export class WithdrawalService {
     return { tokenToSolExchangeRate, solanaWithdrawalFee };
   }
 
-  async withdraw(userId: string, tokenAmount: Decimal): Promise<string> {
+  async withdraw(userId: string, walletPublicKey: string, tokenAmount: Decimal): Promise<string> {
     this.checkIfUserCanWithdrawTokens(tokenAmount);
 
     const solData = await this.currencyService.getSolData();
     const solPrice = solData.quote.USD.price;
-    return await this.createWithdrawal('some_pub_key', tokenAmount, solPrice);
+    const signature = await this.createWithdrawal(walletPublicKey, tokenAmount, solPrice);
+
+    await this.updateUserInventoryAndTransactions(userId, tokenAmount);
+
+    return signature;
   }
 
   private checkIfUserCanWithdrawTokens(tokenAmount: Decimal): void {
@@ -94,5 +98,18 @@ export class WithdrawalService {
     });
 
     return signature;
+  }
+
+  //TODO: refactor this, one we update the inventory
+  private async updateUserInventoryAndTransactions(userId: string, tokenAmount: Decimal): Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.transactions.create({
+        data: {
+          userId,
+          type: 'WITHDRAWAL',
+          coinsAmount: tokenAmount,
+        },
+      }),
+    ]);
   }
 }

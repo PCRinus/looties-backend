@@ -29,6 +29,9 @@ export class WithdrawalController {
   async withdraw(@Param('userId') userId: string, @Body() body: WithdrawDto): Promise<string> {
     const { tokenAmount } = body;
 
-    return this.withdrawalService.withdraw(userId, tokenAmount);
+    const user = await this.userService.getUserById(userId);
+    const walletPublicKey = user.walletAddress;
+
+    return this.withdrawalService.withdraw(userId, walletPublicKey, tokenAmount);
   }
 }

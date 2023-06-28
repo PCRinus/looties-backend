@@ -8,7 +8,7 @@ generator client {
 
 generator erd {
   provider = "prisma-erd-generator"
-  output = "./erd.svg"
+  output   = "./erd.svg"
 }
 
 datasource db {
@@ -104,14 +104,15 @@ model Lootbox {
 }
 
 model Transactions {
-  id        Int                @id @default(autoincrement())
-  type      TransactionType
-  method    String //TODO: maybe an enum, check with team
-  status    TransactionStatus? @default(PENDING)
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  user      User               @relation(fields: [userId], references: [id])
-  userId    String
+  id          Int                @id @default(autoincrement())
+  type        TransactionType
+  coinsAmount Decimal?
+  nftName     String?
+  status      TransactionStatus? @default(PENDING)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  user        User               @relation(fields: [userId], references: [id])
+  userId      String
 }
 
 model GameHistory {

@@ -80,47 +80,39 @@ const seedTransactions = async (userIds: string[]) => {
     data: [
       {
         userId: userIds[0],
-        method: 'SOL',
         type: 'DEPOSIT',
         status: 'APPROVED',
       },
       {
         userId: userIds[0],
-        method: 'SOL',
         type: 'DEPOSIT',
         status: 'DECLINED',
       },
       {
         userId: userIds[0],
-        method: 'SOL',
         type: 'DEPOSIT',
       },
       {
         userId: userIds[0],
-        method: 'SOL',
         type: 'WITHDRAWAL',
         status: 'APPROVED',
       },
       {
         userId: userIds[1],
-        method: 'SOL',
         type: 'DEPOSIT',
         status: 'APPROVED',
       },
       {
         userId: userIds[1],
-        method: 'SOL',
         type: 'DEPOSIT',
         status: 'DECLINED',
       },
       {
         userId: userIds[1],
-        method: 'SOL',
         type: 'DEPOSIT',
       },
       {
         userId: userIds[1],
-        method: 'SOL',
         type: 'WITHDRAWAL',
         status: 'APPROVED',
       },
