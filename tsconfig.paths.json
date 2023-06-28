@@ -15,7 +15,8 @@
       "@@game-history/*": ["./src/game-history/*"],
       "@@game-responsibly/*": ["./src/game-responsibly/*"],
       "@@live-drops/*": ["./src/live-drops/*"],
-      "@@shared/*": ["./src/shared/*"]
+      "@@shared/*": ["./src/shared/*"],
+      "@@withdrawal/*": ["./src/withdrawal/*"]
     }
   }
 }
