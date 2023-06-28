@@ -38,6 +38,7 @@
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/websockets": "^9.4.2",
     "@prisma/client": "^4.15.0",
+    "@solana/web3.js": "^1.77.3",
     "@types/uuid": "^9.0.2",
     "bs58": "^5.0.0",
     "class-transformer": "^0.5.1",

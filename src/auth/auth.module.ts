@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
   imports: [
     JwtModule.register({
       global: true,
+      //TODO: change this secret
       secret: 'placeholder_secret',
       //TODO: adjust this expiry time at a later date
       signOptions: { expiresIn: '7d' },

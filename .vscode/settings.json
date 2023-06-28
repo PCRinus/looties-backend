@@ -1,9 +1,12 @@
 {
   "cSpell.words": [
     "autoincrement",
+    "Blockhash",
     "datasource",
     "datasources",
     "dtos",
+    "Keypair",
+    "lamports",
     "lootbox",
     "lootboxes",
     "lootie",
@@ -11,6 +14,7 @@
     "luxon",
     "nacl",
     "PGADMIN",
+    "solana",
     "Timestamptz",
     "tweetnacl",
     "Unliked",
