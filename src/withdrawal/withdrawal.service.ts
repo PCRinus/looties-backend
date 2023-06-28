@@ -1,55 +1,78 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SystemProgram, Transaction } from '@solana/web3.js';
 import base58 from 'bs58';
-import type Decimal from 'decimal.js';
+import Decimal from 'decimal.js';
 
+import { CurrencyService } from '@@currency/currency.service';
 import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
 export class WithdrawalService {
-  private readonly _houseWalletSecret: string | undefined;
+  private readonly _houseWalletSecret: string;
+  private readonly _maxWithdrawalAmount: Decimal;
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly currencyService: CurrencyService,
     private readonly configService: ConfigService,
     private readonly rpcConnection: Connection,
   ) {
-    this._houseWalletSecret = this.configService.get<string>('HOUSE_WALLET_SECRET');
+    this._houseWalletSecret = this.configService.get<string>('HOUSE_WALLET_SECRET') ?? '';
+    if (!this._houseWalletSecret) {
+      throw new InternalServerErrorException('House wallet is not defined, withdrawals can not be created');
+    }
+
+    this._maxWithdrawalAmount = this.configService.get<Decimal>('MAX_WITHDRAWAL_AMOUNT') ?? new Decimal(0);
+    if (this._maxWithdrawalAmount.lessThanOrEqualTo(0)) {
+      throw new InternalServerErrorException('MAX_WITHDRAWAL_AMOUNT is not defined or is less than or equal to 0');
+    }
 
     const solanaEndpoint = this.configService.get<string>('SOLANA_RPC_ENDPOINT');
     if (!solanaEndpoint) {
       throw new InternalServerErrorException('SOLANA_RPC_ENDPOINT is not defined');
     }
 
-    this.rpcConnection = new Connection(solanaEndpoint, 'confirmed');
+    try {
+      this.rpcConnection = new Connection(solanaEndpoint, 'confirmed');
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to connect to Solana RPC endpoint');
+    }
   }
 
-  async withdraw(userId: string, tokenAmount: Decimal): Promise<any> {
-    const solPrice = await this.getSolPrice();
+  async withdraw(userId: string, tokenAmount: Decimal): Promise<string> {
+    this.checkIfUserCanWithdrawTokens(tokenAmount);
 
-    return 'withdraw';
+    const solData = await this.currencyService.getSolData();
+    const solPrice = solData.quote.USD.price;
+    return await this.createWithdrawal('some_pub_key', tokenAmount, solPrice);
   }
 
-  private async getSolPrice(): Promise<number> {
-    return 100;
-  }
-
-  private async createWithdrawal(payeePubKey: PublicKey): Promise<string> {
-    if (!this._houseWalletSecret) {
-      throw new InternalServerErrorException('House wallet secret is not defined, withdrawals can not be created');
+  private checkIfUserCanWithdrawTokens(tokenAmount: Decimal): void {
+    if (tokenAmount.lessThan(0)) {
+      throw new BadRequestException('Token amount can not be negative');
     }
 
+    if (tokenAmount.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
+      throw new BadRequestException('Token amount is greater than max withdrawal amount');
+    }
+
+    //TODO: add additional checks for required games for example, or referral bonuses limitations
+  }
+
+  private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal, solPrice: number): Promise<string> {
     const decoded = base58.decode(this._houseWalletSecret);
     const houseKeyPair = Keypair.fromSecretKey(decoded);
     const { blockhash } = await this.rpcConnection.getLatestBlockhash();
 
+    const lamports = Math.ceil((withdrawalAmount.toNumber() * LAMPORTS_PER_SOL) / solPrice);
+
     const withdrawal = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: houseKeyPair.publicKey,
-        toPubkey: new PublicKey(payeePubKey),
-        lamports: 100,
+        toPubkey: new PublicKey(payeePublicKey),
+        lamports,
       }),
     );
 

@@ -18,6 +18,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
+import { CurrencyModule } from './currency/currency.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
     UserSettingsModule,
     InventoryModule,
     WithdrawalModule,
+    CurrencyModule,
   ],
 })
 export class AppModule {}

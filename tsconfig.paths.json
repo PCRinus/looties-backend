@@ -16,6 +16,7 @@
       "@@game-responsibly/*": ["./src/game-responsibly/*"],
       "@@live-drops/*": ["./src/live-drops/*"],
       "@@shared/*": ["./src/shared/*"],
+      "@@currency/*": ["./src/currency/*"],
       "@@withdrawal/*": ["./src/withdrawal/*"]
     }
   }
