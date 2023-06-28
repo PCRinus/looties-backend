@@ -24,7 +24,8 @@ export class WithdrawalService {
       throw new InternalServerErrorException('House wallet is not defined, withdrawals can not be created');
     }
 
-    this._maxWithdrawalAmount = this.configService.get<Decimal>('MAX_WITHDRAWAL_AMOUNT') ?? new Decimal(0);
+    const maxWithdrawalAmount = this.configService.get<string>('MAX_WITHDRAWAL_AMOUNT');
+    this._maxWithdrawalAmount = maxWithdrawalAmount ? new Decimal(maxWithdrawalAmount) : new Decimal(0);
     if (this._maxWithdrawalAmount.lessThanOrEqualTo(0)) {
       throw new InternalServerErrorException('MAX_WITHDRAWAL_AMOUNT is not defined or is less than or equal to 0');
     }
@@ -57,6 +58,7 @@ export class WithdrawalService {
   }
 
   private checkIfUserCanWithdrawTokens(tokenAmount: Decimal): void {
+    //TODO: add additional checks for required games for example, or referral bonuses limitations
     if (tokenAmount.lessThan(0)) {
       throw new BadRequestException('Token amount can not be negative');
     }
@@ -64,8 +66,6 @@ export class WithdrawalService {
     if (tokenAmount.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
       throw new BadRequestException('Token amount is greater than max withdrawal amount');
     }
-
-    //TODO: add additional checks for required games for example, or referral bonuses limitations
   }
 
   private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal, solPrice: number): Promise<string> {
