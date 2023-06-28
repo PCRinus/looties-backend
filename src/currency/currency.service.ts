@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Decimal from 'decimal.js';
 import { lastValueFrom, map } from 'rxjs';
 
 type CurrencyData = {
@@ -50,6 +51,10 @@ export class CurrencyService {
     if (!this._cmcApiKey) {
       throw new InternalServerErrorException('CMC_API_KEY is not defined');
     }
+  }
+
+  async getTokenToSolExchangeRate(): Promise<Decimal> {
+    return new Decimal(1.2);
   }
 
   async getSolData(): Promise<CurrencyData> {

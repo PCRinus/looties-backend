@@ -41,6 +41,13 @@ export class WithdrawalService {
     }
   }
 
+  async getWithdrawalData(): Promise<{ tokenToSolExchangeRate: Decimal; solanaWithdrawalFee: Decimal }> {
+    const tokenToSolExchangeRate = await this.currencyService.getTokenToSolExchangeRate();
+    const solanaWithdrawalFee = new Decimal(0.000005);
+
+    return { tokenToSolExchangeRate, solanaWithdrawalFee };
+  }
+
   async withdraw(userId: string, tokenAmount: Decimal): Promise<string> {
     this.checkIfUserCanWithdrawTokens(tokenAmount);
 
