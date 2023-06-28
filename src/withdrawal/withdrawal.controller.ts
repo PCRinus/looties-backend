@@ -3,7 +3,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type Decimal from 'decimal.js';
 
 import { AuthGuard } from '@@auth/guards/auth.guard';
-import { InventoryService } from '@@inventory/inventory.service';
 import { UserService } from '@@user/user.service';
 import { WithdrawDto } from '@@withdrawal/dtos/withdraw.dto';
 import { WithdrawalService } from '@@withdrawal/withdrawal.service';
@@ -13,11 +12,7 @@ import { WithdrawalService } from '@@withdrawal/withdrawal.service';
 @UseGuards(AuthGuard)
 @Controller('withdrawal')
 export class WithdrawalController {
-  constructor(
-    private readonly withdrawalService: WithdrawalService,
-    private readonly userService: UserService,
-    private readonly inventoryService: InventoryService,
-  ) {}
+  constructor(private readonly withdrawalService: WithdrawalService, private readonly userService: UserService) {}
 
   //TODO: better endpoint name
   @Get('/data')

@@ -1,3 +1,4 @@
+import type { OnModuleInit } from '@nestjs/common';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -9,16 +10,18 @@ import { CurrencyService } from '@@currency/currency.service';
 import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
-export class WithdrawalService {
-  private readonly _houseWalletSecret: string;
-  private readonly _maxWithdrawalAmount: Decimal;
-
+export class WithdrawalService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly currencyService: CurrencyService,
     private readonly configService: ConfigService,
-    private readonly rpcConnection: Connection,
-  ) {
+  ) {}
+
+  private _houseWalletSecret: string;
+  private _maxWithdrawalAmount: Decimal;
+  private _rpcConnection: Connection;
+
+  onModuleInit() {
     this._houseWalletSecret = this.configService.get<string>('HOUSE_WALLET_SECRET') ?? '';
     if (!this._houseWalletSecret) {
       throw new InternalServerErrorException('House wallet is not defined, withdrawals can not be created');
@@ -36,7 +39,7 @@ export class WithdrawalService {
     }
 
     try {
-      this.rpcConnection = new Connection(solanaEndpoint, 'confirmed');
+      this._rpcConnection = new Connection(solanaEndpoint, 'confirmed');
     } catch (error) {
       throw new InternalServerErrorException('Failed to connect to Solana RPC endpoint');
     }
@@ -75,7 +78,7 @@ export class WithdrawalService {
   private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal, solPrice: number): Promise<string> {
     const decoded = base58.decode(this._houseWalletSecret);
     const houseKeyPair = Keypair.fromSecretKey(decoded);
-    const { blockhash } = await this.rpcConnection.getLatestBlockhash();
+    const { blockhash } = await this._rpcConnection.getLatestBlockhash();
 
     const lamports = Math.ceil((withdrawalAmount.toNumber() * LAMPORTS_PER_SOL) / solPrice);
 
@@ -93,7 +96,7 @@ export class WithdrawalService {
 
     const serializedWithdrawal = withdrawal.serialize();
 
-    const signature = await this.rpcConnection.sendRawTransaction(serializedWithdrawal, {
+    const signature = await this._rpcConnection.sendRawTransaction(serializedWithdrawal, {
       skipPreflight: true,
     });
 
