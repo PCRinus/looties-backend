@@ -61,11 +61,7 @@ export class WithdrawalService implements OnModuleInit {
 
     this.logger.log('Fetching SOL price');
 
-    const solData = await this.currencyService.getSolData();
-    const solPrice = solData.quote.USD.price;
-    this.logger.log(`SOL price is ${solPrice}`);
-
-    const signature = await this.createWithdrawal(walletPublicKey, tokenAmount, solPrice);
+    const signature = await this.createWithdrawal(walletPublicKey, tokenAmount);
     this.logger.log(`Withdrawal created with signature ${signature}`);
 
     await this.updateUserInventoryAndTransactions(userId, tokenAmount);
@@ -86,14 +82,14 @@ export class WithdrawalService implements OnModuleInit {
     }
   }
 
-  private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal, solPrice: number): Promise<string> {
+  private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal): Promise<string> {
     this.logger.log(`Creating withdrawal for ${withdrawalAmount} tokens for user with wallet ${payeePublicKey}`);
 
     const decoded = decode(this._houseWalletSecret);
     const houseKeyPair = Keypair.fromSecretKey(decoded);
     const { blockhash } = await this._rpcConnection.getLatestBlockhash();
 
-    const lamports = Math.ceil((withdrawalAmount.toNumber() * LAMPORTS_PER_SOL) / solPrice);
+    const lamports = Math.ceil(withdrawalAmount.toNumber() * LAMPORTS_PER_SOL);
 
     const withdrawal = new Transaction().add(
       SystemProgram.transfer({
