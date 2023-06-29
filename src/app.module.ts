@@ -8,6 +8,7 @@ import { ItemModule } from '@@item/item.module';
 import { AffiliatesModule } from './affiliates/affiliates.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { CurrencyModule } from './currency/currency.module';
 import { GameResponsiblyModule } from './game-responsibly/game-responsibly.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
@@ -18,7 +19,6 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
-import { CurrencyModule } from './currency/currency.module';
 
 @Module({
   imports: [
