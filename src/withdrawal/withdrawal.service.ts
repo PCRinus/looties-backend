@@ -8,6 +8,7 @@ import Decimal from 'decimal.js';
 
 import { CurrencyService } from '@@currency/currency.service';
 import { PrismaService } from '@@shared/prisma.service';
+import { TransactionsService } from '@@transactions/transactions.service';
 
 @Injectable()
 export class WithdrawalService implements OnModuleInit {
@@ -16,6 +17,7 @@ export class WithdrawalService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly currencyService: CurrencyService,
+    private readonly transactionService: TransactionsService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -61,10 +63,11 @@ export class WithdrawalService implements OnModuleInit {
 
     this.logger.log('Fetching SOL price');
 
-    const signature = await this.createWithdrawal(walletPublicKey, tokenAmount);
-    this.logger.log(`Withdrawal created with signature ${signature}`);
+    const transactionId = await this.createWithdrawalTransaction(userId, tokenAmount);
+    this.logger.log(`Pending transaction created with id ${transactionId}`);
 
-    await this.updateUserInventoryAndTransactions(userId, tokenAmount, signature);
+    const signature = await this.createWithdrawal(walletPublicKey, tokenAmount, transactionId);
+    this.logger.log(`Withdrawal created with signature ${signature}`);
 
     return signature;
   }
@@ -82,51 +85,63 @@ export class WithdrawalService implements OnModuleInit {
     }
   }
 
-  private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal): Promise<string> {
-    this.logger.log(`Creating withdrawal for ${withdrawalAmount} tokens for user with wallet ${payeePublicKey}`);
-
-    const decoded = decode(this._houseWalletSecret);
-    const houseKeyPair = Keypair.fromSecretKey(decoded);
-    const { blockhash } = await this._rpcConnection.getLatestBlockhash();
-
-    const lamports = Math.ceil(withdrawalAmount.toNumber() * LAMPORTS_PER_SOL);
-
-    const withdrawal = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: houseKeyPair.publicKey,
-        toPubkey: new PublicKey(payeePublicKey),
-        lamports,
-      }),
-    );
-
-    withdrawal.recentBlockhash = blockhash;
-    withdrawal.feePayer = houseKeyPair.publicKey;
-    withdrawal.sign(houseKeyPair);
-
-    const serializedWithdrawal = withdrawal.serialize();
-
-    const signature = await this._rpcConnection.sendRawTransaction(serializedWithdrawal, {
-      skipPreflight: true,
-    });
-
-    return signature;
+  private async createWithdrawalTransaction(userId: string, tokenAmount: Decimal): Promise<number> {
+    return await this.transactionService.createNewTransaction(userId, 'WITHDRAWAL', tokenAmount);
   }
 
-  //TODO: refactor this, once we update the inventory
-  private async updateUserInventoryAndTransactions(
-    userId: string,
-    tokenAmount: Decimal,
+  private async createWithdrawal(
+    payeePublicKey: string,
+    withdrawalAmount: Decimal,
+    transactionId: number,
+  ): Promise<string> {
+    this.logger.log(`Creating withdrawal for ${withdrawalAmount} tokens for user with wallet ${payeePublicKey}`);
+
+    try {
+      const decoded = decode(this._houseWalletSecret);
+      const houseKeyPair = Keypair.fromSecretKey(decoded);
+      const { blockhash } = await this._rpcConnection.getLatestBlockhash();
+
+      const lamports = Math.ceil(withdrawalAmount.toNumber() * LAMPORTS_PER_SOL);
+
+      const withdrawal = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: houseKeyPair.publicKey,
+          toPubkey: new PublicKey(payeePublicKey),
+          lamports,
+        }),
+      );
+
+      withdrawal.recentBlockhash = blockhash;
+      withdrawal.feePayer = houseKeyPair.publicKey;
+      withdrawal.sign(houseKeyPair);
+
+      const serializedWithdrawal = withdrawal.serialize();
+
+      const signature = await this._rpcConnection.sendRawTransaction(serializedWithdrawal, {
+        skipPreflight: true,
+      });
+
+      await this.updateSuccessfulWithdrawalTransaction(transactionId, signature, withdrawalAmount);
+
+      return signature;
+    } catch (error) {
+      this.logger.error(error);
+      await this.transactionService.updateTransactionStatus(transactionId, 'DECLINED');
+
+      throw new InternalServerErrorException('Failed to create withdrawal');
+    }
+  }
+
+  private async updateSuccessfulWithdrawalTransaction(
+    transactionId: number,
     signature: string,
+    withdrawalAmount: Decimal,
   ): Promise<void> {
-    await this.prisma.$transaction([
-      this.prisma.transactions.create({
-        data: {
-          userId,
-          type: 'WITHDRAWAL',
-          coinsAmount: tokenAmount,
-          hash: signature,
-        },
-      }),
-    ]);
+    await this.transactionService.updateTransaction({
+      transactionId,
+      status: 'APPROVED',
+      transactionHash: signature,
+      coinsAmount: withdrawalAmount,
+    });
   }
 }
