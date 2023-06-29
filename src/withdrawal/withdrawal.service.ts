@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger }
 import { ConfigService } from '@nestjs/config';
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SystemProgram, Transaction } from '@solana/web3.js';
-import base58 from 'bs58';
+import { decode } from 'bs58';
 import Decimal from 'decimal.js';
 
 import { CurrencyService } from '@@currency/currency.service';
@@ -77,12 +77,11 @@ export class WithdrawalService implements OnModuleInit {
     //TODO: add additional checks for required games for example, or referral bonuses limitations
     this.logger.log(`Checking if user can withdraw ${tokenAmount} tokens`);
 
-    const test = new Decimal(tokenAmount);
-    if (test.lessThan(0)) {
+    if (tokenAmount.lessThan(0)) {
       throw new BadRequestException('Token amount can not be negative');
     }
 
-    if (test.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
+    if (tokenAmount.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
       throw new BadRequestException('Token amount is greater than max withdrawal amount');
     }
   }
@@ -90,7 +89,7 @@ export class WithdrawalService implements OnModuleInit {
   private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal, solPrice: number): Promise<string> {
     this.logger.log(`Creating withdrawal for ${withdrawalAmount} tokens for user with wallet ${payeePublicKey}`);
 
-    const decoded = base58.decode(this._houseWalletSecret);
+    const decoded = decode(this._houseWalletSecret);
     const houseKeyPair = Keypair.fromSecretKey(decoded);
     const { blockhash } = await this._rpcConnection.getLatestBlockhash();
 

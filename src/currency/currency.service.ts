@@ -3,7 +3,7 @@ import type { OnModuleInit } from '@nestjs/common';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Decimal from 'decimal.js';
-import { lastValueFrom, map } from 'rxjs';
+import { catchError, lastValueFrom, map } from 'rxjs';
 
 type CurrencyData = {
   id: number;
@@ -73,8 +73,8 @@ export class CurrencyService implements OnModuleInit {
         },
       })
       .pipe(
-        map((axiosData) => {
-          const cmcData = axiosData.data;
+        map((axiosData) => axiosData.data),
+        map((cmcData) => {
           if (this.isCmcRequestSuccessful(cmcData)) {
             const filteredSolData = cmcData.data.find((item) => item.symbol === 'SOL');
 
@@ -82,6 +82,11 @@ export class CurrencyService implements OnModuleInit {
           } else {
             throw new InternalServerErrorException('Failed to get SOL price from CMC');
           }
+        }),
+        catchError((error) => {
+          this.logger.error(error);
+
+          throw new InternalServerErrorException('Failed to get SOL price from CMC');
         }),
       );
 

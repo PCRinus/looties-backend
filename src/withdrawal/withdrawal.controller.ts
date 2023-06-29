@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import type Decimal from 'decimal.js';
+import Decimal from 'decimal.js';
 
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { UserService } from '@@user/user.service';
@@ -22,7 +22,8 @@ export class WithdrawalController {
 
   @Post(':userId')
   async withdraw(@Param('userId') userId: string, @Body() body: WithdrawDto): Promise<string> {
-    const { tokenAmount } = body;
+    const { amount } = body;
+    const tokenAmount = new Decimal(amount);
 
     const user = await this.userService.getUserById(userId);
     const walletPublicKey = user.walletAddress;
