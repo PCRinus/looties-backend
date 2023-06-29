@@ -106,6 +106,7 @@ model Lootbox {
 model Transactions {
   id          Int                @id @default(autoincrement())
   type        TransactionType
+  hash        String?            @unique
   coinsAmount Decimal?
   nftName     String?
   status      TransactionStatus? @default(PENDING)

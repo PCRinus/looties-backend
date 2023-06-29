@@ -64,7 +64,7 @@ export class WithdrawalService implements OnModuleInit {
     const signature = await this.createWithdrawal(walletPublicKey, tokenAmount);
     this.logger.log(`Withdrawal created with signature ${signature}`);
 
-    await this.updateUserInventoryAndTransactions(userId, tokenAmount);
+    await this.updateUserInventoryAndTransactions(userId, tokenAmount, signature);
 
     return signature;
   }
@@ -112,14 +112,19 @@ export class WithdrawalService implements OnModuleInit {
     return signature;
   }
 
-  //TODO: refactor this, one we update the inventory
-  private async updateUserInventoryAndTransactions(userId: string, tokenAmount: Decimal): Promise<void> {
+  //TODO: refactor this, once we update the inventory
+  private async updateUserInventoryAndTransactions(
+    userId: string,
+    tokenAmount: Decimal,
+    signature: string,
+  ): Promise<void> {
     await this.prisma.$transaction([
       this.prisma.transactions.create({
         data: {
           userId,
           type: 'WITHDRAWAL',
           coinsAmount: tokenAmount,
+          hash: signature,
         },
       }),
     ]);

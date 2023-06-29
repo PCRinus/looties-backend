@@ -9,7 +9,6 @@ const seed = async () => {
   const inventoryIds = await seedInventories(userIds);
 
   await seedAffiliateLinks(userIds);
-  await seedTransactions(userIds);
   const lootboxIds = await seedLootboxes();
   const itemIds = await seedItems(inventoryIds, lootboxIds);
   await seedLiveDrops(itemIds, lootboxIds);
@@ -70,51 +69,6 @@ const seedAffiliateLinks = async (userIds: string[]) => {
       },
       {
         referrerId: userIds[1],
-      },
-    ],
-  });
-};
-
-const seedTransactions = async (userIds: string[]) => {
-  await prisma.transactions.createMany({
-    data: [
-      {
-        userId: userIds[0],
-        type: 'DEPOSIT',
-        status: 'APPROVED',
-      },
-      {
-        userId: userIds[0],
-        type: 'DEPOSIT',
-        status: 'DECLINED',
-      },
-      {
-        userId: userIds[0],
-        type: 'DEPOSIT',
-      },
-      {
-        userId: userIds[0],
-        type: 'WITHDRAWAL',
-        status: 'APPROVED',
-      },
-      {
-        userId: userIds[1],
-        type: 'DEPOSIT',
-        status: 'APPROVED',
-      },
-      {
-        userId: userIds[1],
-        type: 'DEPOSIT',
-        status: 'DECLINED',
-      },
-      {
-        userId: userIds[1],
-        type: 'DEPOSIT',
-      },
-      {
-        userId: userIds[1],
-        type: 'WITHDRAWAL',
-        status: 'APPROVED',
       },
     ],
   });
