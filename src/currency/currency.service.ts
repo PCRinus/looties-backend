@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import type { OnModuleInit } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Decimal from 'decimal.js';
 import { lastValueFrom, map } from 'rxjs';
@@ -37,11 +38,15 @@ type CmcErrorResponse = {
 };
 
 @Injectable()
-export class CurrencyService {
-  private readonly _cmcUrl: string;
-  private readonly _cmcApiKey: string;
+export class CurrencyService implements OnModuleInit {
+  private readonly logger = new Logger(CurrencyService.name);
 
-  constructor(private readonly http: HttpService, private readonly configService: ConfigService) {
+  constructor(private readonly http: HttpService, private readonly configService: ConfigService) {}
+
+  private _cmcUrl: string;
+  private _cmcApiKey: string;
+
+  onModuleInit() {
     this._cmcUrl = this.configService.get<string>('CMC_URL') ?? '';
     if (!this._cmcUrl) {
       throw new InternalServerErrorException('CMC_URL is not defined');
@@ -58,8 +63,11 @@ export class CurrencyService {
   }
 
   async getSolData(): Promise<CurrencyData> {
+    const cmcUrl = `${this._cmcUrl}/v1/cryptocurrency/listings/latest`;
+    this.logger.log(`Fetching SOL data from ${cmcUrl}`);
+
     const solData$ = this.http
-      .get<CmcSuccessResponse | CmcErrorResponse>(`${this._cmcUrl}/v1/cryptocurrency/quotes/latest`, {
+      .get<CmcSuccessResponse | CmcErrorResponse>(cmcUrl, {
         headers: {
           'X-CMC_PRO_API_KEY': this._cmcApiKey,
         },

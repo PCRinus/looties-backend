@@ -1,5 +1,5 @@
 import type { OnModuleInit } from '@nestjs/common';
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SystemProgram, Transaction } from '@solana/web3.js';
@@ -11,6 +11,8 @@ import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
 export class WithdrawalService implements OnModuleInit {
+  private readonly logger = new Logger(WithdrawalService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly currencyService: CurrencyService,
@@ -53,11 +55,18 @@ export class WithdrawalService implements OnModuleInit {
   }
 
   async withdraw(userId: string, walletPublicKey: string, tokenAmount: Decimal): Promise<string> {
+    this.logger.log(`Withdrawal request for user ${userId} with wallet ${walletPublicKey} for ${tokenAmount} tokens`);
+
     this.checkIfUserCanWithdrawTokens(tokenAmount);
+
+    this.logger.log('Fetching SOL price');
 
     const solData = await this.currencyService.getSolData();
     const solPrice = solData.quote.USD.price;
+    this.logger.log(`SOL price is ${solPrice}`);
+
     const signature = await this.createWithdrawal(walletPublicKey, tokenAmount, solPrice);
+    this.logger.log(`Withdrawal created with signature ${signature}`);
 
     await this.updateUserInventoryAndTransactions(userId, tokenAmount);
 
@@ -66,16 +75,21 @@ export class WithdrawalService implements OnModuleInit {
 
   private checkIfUserCanWithdrawTokens(tokenAmount: Decimal): void {
     //TODO: add additional checks for required games for example, or referral bonuses limitations
-    if (tokenAmount.lessThan(0)) {
+    this.logger.log(`Checking if user can withdraw ${tokenAmount} tokens`);
+
+    const test = new Decimal(tokenAmount);
+    if (test.lessThan(0)) {
       throw new BadRequestException('Token amount can not be negative');
     }
 
-    if (tokenAmount.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
+    if (test.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
       throw new BadRequestException('Token amount is greater than max withdrawal amount');
     }
   }
 
   private async createWithdrawal(payeePublicKey: string, withdrawalAmount: Decimal, solPrice: number): Promise<string> {
+    this.logger.log(`Creating withdrawal for ${withdrawalAmount} tokens for user with wallet ${payeePublicKey}`);
+
     const decoded = base58.decode(this._houseWalletSecret);
     const houseKeyPair = Keypair.fromSecretKey(decoded);
     const { blockhash } = await this._rpcConnection.getLatestBlockhash();
