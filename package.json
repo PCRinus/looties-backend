@@ -37,6 +37,7 @@
     "@nestjs/platform-socket.io": "^9.4.2",
     "@nestjs/schedule": "^2.2.3",
     "@nestjs/swagger": "^6.3.0",
+    "@nestjs/terminus": "^10.0.1",
     "@nestjs/websockets": "^9.4.2",
     "@prisma/client": "^4.15.0",
     "@solana/web3.js": "^1.77.3",

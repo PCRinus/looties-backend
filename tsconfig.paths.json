@@ -14,6 +14,7 @@
       "@@transactions/*": ["./src/transactions/*"],
       "@@game-history/*": ["./src/game-history/*"],
       "@@game-responsibly/*": ["./src/game-responsibly/*"],
+      "@@health/*": ["./src/health/*"],
       "@@live-drops/*": ["./src/live-drops/*"],
       "@@shared/*": ["./src/shared/*"],
       "@@currency/*": ["./src/currency/*"],

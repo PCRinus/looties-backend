@@ -19,6 +19,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
     InventoryModule,
     WithdrawalModule,
     CurrencyModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
