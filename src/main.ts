@@ -19,6 +19,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableShutdownHooks();
+
   const config = new DocumentBuilder()
     .setTitle('lootie-backend')
     .setDescription('lootie API for interacting with th client app')

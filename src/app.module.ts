@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { CurrencyModule } from './currency/currency.module';
 import { GameResponsiblyModule } from './game-responsibly/game-responsibly.module';
+import { HealthModule } from './health/health.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { LootboxModule } from './lootbox/lootbox.module';
@@ -19,10 +20,10 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
-import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
+    HealthModule,
     AuthModule,
     ItemModule,
     LootboxModule,
@@ -56,7 +57,6 @@ import { HealthModule } from './health/health.module';
     InventoryModule,
     WithdrawalModule,
     CurrencyModule,
-    HealthModule,
   ],
 })
 export class AppModule {}
