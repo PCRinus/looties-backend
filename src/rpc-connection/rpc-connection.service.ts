@@ -1,3 +1,4 @@
+import type { OnModuleInit } from '@nestjs/common';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from '@solana/web3.js';
@@ -10,11 +11,14 @@ import { Connection } from '@solana/web3.js';
 const BLOCKHASH_EXPIRATION_LIMIT = 150;
 
 @Injectable()
-export class RpcConnectionService {
-  private readonly _rpcConnection: Connection;
+export class RpcConnectionService implements OnModuleInit {
   private readonly _logger = new Logger(RpcConnectionService.name);
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {}
+
+  private _rpcConnection: Connection;
+
+  onModuleInit() {
     const rpcEndpoint = this.configService.get<string>('SOLANA_RPC_ENDPOINT');
     if (!rpcEndpoint) {
       throw new InternalServerErrorException('SOLANA_RPC_ENDPOINT is not defined');

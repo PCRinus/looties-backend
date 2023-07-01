@@ -19,7 +19,7 @@
       "@@shared/*": ["./src/shared/*"],
       "@@currency/*": ["./src/currency/*"],
       "@@withdrawal/*": ["./src/withdrawal/*"],
-      "@@rpc-connection/*": ["./src/rpc-connection/*"],
+      "@@rpc-connection/*": ["./src/rpc-connection/*"]
     }
   }
 }

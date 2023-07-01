@@ -1,4 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+
 import { RpcConnectionService } from './rpc-connection.service';
 
 describe('RpcConnectionService', () => {
@@ -6,6 +9,7 @@ describe('RpcConnectionService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule],
       providers: [RpcConnectionService],
     }).compile();
 
