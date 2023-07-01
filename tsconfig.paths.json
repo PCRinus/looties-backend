@@ -18,7 +18,8 @@
       "@@live-drops/*": ["./src/live-drops/*"],
       "@@shared/*": ["./src/shared/*"],
       "@@currency/*": ["./src/currency/*"],
-      "@@withdrawal/*": ["./src/withdrawal/*"]
+      "@@withdrawal/*": ["./src/withdrawal/*"],
+      "@@rpc-connection/*": ["./src/rpc-connection/*"],
     }
   }
 }

@@ -1,13 +1,14 @@
 import type { OnModuleInit } from '@nestjs/common';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import type { Connection } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SystemProgram, Transaction } from '@solana/web3.js';
 import { decode } from 'bs58';
 import Decimal from 'decimal.js';
 
 import { CurrencyService } from '@@currency/currency.service';
-import { PrismaService } from '@@shared/prisma.service';
+import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 
 @Injectable()
@@ -15,9 +16,9 @@ export class WithdrawalService implements OnModuleInit {
   private readonly logger = new Logger(WithdrawalService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
     private readonly currencyService: CurrencyService,
     private readonly transactionService: TransactionsService,
+    private readonly rpcConnectionService: RpcConnectionService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -37,16 +38,7 @@ export class WithdrawalService implements OnModuleInit {
       throw new InternalServerErrorException('MAX_WITHDRAWAL_AMOUNT is not defined or is less than or equal to 0');
     }
 
-    const solanaEndpoint = this.configService.get<string>('SOLANA_RPC_ENDPOINT');
-    if (!solanaEndpoint) {
-      throw new InternalServerErrorException('SOLANA_RPC_ENDPOINT is not defined');
-    }
-
-    try {
-      this._rpcConnection = new Connection(solanaEndpoint, 'confirmed');
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to connect to Solana RPC endpoint');
-    }
+    this._rpcConnection = this.rpcConnectionService.getRpcConnection();
   }
 
   async getWithdrawalData(): Promise<{ tokenToSolExchangeRate: Decimal; solanaWithdrawalFee: Decimal }> {
@@ -99,7 +91,7 @@ export class WithdrawalService implements OnModuleInit {
     try {
       const decoded = decode(this._houseWalletSecret);
       const houseKeyPair = Keypair.fromSecretKey(decoded);
-      const { blockhash } = await this._rpcConnection.getLatestBlockhash();
+      const { blockhash, lastValidBlockHeight } = await this._rpcConnection.getLatestBlockhash();
 
       const lamports = Math.ceil(withdrawalAmount.toNumber() * LAMPORTS_PER_SOL);
 
@@ -121,7 +113,18 @@ export class WithdrawalService implements OnModuleInit {
         skipPreflight: true,
       });
 
-      await this.updateSuccessfulWithdrawalTransaction(transactionId, signature, withdrawalAmount);
+      const isTransactionValid = await this.rpcConnectionService.isTransactionValid(signature, lastValidBlockHeight);
+
+      if (!isTransactionValid) {
+        throw new Error();
+      }
+
+      await this.transactionService.updateTransaction({
+        transactionId,
+        status: 'APPROVED',
+        transactionHash: signature,
+        coinsAmount: withdrawalAmount,
+      });
 
       return signature;
     } catch (error) {
@@ -130,18 +133,5 @@ export class WithdrawalService implements OnModuleInit {
 
       throw new InternalServerErrorException('Failed to create withdrawal');
     }
-  }
-
-  private async updateSuccessfulWithdrawalTransaction(
-    transactionId: number,
-    signature: string,
-    withdrawalAmount: Decimal,
-  ): Promise<void> {
-    await this.transactionService.updateTransaction({
-      transactionId,
-      status: 'APPROVED',
-      transactionHash: signature,
-      coinsAmount: withdrawalAmount,
-    });
   }
 }

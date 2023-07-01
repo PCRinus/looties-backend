@@ -15,6 +15,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { LootboxModule } from './lootbox/lootbox.module';
 import { ProfileModule } from './profile/profile.module';
+import { RpcConnectionModule } from './rpc-connection/rpc-connection.module';
 import { SharedModule } from './shared/shared.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
@@ -57,6 +58,7 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
     InventoryModule,
     WithdrawalModule,
     CurrencyModule,
+    RpcConnectionModule,
   ],
 })
 export class AppModule {}
