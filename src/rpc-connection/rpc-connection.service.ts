@@ -27,17 +27,14 @@ export class RpcConnectionService {
     }
   }
 
-  private startTime: Date;
-
   getRpcConnection(): Connection {
-    this.startTime = new Date();
-
     return this._rpcConnection;
   }
 
-  async isTransactionValid(txHash: string, lastValidBlockHeight: number): Promise<boolean | undefined> {
+  async isTransactionValid(txHash: string, lastValidBlockHeight: number): Promise<boolean> {
     let hashExpired = false;
     let txSuccess = false;
+    const startTime = new Date();
 
     do {
       const { value: status } = await this._rpcConnection.getSignatureStatus(txHash);
@@ -47,7 +44,7 @@ export class RpcConnectionService {
         txSuccess = true;
 
         const endTime = new Date();
-        const elapsed = (endTime.getTime() - this.startTime.getTime()) / 1000;
+        const elapsed = (endTime.getTime() - startTime.getTime()) / 1000;
         this._logger.log(`Transaction Success. Elapsed time: ${elapsed} seconds.`);
         //TODO: change cluster based on current environment
         this._logger.log(`https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
@@ -60,7 +57,7 @@ export class RpcConnectionService {
       // Break loop if blockhash has expired
       if (hashExpired) {
         const endTime = new Date();
-        const elapsed = (endTime.getTime() - this.startTime.getTime()) / 1000;
+        const elapsed = (endTime.getTime() - startTime.getTime()) / 1000;
         this._logger.log(`Blockhash has expired. Elapsed time: ${elapsed} seconds.`);
         // (add your own logic to Fetch a new blockhash and resend the transaction or throw an error)
         return false;
@@ -68,6 +65,8 @@ export class RpcConnectionService {
 
       await this.sleep(1500);
     } while (!hashExpired && !txSuccess);
+
+    return false;
   }
 
   private async isBlockhashExpired(lastValidBlockHeight: number): Promise<boolean> {
