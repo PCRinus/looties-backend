@@ -7,6 +7,7 @@ import { SystemProgram, Transaction } from '@solana/web3.js';
 import { decode } from 'bs58';
 import Decimal from 'decimal.js';
 
+import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 
@@ -17,6 +18,7 @@ export class WithdrawalService implements OnModuleInit {
   constructor(
     private readonly transactionService: TransactionsService,
     private readonly rpcConnectionService: RpcConnectionService,
+    private readonly itemService: ItemService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -42,9 +44,7 @@ export class WithdrawalService implements OnModuleInit {
   async withdraw(userId: string, walletPublicKey: string, tokenAmount: Decimal): Promise<string> {
     this.logger.log(`Withdrawal request for user ${userId} with wallet ${walletPublicKey} for ${tokenAmount} tokens`);
 
-    this.checkIfUserCanWithdrawTokens(tokenAmount);
-
-    this.logger.log('Fetching SOL price');
+    await this.checkIfUserCanWithdrawTokens(userId, tokenAmount);
 
     const transactionId = await this.createWithdrawalTransaction(userId, tokenAmount);
     this.logger.log(`Pending transaction created with id ${transactionId}`);
@@ -52,10 +52,22 @@ export class WithdrawalService implements OnModuleInit {
     const signature = await this.createWithdrawal(walletPublicKey, tokenAmount, transactionId);
     this.logger.log(`Withdrawal created with signature ${signature}`);
 
+    await this.transactionService.updateTransaction({
+      transactionId,
+      status: 'APPROVED',
+      transactionHash: signature,
+      coinsAmount: tokenAmount,
+    });
+    this.logger.log(`Transaction ${transactionId} updated with status APPROVED and transaction hash ${signature}`);
+
+    this.logger.log('Withdrawing tokens from user balance...');
+    await this.itemService.withdrawTokens(userId, tokenAmount);
+    this.logger.log(`${tokenAmount} tokens withdrawn from user ${userId} balance`);
+
     return signature;
   }
 
-  private checkIfUserCanWithdrawTokens(tokenAmount: Decimal): void {
+  private async checkIfUserCanWithdrawTokens(userId: string, tokenAmount: Decimal): Promise<void> {
     //TODO: add additional checks for required games for example, or referral bonuses limitations
     this.logger.log(`Checking if user can withdraw ${tokenAmount} tokens`);
 
@@ -65,6 +77,11 @@ export class WithdrawalService implements OnModuleInit {
 
     if (tokenAmount.greaterThanOrEqualTo(this._maxWithdrawalAmount)) {
       throw new BadRequestException('Token amount is greater than max withdrawal amount');
+    }
+
+    const tokenBalance = await this.itemService.getTokensBalance(userId);
+    if (tokenBalance.lessThan(tokenAmount)) {
+      throw new BadRequestException('User does not have enough tokens to withdraw');
     }
   }
 
@@ -109,13 +126,6 @@ export class WithdrawalService implements OnModuleInit {
       if (!isTransactionValid) {
         throw new Error();
       }
-
-      await this.transactionService.updateTransaction({
-        transactionId,
-        status: 'APPROVED',
-        transactionHash: signature,
-        coinsAmount: withdrawalAmount,
-      });
 
       return signature;
     } catch (error) {

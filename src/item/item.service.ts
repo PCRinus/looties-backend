@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import type { Item } from '@prisma/client';
-import type Decimal from 'decimal.js';
+import Decimal from 'decimal.js';
 
 import { PrismaService } from '@@shared/prisma.service';
 
@@ -18,7 +18,7 @@ export class ItemService {
     });
   }
 
-  async selectTokens(userId: string): Promise<Item> {
+  async getTokensBalance(userId: string): Promise<Decimal> {
     const tokens = await this.prisma.item.findUnique({
       where: {
         name: `tokens_${userId}`,
@@ -29,7 +29,7 @@ export class ItemService {
       throw new InternalServerErrorException(`Tokens for user id ${userId} could not be retrieved`);
     }
 
-    return tokens;
+    return tokens.amount ?? new Decimal(0);
   }
 
   async depositTokens(
