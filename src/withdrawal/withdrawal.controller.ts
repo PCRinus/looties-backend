@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import Decimal from 'decimal.js';
 
@@ -14,13 +14,7 @@ import { WithdrawalService } from '@@withdrawal/withdrawal.service';
 export class WithdrawalController {
   constructor(private readonly withdrawalService: WithdrawalService, private readonly userService: UserService) {}
 
-  //TODO: better endpoint name
-  @Get('/data')
-  async getWithdrawalData(): Promise<{ tokenToSolExchangeRate: Decimal; solanaWithdrawalFee: Decimal }> {
-    return this.withdrawalService.getWithdrawalData();
-  }
-
-  @Post(':userId')
+  @Post(':userId/sol')
   async withdraw(@Param('userId') userId: string, @Body() body: WithdrawDto): Promise<string> {
     const { amount } = body;
     const tokenAmount = new Decimal(amount);

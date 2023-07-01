@@ -7,7 +7,6 @@ import { SystemProgram, Transaction } from '@solana/web3.js';
 import { decode } from 'bs58';
 import Decimal from 'decimal.js';
 
-import { CurrencyService } from '@@currency/currency.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 
@@ -16,7 +15,6 @@ export class WithdrawalService implements OnModuleInit {
   private readonly logger = new Logger(WithdrawalService.name);
 
   constructor(
-    private readonly currencyService: CurrencyService,
     private readonly transactionService: TransactionsService,
     private readonly rpcConnectionService: RpcConnectionService,
     private readonly configService: ConfigService,
@@ -39,13 +37,6 @@ export class WithdrawalService implements OnModuleInit {
     }
 
     this._rpcConnection = this.rpcConnectionService.getRpcConnection();
-  }
-
-  async getWithdrawalData(): Promise<{ tokenToSolExchangeRate: Decimal; solanaWithdrawalFee: Decimal }> {
-    const tokenToSolExchangeRate = this.currencyService.getTokenPerSolRate();
-    const solanaWithdrawalFee = new Decimal(0.000005);
-
-    return { tokenToSolExchangeRate, solanaWithdrawalFee };
   }
 
   async withdraw(userId: string, walletPublicKey: string, tokenAmount: Decimal): Promise<string> {
