@@ -12,7 +12,6 @@ import { CurrencyModule } from './currency/currency.module';
 import { DepositModule } from './deposit/deposit.module';
 import { GameResponsiblyModule } from './game-responsibly/game-responsibly.module';
 import { HealthModule } from './health/health.module';
-import { InventoryModule } from './inventory/inventory.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { LootboxModule } from './lootbox/lootbox.module';
 import { ProfileModule } from './profile/profile.module';
@@ -56,7 +55,6 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
     }),
     AffiliatesModule,
     UserSettingsModule,
-    InventoryModule,
     WithdrawalModule,
     CurrencyModule,
     DepositModule,

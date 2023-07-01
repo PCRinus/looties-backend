@@ -6,11 +6,9 @@ const prisma = new PrismaClient();
 
 const seed = async () => {
   const userIds = await seedUsers();
-  const inventoryIds = await seedInventories(userIds);
-
   await seedAffiliateLinks(userIds);
   const lootboxIds = await seedLootboxes();
-  const itemIds = await seedItems(inventoryIds, lootboxIds);
+  const itemIds = await seedItems(userIds, lootboxIds);
   await seedLiveDrops(itemIds, lootboxIds);
 };
 
@@ -38,27 +36,6 @@ const seedUsers = async () => {
   });
 
   return userIds.map((userId) => userId.id);
-};
-
-const seedInventories = async (userIds: string[]) => {
-  await prisma.inventory.createMany({
-    data: [
-      {
-        userId: userIds[0],
-      },
-      {
-        userId: userIds[1],
-      },
-    ],
-  });
-
-  const inventoryIds = await prisma.inventory.findMany({
-    select: {
-      id: true,
-    },
-  });
-
-  return inventoryIds.map((inventoryId) => inventoryId.id);
 };
 
 const seedAffiliateLinks = async (userIds: string[]) => {
@@ -101,7 +78,7 @@ const seedLootboxes = async () => {
   return lootboxIds.map((lootboxId) => lootboxId.id);
 };
 
-const seedItems = async (inventoryIds: string[], lootboxIds: string[]) => {
+const seedItems = async (userIds: string[], lootboxIds: string[]) => {
   await prisma.item.createMany({
     data: [
       {
@@ -112,7 +89,7 @@ const seedItems = async (inventoryIds: string[], lootboxIds: string[]) => {
         type: 'NFT',
         highestPrice: 100,
         lowestPrice: 100,
-        inventoryId: inventoryIds[0],
+        userId: userIds[0],
         lootboxId: lootboxIds[0],
       },
       {
@@ -123,7 +100,7 @@ const seedItems = async (inventoryIds: string[], lootboxIds: string[]) => {
         type: 'NFT',
         highestPrice: 300,
         lowestPrice: 100,
-        inventoryId: inventoryIds[0],
+        userId: userIds[0],
         lootboxId: lootboxIds[1],
       },
       {
@@ -134,7 +111,7 @@ const seedItems = async (inventoryIds: string[], lootboxIds: string[]) => {
         type: 'NFT',
         highestPrice: 250,
         lowestPrice: 100,
-        inventoryId: inventoryIds[1],
+        userId: userIds[1],
         lootboxId: lootboxIds[1],
       },
     ],
