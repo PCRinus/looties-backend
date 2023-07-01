@@ -16,7 +16,12 @@ import { UnlikeMessageDto } from './dtos/unlike-message.to';
 
 @UsePipes(new ValidationPipe())
 @UseGuards(WsGuard)
-@WebSocketGateway({ namespace: 'chat', cors: true })
+@WebSocketGateway({
+  namespace: 'chat',
+  cors: {
+    origin: ['http://localhost:8000', 'https://looties-frontend-w3sd7.ondigitalocean.app/'],
+  },
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private readonly server: Server;

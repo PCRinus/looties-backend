@@ -7,9 +7,14 @@ import { AppModule } from './app.module';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const module: any;
 
+const LOCAL_FRONTEND_URL = 'http://localhost:8000';
+const DEV_FRONTEND_URL = 'https://looties-frontend-w3sd7.ondigitalocean.app/';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true,
+    cors: {
+      origin: [LOCAL_FRONTEND_URL, DEV_FRONTEND_URL],
+    },
   });
 
   app.useGlobalPipes(

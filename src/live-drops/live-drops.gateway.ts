@@ -11,7 +11,12 @@ import { UserSettingsService } from '@@user-settings/user-settings.service';
 
 @UsePipes(new ValidationPipe())
 @UseGuards(WsGuard)
-@WebSocketGateway({ namespace: 'live-drops', cors: true })
+@WebSocketGateway({
+  namespace: 'live-drops',
+  cors: {
+    origin: ['http://localhost:8000', 'https://looties-frontend-w3sd7.ondigitalocean.app/'],
+  },
+})
 export class LiveDropsGateway implements OnGatewayConnection {
   @WebSocketServer()
   private readonly server: Server;
