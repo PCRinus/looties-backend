@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import type { User } from '@prisma/client';
-import { log } from 'console';
 import { generate } from 'referral-codes';
+import { v4 as uuidv4 } from 'uuid';
 
 import { PrismaService } from '@@shared/prisma.service';
 
@@ -58,41 +58,47 @@ export class UserService {
       },
     });
 
-    log('existingUser', existingUser);
-
-    const formattedWalletPublicKey = `${walletPublicKey.slice(0, 5)}...${walletPublicKey.slice(-5)}`;
-
-    if (!existingUser) {
-      try {
-        const newUser = await this.prisma.user.create({
-          data: {
-            walletAddress: walletPublicKey,
-            profile: {
-              create: {
-                userName: formattedWalletPublicKey,
-              },
-            },
-            referrer: {
-              create: {
-                referralCode: generate({
-                  length: 8,
-                  count: 1,
-                  prefix: 'looties-',
-                })[0],
-              },
-            },
-            UserSettings: {
-              create: {},
-            },
-          },
-        });
-
-        return newUser;
-      } catch (error) {
-        throw new InternalServerErrorException(error);
-      }
+    if (existingUser) {
+      return existingUser;
     }
 
-    return existingUser;
+    const userId = uuidv4();
+    const formattedWalletPublicKey = `${walletPublicKey.slice(0, 5)}...${walletPublicKey.slice(-5)}`;
+    try {
+      const newUser = await this.prisma.user.create({
+        data: {
+          id: userId,
+          walletAddress: walletPublicKey,
+          profile: {
+            create: {
+              userName: formattedWalletPublicKey,
+            },
+          },
+          items: {
+            create: {
+              type: 'TOKEN',
+              amount: '0',
+              name: `tokens_${userId}`,
+            },
+          },
+          referrer: {
+            create: {
+              referralCode: generate({
+                length: 8,
+                count: 1,
+                prefix: 'looties-',
+              })[0],
+            },
+          },
+          UserSettings: {
+            create: {},
+          },
+        },
+      });
+
+      return newUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }
