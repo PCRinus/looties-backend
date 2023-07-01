@@ -15,12 +15,12 @@
       "@@health/*": ["./src/health/*"],
       "@@live-drops/*": ["./src/live-drops/*"],
       "@@profile/*": ["./src/profile/*"],
+      "@@rpc-connection/*": ["./src/rpc-connection/*"],
       "@@shared/*": ["./src/shared/*"],
       "@@transactions/*": ["./src/transactions/*"],
       "@@user/*": ["./src/user/*"],
       "@@user-settings/*": ["./src/user-settings/*"],
-      "@@withdrawal/*": ["./src/withdrawal/*"],
-      "@@rpc-connection/*": ["./src/rpc-connection/*"]
+      "@@withdrawal/*": ["./src/withdrawal/*"]
     }
   }
 }
