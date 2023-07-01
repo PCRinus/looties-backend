@@ -33,12 +33,11 @@ describe('ItemService', () => {
   const mockItem: Item = {
     id: 'mockId',
     name: 'mockName',
-    details: 'mockDetails',
     type: 'NFT',
-    dropChance: new Decimal(0.5),
     price: new Decimal(100),
     lowestPrice: new Decimal(100),
     highestPrice: new Decimal(100),
+    amount: 1,
     lootboxId: 'mockLootboxId',
     userId: 'mockInventoryId',
     createdAt: new Date(),
@@ -53,11 +52,10 @@ describe('ItemService', () => {
     });
 
     it('should return the item live drop data', async () => {
-      const { id, name, dropChance, price, lootboxId, createdAt } = mockItem;
+      const { id, name, price, lootboxId, createdAt } = mockItem;
       prisma.item.findUnique.mockResolvedValue({
         id,
         name,
-        dropChance,
         price,
         lootboxId,
         createdAt,
@@ -66,7 +64,6 @@ describe('ItemService', () => {
       await expect(itemService.selectItemLiveDropData('id')).resolves.toEqual({
         id: mockItem.id,
         name: mockItem.name,
-        dropChance: mockItem.dropChance,
         price: mockItem.price,
         lootboxId: mockItem.lootboxId,
         createdAt: mockItem.createdAt,
@@ -82,12 +79,11 @@ describe('ItemService', () => {
     });
 
     it('should return the items live drop data', async () => {
-      const { id, name, dropChance, price, lootboxId, createdAt } = mockItem;
+      const { id, name, price, lootboxId, createdAt } = mockItem;
       prisma.item.findMany.mockResolvedValue([
         {
           id,
           name,
-          dropChance,
           price,
           lootboxId,
           createdAt,
@@ -98,7 +94,6 @@ describe('ItemService', () => {
         {
           id: mockItem.id,
           name: mockItem.name,
-          dropChance: mockItem.dropChance,
           price: mockItem.price,
           lootboxId: mockItem.lootboxId,
           createdAt: mockItem.createdAt,

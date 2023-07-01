@@ -69,12 +69,11 @@ model Profile {
 model Item {
   id           String      @id @default(uuid())
   name         String      @unique //Maybe unique? TBD
-  details      String?     @db.Text
   type         ItemsType
-  price        Decimal
-  lowestPrice  Decimal
-  highestPrice Decimal
-  dropChance   Decimal
+  price        Decimal?
+  lowestPrice  Decimal?
+  highestPrice Decimal?
+  amount       Int?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   lootbox      Lootbox?    @relation(fields: [lootboxId], references: [id])
@@ -152,11 +151,6 @@ model Affiliates {
   redeemers           User[]   @relation("Redeemers")
 }
 
-enum ItemsType {
-  NFT
-  TOKEN
-}
-
 enum TransactionType {
   DEPOSIT
   WITHDRAWAL
@@ -171,4 +165,9 @@ enum TransactionStatus {
 enum GameType {
   LOOTBOXES
   CLASSIC
+}
+
+enum ItemsType {
+  NFT
+  TOKEN
 }

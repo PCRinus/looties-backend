@@ -84,7 +84,6 @@ const seedItems = async (userIds: string[], lootboxIds: string[]) => {
       {
         id: uuidv5('item1', UUID_NAMESPACE),
         name: 'Item 1',
-        dropChance: 0.1,
         price: 100,
         type: 'NFT',
         highestPrice: 100,
@@ -95,7 +94,6 @@ const seedItems = async (userIds: string[], lootboxIds: string[]) => {
       {
         id: uuidv5('item2', UUID_NAMESPACE),
         name: 'Item 2',
-        dropChance: 0.5,
         price: 200,
         type: 'NFT',
         highestPrice: 300,
@@ -106,7 +104,6 @@ const seedItems = async (userIds: string[], lootboxIds: string[]) => {
       {
         id: uuidv5('item3', UUID_NAMESPACE),
         name: 'Item 3',
-        dropChance: 0.5,
         price: 150,
         type: 'NFT',
         highestPrice: 250,

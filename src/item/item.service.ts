@@ -7,20 +7,23 @@ import { PrismaService } from '@@shared/prisma.service';
 export class ItemService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async selectItems(): Promise<Item[]> {
-    return await this.prisma.item.findMany();
+  async selectItems(userId: string): Promise<Item[]> {
+    return await this.prisma.item.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
   async selectItemLiveDropData(
     itemId: string,
-  ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId' | 'createdAt'>> {
+  ): Promise<Pick<Item, 'id' | 'name' | 'price' | 'lootboxId' | 'createdAt'>> {
     const item = await this.prisma.item.findUnique({
       where: {
         id: itemId,
       },
       select: {
         id: true,
-        dropChance: true,
         name: true,
         price: true,
         lootboxId: true,
@@ -37,7 +40,7 @@ export class ItemService {
 
   async selectItemsLiveDropsData(
     liveDropIds: string[],
-  ): Promise<Pick<Item, 'id' | 'name' | 'dropChance' | 'price' | 'lootboxId' | 'createdAt'>[]> {
+  ): Promise<Pick<Item, 'id' | 'name' | 'price' | 'lootboxId' | 'createdAt'>[]> {
     const items = await this.prisma.item.findMany({
       where: {
         id: {
@@ -46,7 +49,6 @@ export class ItemService {
       },
       select: {
         id: true,
-        dropChance: true,
         name: true,
         price: true,
         lootboxId: true,
