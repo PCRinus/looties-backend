@@ -42,7 +42,7 @@ export class WithdrawalService implements OnModuleInit {
   }
 
   async getWithdrawalData(): Promise<{ tokenToSolExchangeRate: Decimal; solanaWithdrawalFee: Decimal }> {
-    const tokenToSolExchangeRate = await this.currencyService.getTokenToSolExchangeRate();
+    const tokenToSolExchangeRate = this.currencyService.getTokenPerSolRate();
     const solanaWithdrawalFee = new Decimal(0.000005);
 
     return { tokenToSolExchangeRate, solanaWithdrawalFee };

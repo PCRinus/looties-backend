@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import Decimal from 'decimal.js';
 import { catchError, lastValueFrom, map } from 'rxjs';
 
+const TOKENS_PER_SOL = new Decimal(1.2);
+
 type CurrencyData = {
   id: number;
   name: string;
@@ -58,8 +60,24 @@ export class CurrencyService implements OnModuleInit {
     }
   }
 
-  async getTokenToSolExchangeRate(): Promise<Decimal> {
-    return new Decimal(1.2);
+  getTokenPerSolRate(): Decimal {
+    return TOKENS_PER_SOL;
+  }
+
+  convertTokenToSol(tokenAmount: number | Decimal): Decimal {
+    if (typeof tokenAmount === 'number') {
+      return new Decimal(tokenAmount).div(TOKENS_PER_SOL);
+    }
+
+    return tokenAmount.div(TOKENS_PER_SOL);
+  }
+
+  convertSolToToken(solAmount: number | Decimal): Decimal {
+    if (typeof solAmount === 'number') {
+      return new Decimal(solAmount).mul(TOKENS_PER_SOL);
+    }
+
+    return solAmount.mul(TOKENS_PER_SOL);
   }
 
   async getSolData(): Promise<CurrencyData> {

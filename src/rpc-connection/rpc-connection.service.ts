@@ -1,7 +1,8 @@
 import type { OnModuleInit } from '@nestjs/common';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Connection } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import Decimal from 'decimal.js';
 
 /**
  * The number of blocks before a blockhash expires
@@ -33,6 +34,12 @@ export class RpcConnectionService implements OnModuleInit {
 
   getRpcConnection(): Connection {
     return this._rpcConnection;
+  }
+
+  convertLamportsToSol(lamports: number): Decimal {
+    const solAmount = new Decimal(lamports / LAMPORTS_PER_SOL);
+
+    return solAmount;
   }
 
   async isTransactionValid(txHash: string, lastValidBlockHeight: number): Promise<boolean> {
