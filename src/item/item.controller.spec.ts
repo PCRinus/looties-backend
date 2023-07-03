@@ -1,3 +1,5 @@
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -11,7 +13,7 @@ describe('ItemController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [SharedModule],
+      imports: [SharedModule, JwtModule, ConfigModule],
       controllers: [ItemController],
       providers: [ItemService],
     }).compile();

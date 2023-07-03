@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
+import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { SharedModule } from '@@shared/shared.module';
 import { TransactionsService } from '@@transactions/transactions.service';
@@ -14,7 +15,7 @@ describe('WithdrawalService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule, HttpModule, ConfigModule],
-      providers: [WithdrawalService, TransactionsService, RpcConnectionService],
+      providers: [WithdrawalService, TransactionsService, RpcConnectionService, ItemService],
     }).compile();
 
     service = module.get<WithdrawalService>(WithdrawalService);

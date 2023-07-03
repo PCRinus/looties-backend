@@ -37,7 +37,7 @@ describe('ItemService', () => {
     price: new Decimal(100),
     lowestPrice: new Decimal(100),
     highestPrice: new Decimal(100),
-    amount: 1,
+    amount: new Decimal(1),
     lootboxId: 'mockLootboxId',
     userId: 'mockInventoryId',
     createdAt: new Date(),
