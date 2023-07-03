@@ -4,7 +4,8 @@ import type Decimal from 'decimal.js';
 
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { DepositService } from '@@deposit/deposit.service';
-import { CreateDepositDto } from '@@deposit/dtos/create-deposit.dto';
+import type { CreateNftDepositDto } from '@@deposit/dtos/create-nft-deposit.dto';
+import { CreateTokenDepositDto } from '@@deposit/dtos/create-token-deposit.dto';
 
 @ApiTags('Deposit')
 @ApiBearerAuth()
@@ -14,10 +15,15 @@ export class DepositController {
   constructor(private readonly depositService: DepositService) {}
 
   @Post(':userId/sol')
-  async depositSol(@Param('userId') userId: string, @Body() body: CreateDepositDto): Promise<Decimal> {
+  async depositSol(@Param('userId') userId: string, @Body() body: CreateTokenDepositDto): Promise<Decimal> {
     const { txHash, lamports } = body;
 
     return await this.depositService.depositSol(userId, txHash, lamports);
+  }
+
+  @Post(':userId/nft')
+  async depositNft(@Param('userId') userId: string, @Body() body: CreateNftDepositDto[]): Promise<void> {
+    await this.depositService.depositNft(userId, body);
   }
 
   /**

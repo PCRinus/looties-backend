@@ -7,6 +7,11 @@ import { CurrencyService } from '@@currency/currency.service';
 import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 
+type SignedNftTransactions = {
+  txHash: string;
+  mintAddress: string;
+};
+
 @Injectable()
 export class DepositService implements OnModuleInit {
   private readonly logger = new Logger(DepositService.name);
@@ -40,5 +45,9 @@ export class DepositService implements OnModuleInit {
     await this.itemService.depositTokens(userId, tokenAmount);
 
     return tokenAmount;
+  }
+
+  async depositNft(userId: string, payload: SignedNftTransactions[]): Promise<void> {
+    this.logger.log(`Deposit ${payload.length} NFTs for user ${userId}`);
   }
 }
