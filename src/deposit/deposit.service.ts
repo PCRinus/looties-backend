@@ -4,15 +4,15 @@ import type { Connection } from '@solana/web3.js';
 import type Decimal from 'decimal.js';
 
 import { CurrencyService } from '@@currency/currency.service';
+import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
-import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
 export class DepositService implements OnModuleInit {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly rpcConnectionService: RpcConnectionService,
     private readonly currencyService: CurrencyService,
+    private readonly itemService: ItemService,
   ) {}
 
   private _rpcConnection: Connection;
@@ -32,6 +32,8 @@ export class DepositService implements OnModuleInit {
 
     const solAmount = this.rpcConnectionService.convertLamportsToSol(lamports);
     const tokenAmount = this.currencyService.convertSolToToken(solAmount);
+
+    await this.itemService.depositTokens(userId, tokenAmount);
 
     return tokenAmount;
   }
