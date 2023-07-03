@@ -59,7 +59,6 @@ export class RpcConnectionService implements OnModuleInit {
         this._logger.log(`Transaction Success. Elapsed time: ${elapsed} seconds.`);
         //TODO: change cluster based on current environment
         this._logger.log(`https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
-
         return true;
       }
 
@@ -71,6 +70,8 @@ export class RpcConnectionService implements OnModuleInit {
         const elapsed = (endTime.getTime() - startTime.getTime()) / 1000;
         this._logger.log(`Blockhash has expired. Elapsed time: ${elapsed} seconds.`);
         // (add your own logic to Fetch a new blockhash and resend the transaction or throw an error)
+
+        this._logger.error(`Transaction ${txHash} is not valid`);
         return false;
       }
 

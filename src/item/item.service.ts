@@ -32,32 +32,23 @@ export class ItemService {
     return tokens.amount ?? new Decimal(0);
   }
 
-  async depositTokens(
-    userId: string,
-    amount: Decimal,
-  ): Promise<Pick<Item, 'amount' | 'type' | 'name' | 'createdAt' | 'updatedAt'>> {
+  async depositTokens(userId: string, amount: Decimal): Promise<void> {
+    this.logger.log(`Depositing ${amount} tokens for user ${userId}...`);
+
     try {
-      return await this.prisma.item.upsert({
+      await this.prisma.item.upsert({
         where: {
-          id: userId,
           name: `tokens_${userId}`,
-        },
-        update: {
-          amount: {
-            increment: amount,
-          },
         },
         create: {
           type: 'TOKEN',
           name: `tokens_${userId}`,
           amount,
         },
-        select: {
-          amount: true,
-          type: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
+        update: {
+          amount: {
+            increment: amount,
+          },
         },
       });
     } catch (error) {
@@ -69,7 +60,6 @@ export class ItemService {
     try {
       await this.prisma.item.update({
         where: {
-          id: userId,
           name: `tokens_${userId}`,
         },
         data: {

@@ -1,5 +1,5 @@
 import type { OnModuleInit } from '@nestjs/common';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import type { Connection } from '@solana/web3.js';
 import type Decimal from 'decimal.js';
 
@@ -9,6 +9,8 @@ import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 
 @Injectable()
 export class DepositService implements OnModuleInit {
+  private readonly logger = new Logger(DepositService.name);
+
   constructor(
     private readonly rpcConnectionService: RpcConnectionService,
     private readonly currencyService: CurrencyService,
@@ -22,6 +24,8 @@ export class DepositService implements OnModuleInit {
   }
 
   async depositSol(userId: string, txHash: string, lamports: number): Promise<Decimal> {
+    this.logger.log(`Deposit ${lamports} lamports for user ${userId}`);
+
     const { lastValidBlockHeight } = await this._rpcConnection.getLatestBlockhash();
 
     const isTransactionValid = await this.rpcConnectionService.isTransactionValid(txHash, lastValidBlockHeight);
