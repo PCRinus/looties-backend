@@ -13,8 +13,9 @@ import { UserSettingsService } from '@@user-settings/user-settings.service';
 @UseGuards(WsGuard)
 @WebSocketGateway({
   namespace: 'live-drops',
+  //TODO: add trusted origins
   cors: {
-    origin: ['http://localhost:8000', 'https://looties-frontend-w3sd7.ondigitalocean.app/'],
+    origin: '*',
   },
 })
 export class LiveDropsGateway implements OnGatewayConnection {

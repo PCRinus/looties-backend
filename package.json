@@ -8,6 +8,7 @@
   "scripts": {
     "watch": "npx -p typescript tsc -w",
     "build": "nest build",
+    "build:migrate": "npx prisma migrate deploy && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch",
