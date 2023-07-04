@@ -114,10 +114,6 @@ export class ItemService {
       },
     });
 
-    if (!items.length) {
-      throw new NotFoundException('Item data not found');
-    }
-
     return items;
   }
 
