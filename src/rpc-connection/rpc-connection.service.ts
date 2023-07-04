@@ -36,6 +36,10 @@ export class RpcConnectionService implements OnModuleInit {
     return this._rpcConnection;
   }
 
+  async getLatestBlockhash(): Promise<{ blockhash: string; lastValidBlockHeight: number }> {
+    return await this._rpcConnection.getLatestBlockhash();
+  }
+
   convertLamportsToSol(lamports: number): Decimal {
     const solAmount = new Decimal(lamports / LAMPORTS_PER_SOL);
 

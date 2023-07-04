@@ -52,8 +52,7 @@ export class WithdrawalService implements OnModuleInit {
     const signature = await this.createWithdrawal(walletPublicKey, tokenAmount, transactionId);
     this.logger.log(`Withdrawal created with signature ${signature}`);
 
-    await this.transactionService.updateTransaction({
-      transactionId,
+    await this.transactionService.updateTransaction(transactionId, {
       status: 'APPROVED',
       transactionHash: signature,
       coinsAmount: tokenAmount,
@@ -86,7 +85,10 @@ export class WithdrawalService implements OnModuleInit {
   }
 
   private async createWithdrawalTransaction(userId: string, tokenAmount: Decimal): Promise<number> {
-    return await this.transactionService.createNewTransaction(userId, 'WITHDRAWAL', tokenAmount);
+    return await this.transactionService.createNewTransaction(userId, {
+      transactionType: 'WITHDRAWAL',
+      coinsAmount: tokenAmount,
+    });
   }
 
   private async createWithdrawal(

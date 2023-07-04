@@ -1,12 +1,17 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import type { Transactions, TransactionStatus } from '@prisma/client';
+import type { Transactions, TransactionStatus, TransactionType } from '@prisma/client';
 import type Decimal from 'decimal.js';
 
 import { PrismaService } from '@@shared/prisma.service';
 import type { TransactionTypes } from '@@transactions/transactions.controller';
 
+type NewTransaction = {
+  transactionType: TransactionType;
+  coinsAmount?: Decimal;
+  nftName?: string;
+};
+
 type UpdateTransaction = {
-  transactionId: number;
   status: TransactionStatus;
   transactionHash?: string;
   coinsAmount?: Decimal;
@@ -16,12 +21,8 @@ type UpdateTransaction = {
 export class TransactionsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createNewTransaction(
-    userId: string,
-    transactionType: TransactionTypes,
-    coinsAmount?: Decimal,
-    nftName?: string,
-  ): Promise<number> {
+  async createNewTransaction(userId: string, payload: NewTransaction): Promise<number> {
+    const { transactionType, coinsAmount, nftName } = payload;
     try {
       const { id } = await this.prismaService.transactions.create({
         data: {
@@ -56,8 +57,8 @@ export class TransactionsService {
     }
   }
 
-  async updateTransaction(updatedTransaction: UpdateTransaction): Promise<void> {
-    const { transactionId, status, transactionHash, coinsAmount } = updatedTransaction;
+  async updateTransaction(transactionId: number, updatedTransaction: UpdateTransaction): Promise<void> {
+    const { status, transactionHash, coinsAmount } = updatedTransaction;
     try {
       await this.prismaService.transactions.update({
         where: {
