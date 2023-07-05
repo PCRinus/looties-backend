@@ -14,6 +14,8 @@
       "@@item/*": ["./src/item/*"],
       "@@health/*": ["./src/health/*"],
       "@@live-drops/*": ["./src/live-drops/*"],
+      "@@lootbox/*": ["./src/lootbox/*"],
+      "@@nft-metadata/*": ["./src/nft-metadata/*"],
       "@@profile/*": ["./src/profile/*"],
       "@@rpc-connection/*": ["./src/rpc-connection/*"],
       "@@shared/*": ["./src/shared/*"],
