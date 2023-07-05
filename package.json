@@ -28,6 +28,7 @@
     "prisma:migrate:dev": "npx prisma migrate dev"
   },
   "dependencies": {
+    "@metaplex-foundation/js": "^0.19.4",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
