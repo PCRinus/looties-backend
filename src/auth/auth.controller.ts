@@ -13,10 +13,7 @@ export class AuthController {
   @Post('connect-wallet')
   async connectWallet(@Body() payload: ConnectWalletDto): Promise<string> {
     const { walletPublicKey } = payload;
-    console.log('walletPublicKey', walletPublicKey);
     const user = await this.userService.getOrCreateUserByWalletPublicKey(walletPublicKey);
-
-    console.log('user', user);
 
     return this.authService.generateJwt(user.walletAddress, user.id);
   }

@@ -21,7 +21,6 @@ export class TransactionsController {
     @Param('userId') userId: string,
     @Query('transactionType') transactionType: TransactionTypes,
   ): Promise<Transaction[]> {
-    console.log('query', transactionType);
     return await this.transactionsService.getTransactionsByUserIdAndType(userId, transactionType);
   }
 }
