@@ -1,13 +1,15 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { TokensService } from './tokens.service';
+import { SharedModule } from '@@shared/shared.module';
+import { TokensService } from '@@tokens/tokens.service';
 
 describe('TokensService', () => {
   let service: TokensService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [SharedModule],
       providers: [TokensService],
     }).compile();
 

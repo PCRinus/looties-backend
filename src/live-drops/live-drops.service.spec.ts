@@ -30,6 +30,10 @@ describe('LiveDropsService', () => {
     prisma = module.get(PrismaService);
   });
 
+  it('should be defined', () => {
+    expect(liveDropsService).toBeDefined();
+  });
+
   // TODO: Fix tests
   // describe('getDrops', () => {
   //   it('should return am empty list if no live drops are found', async () => {
