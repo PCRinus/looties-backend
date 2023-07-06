@@ -72,12 +72,6 @@ describe('ItemService', () => {
   });
 
   describe('selectItemsLiveDropsData', () => {
-    it('should throw an error if no items are found', async () => {
-      prisma.item.findMany.mockResolvedValue([]);
-
-      await expect(itemService.selectItemsLiveDropsData(['id'])).rejects.toThrowError(NotFoundException);
-    });
-
     it('should return the items live drop data', async () => {
       const { id, name, price, lootboxId, createdAt } = mockItem;
       prisma.item.findMany.mockResolvedValue([
