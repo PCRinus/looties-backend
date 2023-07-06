@@ -13,12 +13,13 @@ export class LiveDropsService {
     });
   }
 
-  async saveDropData(itemId: string, lootboxId: string): Promise<LiveDrops> {
-    return await this.prisma.liveDrops.create({
-      data: {
-        itemId,
-        lootboxId,
-      },
-    });
-  }
+  // TODO
+  // async saveDropData(itemId: string, lootboxId: string): Promise<LiveDrops> {
+  //   return await this.prisma.liveDrops.create({
+  //     data: {
+  //       itemId,
+  //       lootboxId,
+  //     },
+  //   });
+  // }
 }

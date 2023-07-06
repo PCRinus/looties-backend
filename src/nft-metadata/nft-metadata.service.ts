@@ -1,6 +1,7 @@
+import type { Nft } from '@metaplex-foundation/js';
 import { Metaplex } from '@metaplex-foundation/js';
 import type { OnModuleInit } from '@nestjs/common';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import type { Connection, PublicKey } from '@solana/web3.js';
 
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
@@ -19,10 +20,20 @@ export class NftMetadataService implements OnModuleInit {
     this._metaplex = new Metaplex(this._connection);
   }
 
-  async getNftMetadata(mintAddress: PublicKey) {
+  async getNftMetadata(mintAddress: PublicKey): Promise<Nft> {
     this.logger.log(`Fetching NFT metadata for mint ${mintAddress.toBase58()}...`);
-    const metadata = await this._metaplex.nfts().findByMint({ mintAddress });
+    const nftMetadata = await this._metaplex.nfts().findByMint({ mintAddress });
 
-    return metadata;
+    if (nftMetadata.model !== 'nft') {
+      throw new BadRequestException(`Mint ${mintAddress.toBase58()} is not an NFT`);
+    }
+
+    if ('token' in nftMetadata) {
+      throw new BadRequestException(`Mint ${mintAddress.toBase58()} is not an NFT, it also has a token attached`);
+    }
+
+    this.logger.log(`Fetched NFT metadata for mint ${mintAddress.toBase58()}`);
+
+    return nftMetadata;
   }
 }

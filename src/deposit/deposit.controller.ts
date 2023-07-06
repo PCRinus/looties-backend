@@ -23,7 +23,7 @@ export class DepositController {
 
   @Post(':userId/nft')
   async depositNft(@Param('userId') userId: string, @Body() body: CreateNftDepositDto[]): Promise<void> {
-    await this.depositService.depositNft(userId, body);
+    await this.depositService.depositNfts(userId, body);
   }
 
   /**

@@ -7,9 +7,9 @@ import { Test } from '@nestjs/testing';
 import { CurrencyService } from '@@currency/currency.service';
 import { DepositController } from '@@deposit/deposit.controller';
 import { DepositService } from '@@deposit/deposit.service';
-import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { SharedModule } from '@@shared/shared.module';
+import { TokensService } from '@@tokens/tokens.service';
 
 describe('DepositController', () => {
   let controller: DepositController;
@@ -18,7 +18,7 @@ describe('DepositController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [JwtModule, ConfigModule, SharedModule, HttpModule],
       controllers: [DepositController],
-      providers: [DepositService, RpcConnectionService, CurrencyService, ItemService],
+      providers: [DepositService, RpcConnectionService, CurrencyService, TokensService],
     }).compile();
 
     controller = module.get<DepositController>(DepositController);

@@ -74,11 +74,9 @@ export class UserService {
               userName: formattedWalletPublicKey,
             },
           },
-          items: {
+          tokens: {
             create: {
-              type: 'TOKEN',
               amount: '0',
-              name: `tokens_${userId}`,
             },
           },
           referrer: {
@@ -90,7 +88,7 @@ export class UserService {
               })[0],
             },
           },
-          UserSettings: {
+          userSettings: {
             create: {},
           },
         },

@@ -1,11 +1,13 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import type { Nfts } from '@prisma/client';
 import { PublicKey } from '@solana/web3.js';
 import type Decimal from 'decimal.js';
 
 import { CurrencyService } from '@@currency/currency.service';
-import { ItemService } from '@@item/item.service';
+import { NftService } from '@@nft/nft.service';
 import { NftMetadataService } from '@@nft-metadata/nft-metadata.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
+import { TokensService } from '@@tokens/tokens.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 
 type SignedNftTransactions = {
@@ -20,8 +22,9 @@ export class DepositService {
   constructor(
     private readonly rpcConnectionService: RpcConnectionService,
     private readonly currencyService: CurrencyService,
-    private readonly itemService: ItemService,
+    private readonly tokensService: TokensService,
     private readonly transactionsService: TransactionsService,
+    private readonly nftService: NftService,
     private readonly nftMetadataService: NftMetadataService,
   ) {}
 
@@ -33,7 +36,6 @@ export class DepositService {
     });
 
     const { lastValidBlockHeight } = await this.rpcConnectionService.getLatestBlockhash();
-
     const isTransactionValid = await this.rpcConnectionService.isTransactionValid(txHash, lastValidBlockHeight);
     if (!isTransactionValid) {
       throw new InternalServerErrorException(`Transaction ${txHash} is not valid`);
@@ -42,14 +44,16 @@ export class DepositService {
     const solAmount = this.rpcConnectionService.convertLamportsToSol(lamports);
     const tokenAmount = this.currencyService.convertSolToToken(solAmount);
 
-    await this.itemService.depositTokens(userId, tokenAmount);
+    await this.tokensService.deposit(userId, tokenAmount);
     await this.transactionsService.updateTransaction(newTransactionId, { status: 'APPROVED', transactionHash: txHash });
 
     return tokenAmount;
   }
 
-  async depositNft(userId: string, payload: SignedNftTransactions[]): Promise<void> {
-    this.logger.log(`Depositing NFTs for user ${userId}`);
+  async depositNfts(userId: string, payload: SignedNftTransactions[]): Promise<Array<Nfts>> {
+    this.logger.log(`Depositing ${payload.length} NFTs for user ${userId}`);
+
+    const depositedNftIds = new Array<Nfts>();
 
     for await (const nftTransaction of payload) {
       const { txHash } = nftTransaction;
@@ -59,20 +63,36 @@ export class DepositService {
         continue;
       }
 
+      this.logger.log(`Processing transaction ${txHash}, NFT mint ${nftTransaction.mintAddress}...`);
+
+      const nftDepositTransactionId = await this.transactionsService.createNewTransaction(userId, {
+        transactionType: 'DEPOSIT',
+        transactionHash: txHash,
+      });
+
       const mintPublicKey = new PublicKey(nftTransaction.mintAddress);
 
       const { lastValidBlockHeight } = await this.rpcConnectionService.getLatestBlockhash();
-
       const isTransactionValid = await this.rpcConnectionService.isTransactionValid(txHash, lastValidBlockHeight);
       if (!isTransactionValid) {
+        await this.transactionsService.updateTransactionStatus(nftDepositTransactionId, 'DECLINED');
         throw new InternalServerErrorException(`Transaction ${txHash} is not valid`);
       }
 
       const nftMetadata = await this.nftMetadataService.getNftMetadata(mintPublicKey);
 
-      this.logger.log(nftMetadata);
-
       //save NFTs in db, and return the new Ids
+
+      const depositedNft = await this.nftService.deposit(userId, nftMetadata);
+      this.transactionsService.updateTransaction(nftDepositTransactionId, {
+        status: 'APPROVED',
+        transactionHash: txHash,
+        nftName: depositedNft.name,
+      });
+
+      depositedNftIds.push(depositedNft);
     }
+
+    return depositedNftIds;
   }
 }

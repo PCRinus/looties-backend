@@ -7,8 +7,8 @@ import { SystemProgram, Transaction } from '@solana/web3.js';
 import { decode } from 'bs58';
 import Decimal from 'decimal.js';
 
-import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
+import { TokensService } from '@@tokens/tokens.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class WithdrawalService implements OnModuleInit {
   constructor(
     private readonly transactionService: TransactionsService,
     private readonly rpcConnectionService: RpcConnectionService,
-    private readonly itemService: ItemService,
+    private readonly tokensService: TokensService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -60,7 +60,7 @@ export class WithdrawalService implements OnModuleInit {
     this.logger.log(`Transaction ${transactionId} updated with status APPROVED and transaction hash ${signature}`);
 
     this.logger.log('Withdrawing tokens from user balance...');
-    await this.itemService.withdrawTokens(userId, tokenAmount);
+    await this.tokensService.withdraw(userId, tokenAmount);
     this.logger.log(`${tokenAmount} tokens withdrawn from user ${userId} balance`);
 
     return signature;
@@ -78,7 +78,7 @@ export class WithdrawalService implements OnModuleInit {
       throw new BadRequestException('Token amount is greater than max withdrawal amount');
     }
 
-    const tokenBalance = await this.itemService.getTokensBalance(userId);
+    const tokenBalance = await this.tokensService.getBalance(userId);
     if (tokenBalance.lessThan(tokenAmount)) {
       throw new BadRequestException('User does not have enough tokens to withdraw');
     }

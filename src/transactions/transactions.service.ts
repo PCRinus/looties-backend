@@ -7,14 +7,16 @@ import type { TransactionTypes } from '@@transactions/transactions.controller';
 
 type NewTransaction = {
   transactionType: TransactionType;
+  transactionHash?: string;
   coinsAmount?: Decimal;
   nftName?: string;
 };
 
 type UpdateTransaction = {
-  status: TransactionStatus;
   transactionHash?: string;
+  status: TransactionStatus;
   coinsAmount?: Decimal;
+  nftName?: string;
 };
 
 @Injectable()
@@ -30,6 +32,7 @@ export class TransactionsService {
           userId,
           coinsAmount,
           nftName,
+          status: 'PENDING',
         },
         select: {
           id: true,

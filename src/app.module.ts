@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 import { GameHistoryModule } from '@@game-history/game-history.module';
-import { ItemModule } from '@@item/item.module';
 
 import { AffiliatesModule } from './affiliates/affiliates.module';
 import { AuthModule } from './auth/auth.module';
@@ -14,20 +13,21 @@ import { GameResponsiblyModule } from './game-responsibly/game-responsibly.modul
 import { HealthModule } from './health/health.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { LootboxModule } from './lootbox/lootbox.module';
+import { NftMetadataModule } from './nft-metadata/nft-metadata.module';
 import { ProfileModule } from './profile/profile.module';
 import { RpcConnectionModule } from './rpc-connection/rpc-connection.module';
 import { SharedModule } from './shared/shared.module';
+import { TokensModule } from './tokens/tokens.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
-import { NftMetadataModule } from './nft-metadata/nft-metadata.module';
+import { NftModule } from './nft/nft.module';
 
 @Module({
   imports: [
     HealthModule,
     AuthModule,
-    ItemModule,
     LootboxModule,
     ChatModule,
     ProfileModule,
@@ -61,6 +61,8 @@ import { NftMetadataModule } from './nft-metadata/nft-metadata.module';
     DepositModule,
     RpcConnectionModule,
     NftMetadataModule,
+    TokensModule,
+    NftModule,
   ],
 })
 export class AppModule {}

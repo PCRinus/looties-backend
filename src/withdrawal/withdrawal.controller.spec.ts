@@ -4,9 +4,9 @@ import { JwtModule } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { ItemService } from '@@item/item.service';
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { SharedModule } from '@@shared/shared.module';
+import { TokensService } from '@@tokens/tokens.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 import { UserService } from '@@user/user.service';
 import { WithdrawalController } from '@@withdrawal/withdrawal.controller';
@@ -19,7 +19,7 @@ describe('WithdrawalController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule, HttpModule, JwtModule, ConfigModule],
       controllers: [WithdrawalController],
-      providers: [WithdrawalService, TransactionsService, UserService, RpcConnectionService, ItemService],
+      providers: [WithdrawalService, TransactionsService, UserService, RpcConnectionService, TokensService],
     }).compile();
 
     controller = module.get<WithdrawalController>(WithdrawalController);
