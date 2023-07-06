@@ -8,7 +8,7 @@ import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
 import { UserSettingsService } from '@@user-settings/user-settings.service';
 
-type ProfileCoreData = {
+type ProfileCoreDo = {
   userName: string | null;
   level: number;
   xp: number;
@@ -28,7 +28,7 @@ export class ProfileController {
   @ApiParam({ name: 'userId', description: 'The user ID of the profile to retrieve' })
   @ApiBearerAuth()
   @Get(':userId')
-  async getAuthenticatedUserProfile(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
+  async getAuthenticatedUserProfile(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreDo> {
     const profile = await this.profileService.getProfileStats(userId, false);
 
     return profile;
@@ -37,7 +37,7 @@ export class ProfileController {
   @ApiParam({ name: 'userId', description: 'The user ID of the profile card to retrieve' })
   @Public()
   @Get(':userId/modal')
-  async getProfileModalData(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
+  async getProfileModalData(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreDo> {
     const hideStats = await this.userSettingsService.isHideStatsEnabled(userId);
     const profile = await this.profileService.getProfileStats(userId, hideStats);
 
