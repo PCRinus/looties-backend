@@ -13,6 +13,7 @@ import { GameResponsiblyModule } from './game-responsibly/game-responsibly.modul
 import { HealthModule } from './health/health.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { LootboxModule } from './lootbox/lootbox.module';
+import { NftModule } from './nft/nft.module';
 import { NftMetadataModule } from './nft-metadata/nft-metadata.module';
 import { ProfileModule } from './profile/profile.module';
 import { RpcConnectionModule } from './rpc-connection/rpc-connection.module';
@@ -22,7 +23,6 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './user/user.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
-import { NftModule } from './nft/nft.module';
 
 @Module({
   imports: [
