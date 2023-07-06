@@ -26,22 +26,22 @@ export class ProfileController {
   ) {}
 
   @ApiParam({ name: 'userId', description: 'The user ID of the profile to retrieve' })
-  @Public()
+  @ApiBearerAuth()
   @Get(':userId')
-  async getProfile(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
-    const hideStats = await this.userSettingsService.isHideStatsEnabled(userId);
-    const profile = await this.profileService.getProfileStats(userId, hideStats);
+  async getAuthenticatedUserProfile(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
+    const profile = await this.profileService.getProfileStats(userId, false);
 
     return profile;
   }
 
   @ApiParam({ name: 'userId', description: 'The user ID of the profile card to retrieve' })
   @Public()
-  @Get(':userId/card')
-  async getProfileCard(@Param('userId') userId: string): Promise<ProfileCoreData> {
-    const profileCard = await this.profileService.getProfileCore(userId);
+  @Get(':userId/modal')
+  async getProfileModalData(@Param('userId') userId: string): Promise<ProfileDo | ProfileCoreData> {
+    const hideStats = await this.userSettingsService.isHideStatsEnabled(userId);
+    const profile = await this.profileService.getProfileStats(userId, hideStats);
 
-    return profileCard;
+    return profile;
   }
 
   @ApiBearerAuth()
