@@ -1,5 +1,6 @@
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import type { Nfts } from '@prisma/client';
 import type Decimal from 'decimal.js';
 
 import { AuthGuard } from '@@auth/guards/auth.guard';
@@ -22,8 +23,8 @@ export class DepositController {
   }
 
   @Post(':userId/nft')
-  async depositNft(@Param('userId') userId: string, @Body() body: CreateNftDepositDto[]): Promise<void> {
-    await this.depositService.depositNfts(userId, body);
+  async depositNft(@Param('userId') userId: string, @Body() body: CreateNftDepositDto[]): Promise<Nfts[]> {
+    return await this.depositService.depositNfts(userId, body);
   }
 
   /**

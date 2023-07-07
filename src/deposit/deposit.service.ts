@@ -53,7 +53,7 @@ export class DepositService {
   async depositNfts(userId: string, payload: SignedNftTransactions[]): Promise<Array<Nfts>> {
     this.logger.log(`Depositing ${payload.length} NFTs for user ${userId}`);
 
-    const depositedNftIds = new Array<Nfts>();
+    const depositedNfts = new Array<Nfts>();
 
     for await (const nftTransaction of payload) {
       const { txHash } = nftTransaction;
@@ -76,12 +76,12 @@ export class DepositService {
       const isTransactionValid = await this.rpcConnectionService.isTransactionValid(txHash, lastValidBlockHeight);
       if (!isTransactionValid) {
         await this.transactionsService.updateTransactionStatus(nftDepositTransactionId, 'DECLINED');
-        throw new InternalServerErrorException(`Transaction ${txHash} is not valid`);
+        this.logger.error(`Transaction ${txHash} is not valid`);
+
+        continue;
       }
 
       const nftMetadata = await this.nftMetadataService.getNftMetadata(mintPublicKey);
-
-      //save NFTs in db, and return the new Ids
 
       const depositedNft = await this.nftService.deposit(userId, nftMetadata);
       this.transactionsService.updateTransaction(nftDepositTransactionId, {
@@ -90,9 +90,9 @@ export class DepositService {
         nftName: depositedNft.name,
       });
 
-      depositedNftIds.push(depositedNft);
+      depositedNfts.push(depositedNft);
     }
 
-    return depositedNftIds;
+    return depositedNfts;
   }
 }
