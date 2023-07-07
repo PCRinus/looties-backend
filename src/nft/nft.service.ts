@@ -10,7 +10,18 @@ export class NftService {
 
   constructor(private readonly prisma: PrismaService) {}
 
+  async getNfts(userId: string): Promise<Nfts[]> {
+    this.logger.log(`Fetching NFTs for user with id ${userId}...`);
+
+    return await this.prisma.nfts.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   async deposit(userId: string, nftMetadata: Nft): Promise<Nfts> {
+    this.logger.log(`Depositing NFT with mint id ${nftMetadata.address}...`);
     try {
       return await this.prisma.nfts.create({
         data: {
