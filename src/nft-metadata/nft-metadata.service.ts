@@ -1,4 +1,4 @@
-import type { Nft, NftClient } from '@metaplex-foundation/js';
+import type { Nft, SendAndConfirmTransactionResponse } from '@metaplex-foundation/js';
 import { Metaplex } from '@metaplex-foundation/js';
 import type { OnModuleInit } from '@nestjs/common';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
@@ -20,8 +20,25 @@ export class NftMetadataService implements OnModuleInit {
     this._metaplex = new Metaplex(this._connection);
   }
 
-  getNftClient(): NftClient {
-    return this._metaplex.nfts();
+  async transferNft(
+    mintPublicKey: PublicKey,
+    nftMetadata: Nft,
+    receiverPublicKey: PublicKey,
+  ): Promise<SendAndConfirmTransactionResponse> {
+    const { response } = await this._metaplex.nfts().transfer({
+      nftOrSft: {
+        address: mintPublicKey,
+        tokenStandard: nftMetadata.tokenStandard,
+      },
+      toOwner: receiverPublicKey,
+      authorizationDetails: nftMetadata.programmableConfig?.ruleSet
+        ? {
+            rules: nftMetadata.programmableConfig?.ruleSet,
+          }
+        : undefined,
+    });
+
+    return response;
   }
 
   async getNftMetadata(mintAddress: PublicKey): Promise<Nft> {

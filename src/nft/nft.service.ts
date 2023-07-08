@@ -54,20 +54,11 @@ export class NftService {
     const mintPublicKey = typeof mintAddress === 'string' ? new PublicKey(mintAddress) : mintAddress;
     const receiverPublicKey = typeof receiver === 'string' ? new PublicKey(receiver) : receiver;
 
-    const nftClient = this.nftMetadataService.getNftClient();
     const nftMetadata = await this.nftMetadataService.getNftMetadata(mintPublicKey);
-    const rules = nftMetadata.programmableConfig?.ruleSet;
 
-    const { response } = await nftClient.transfer({
-      nftOrSft: {
-        address: mintPublicKey,
-        tokenStandard: nftMetadata.tokenStandard,
-      },
-      toOwner: receiverPublicKey,
-      authorizationDetails: rules ? { rules } : undefined,
-    });
+    const transferResponse = await this.nftMetadataService.transferNft(mintPublicKey, nftMetadata, receiverPublicKey);
 
-    const { signature, blockhash, lastValidBlockHeight } = response;
+    const { signature, blockhash, lastValidBlockHeight } = transferResponse;
 
     return {
       signature,

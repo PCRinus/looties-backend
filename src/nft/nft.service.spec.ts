@@ -1,5 +1,6 @@
 import type { DeepMocked } from '@golevelup/ts-jest';
 import { createMock } from '@golevelup/ts-jest';
+import type { SendAndConfirmTransactionResponse } from '@metaplex-foundation/js';
 import { type Nft, PublicKey } from '@metaplex-foundation/js';
 import { InternalServerErrorException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
@@ -87,6 +88,28 @@ describe('NftService', () => {
       const result = await nftService.deposit(mockUserId, mockedNftMetadata as Nft);
 
       expect(result).toBe(mockedNft);
+    });
+  });
+
+  describe('signTransfer', () => {
+    it('should transfer an a NFT', async () => {
+      nftMetadataService.getNftMetadata.mockResolvedValue(mockedNftMetadata as Nft);
+      nftMetadataService.transferNft.mockResolvedValue({
+        signature: mockPublicKeyInput,
+        blockhash: mockPublicKeyInput,
+        lastValidBlockHeight: 123,
+      } as SendAndConfirmTransactionResponse);
+
+      //TODO
+      const mockMintAddress58 = mockPublicKeyInput;
+      const mockReceiverAddress58 = mockPublicKeyInput;
+      const result = await nftService.signTransfer(mockMintAddress58, mockReceiverAddress58);
+
+      expect(result).toMatchObject({
+        signature: mockPublicKeyInput,
+        blockhash: mockPublicKeyInput,
+        lastValidBlockHeight: 123,
+      });
     });
   });
 });
