@@ -52,6 +52,7 @@ describe('NftController', () => {
           userId: 'mockUserId',
           createdAt: new Date(),
           updatedAt: new Date(),
+          deleted: false,
         },
       ];
       nftService.getNfts.mockResolvedValue(mockedNftList);

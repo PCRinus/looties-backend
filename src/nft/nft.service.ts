@@ -24,12 +24,13 @@ export class NftService {
     return await this.prisma.nfts.findMany({
       where: {
         userId,
+        deleted: false,
       },
     });
   }
 
   async deposit(userId: string, nftMetadata: Nft): Promise<Nfts> {
-    this.logger.log(`Depositing NFT with mint id ${nftMetadata.address}...`);
+    this.logger.log(`Depositing NFT with address ${nftMetadata.address.toBase58()}...`);
     try {
       return await this.prisma.nfts.create({
         data: {
@@ -42,12 +43,28 @@ export class NftService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error while depositing NFT for user ${userId}`);
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        `Error while depositing NFT ${nftMetadata.address.toBase58()} for user ${userId}`,
+      );
     }
   }
 
-  async withdraw(userId: string, mintAddress: string) {
-    throw new Error('Not implemented yet');
+  async withdraw(userId: string, mintAddress: string): Promise<Nfts> {
+    this.logger.log(`Depositing NFT with mint id ${mintAddress} for user ${userId}...`);
+    try {
+      return await this.prisma.nfts.update({
+        where: {
+          mintAddress,
+        },
+        data: {
+          deleted: true,
+        },
+      });
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(`Error while withdrawing NFT ${mintAddress} for user ${userId}`);
+    }
   }
 
   async signTransfer(mintAddress: PublicKey | string, receiver: PublicKey | string): Promise<NftTransfer> {

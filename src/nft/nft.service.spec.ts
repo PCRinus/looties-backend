@@ -45,6 +45,7 @@ describe('NftService', () => {
     userId: 'mockUserId',
     createdAt: new Date(),
     updatedAt: new Date(),
+    deleted: false,
   };
   const mockedNftList: Nfts[] = [mockedNft];
 
@@ -74,12 +75,12 @@ describe('NftService', () => {
   });
 
   describe('deposit', () => {
-    it('should throw an Internal Server Error if depositing throws', async () => {
+    it('should throw an error if depositing throws', async () => {
       prisma.nfts.create = jest.fn().mockRejectedValue(undefined);
-      const result = nftService.deposit(mockUserId, {} as Nft);
+      const result = nftService.deposit(mockUserId, { address: new PublicKey(mockPublicKeyInput) } as Nft);
 
       expect(result).rejects.toThrowError(
-        new InternalServerErrorException(`Error while depositing NFT for user ${mockUserId}`),
+        new InternalServerErrorException(`Error while depositing NFT ${mockPublicKeyInput} for user ${mockUserId}`),
       );
     });
 
@@ -88,6 +89,29 @@ describe('NftService', () => {
       const result = await nftService.deposit(mockUserId, mockedNftMetadata as Nft);
 
       expect(result).toBe(mockedNft);
+    });
+  });
+
+  describe('withdraw', () => {
+    const mockMintAddress = 'mockMintAddress';
+
+    it('should throw an error if withdrawing throws', async () => {
+      prisma.nfts.update = jest.fn().mockRejectedValue(undefined);
+      const result = nftService.withdraw(mockUserId, mockMintAddress);
+
+      expect(result).rejects.toThrowError(
+        new InternalServerErrorException(`Error while withdrawing NFT ${mockMintAddress} for user ${mockUserId}`),
+      );
+    });
+
+    it('should withdraw an NFT', async () => {
+      const mockedWithdrawnNft = { ...mockedNft, deleted: true };
+
+      prisma.nfts.update = jest.fn().mockResolvedValue(mockedWithdrawnNft);
+      const result = await nftService.withdraw(mockUserId, mockMintAddress);
+
+      expect(prisma.nfts.update).toBeCalledTimes(1);
+      expect(result).toEqual(mockedWithdrawnNft);
     });
   });
 

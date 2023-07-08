@@ -139,6 +139,13 @@ export class WithdrawalService implements OnModuleInit {
           throw new Error();
         }
 
+        await this.transactionService.updateTransaction(transactionId, {
+          status: 'APPROVED',
+          transactionHash: signature,
+        });
+
+        await this.nftService.withdraw(userId, mintAddress);
+
         signatures.push(signature);
       } catch (error) {
         this.logger.error(error);
