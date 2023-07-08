@@ -1,4 +1,4 @@
-import type { Nft } from '@metaplex-foundation/js';
+import type { Nft, NftClient } from '@metaplex-foundation/js';
 import { Metaplex } from '@metaplex-foundation/js';
 import type { OnModuleInit } from '@nestjs/common';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
@@ -18,6 +18,10 @@ export class NftMetadataService implements OnModuleInit {
   onModuleInit() {
     this._connection = this.rpcConnectionService.getRpcConnection();
     this._metaplex = new Metaplex(this._connection);
+  }
+
+  getNftClient(): NftClient {
+    return this._metaplex.nfts();
   }
 
   async getNftMetadata(mintAddress: PublicKey): Promise<Nft> {

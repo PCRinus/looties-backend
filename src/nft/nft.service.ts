@@ -1,14 +1,22 @@
 import type { Nft } from '@metaplex-foundation/js';
+import { PublicKey } from '@metaplex-foundation/js';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import type { Nfts } from '@prisma/client';
 
+import { NftMetadataService } from '@@nft-metadata/nft-metadata.service';
 import { PrismaService } from '@@shared/prisma.service';
+
+type NftTransfer = {
+  signature: string;
+  blockhash: string;
+  lastValidBlockHeight: number;
+};
 
 @Injectable()
 export class NftService {
   private readonly logger = new Logger(NftService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly nftMetadataService: NftMetadataService) {}
 
   async getNfts(userId: string): Promise<Nfts[]> {
     this.logger.log(`Fetching NFTs for user with id ${userId}...`);
@@ -40,5 +48,31 @@ export class NftService {
 
   async withdraw(userId: string, mintAddress: string) {
     throw new Error('Not implemented yet');
+  }
+
+  async signTransfer(mintAddress: PublicKey | string, receiver: PublicKey | string): Promise<NftTransfer> {
+    const mintPublicKey = typeof mintAddress === 'string' ? new PublicKey(mintAddress) : mintAddress;
+    const receiverPublicKey = typeof receiver === 'string' ? new PublicKey(receiver) : receiver;
+
+    const nftClient = this.nftMetadataService.getNftClient();
+    const nftMetadata = await this.nftMetadataService.getNftMetadata(mintPublicKey);
+    const rules = nftMetadata.programmableConfig?.ruleSet;
+
+    const { response } = await nftClient.transfer({
+      nftOrSft: {
+        address: mintPublicKey,
+        tokenStandard: nftMetadata.tokenStandard,
+      },
+      toOwner: receiverPublicKey,
+      authorizationDetails: rules ? { rules } : undefined,
+    });
+
+    const { signature, blockhash, lastValidBlockHeight } = response;
+
+    return {
+      signature,
+      blockhash,
+      lastValidBlockHeight,
+    };
   }
 }

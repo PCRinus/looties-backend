@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import type { Transactions, TransactionStatus, TransactionType } from '@prisma/client';
 import type Decimal from 'decimal.js';
 
@@ -9,6 +9,7 @@ type NewTransaction = {
   transactionType: TransactionType;
   transactionHash?: string;
   coinsAmount?: Decimal;
+  mintAddress?: string;
   nftName?: string;
 };
 
@@ -21,6 +22,8 @@ type UpdateTransaction = {
 
 @Injectable()
 export class TransactionsService {
+  private readonly logger = new Logger(TransactionsService.name);
+
   constructor(private readonly prismaService: PrismaService) {}
 
   async createNewTransaction(userId: string, payload: NewTransaction): Promise<number> {
@@ -38,6 +41,8 @@ export class TransactionsService {
           id: true,
         },
       });
+
+      this.logger.log(`Pending transaction created with id ${id}`);
 
       return id;
     } catch (error) {

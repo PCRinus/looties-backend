@@ -51,6 +51,8 @@ export class RpcConnectionService implements OnModuleInit {
     let txSuccess = false;
     const startTime = new Date();
 
+    this._logger.log(`Checking transaction ${txHash}...`);
+
     do {
       const { value: status } = await this._rpcConnection.getSignatureStatus(txHash);
 
@@ -93,5 +95,11 @@ export class RpcConnectionService implements OnModuleInit {
 
   private async sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async sendRawTransaction(serializedTx: Buffer): Promise<string> {
+    return await this._rpcConnection.sendRawTransaction(serializedTx, {
+      skipPreflight: true,
+    });
   }
 }
