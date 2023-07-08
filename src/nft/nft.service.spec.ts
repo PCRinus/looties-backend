@@ -76,7 +76,7 @@ describe('NftService', () => {
 
   describe('deposit', () => {
     it('should throw an error if depositing throws', async () => {
-      prisma.nfts.create = jest.fn().mockRejectedValue(undefined);
+      prisma.nfts.upsert = jest.fn().mockRejectedValue(undefined);
       const result = nftService.deposit(mockUserId, { address: new PublicKey(mockPublicKeyInput) } as Nft);
 
       expect(result).rejects.toThrowError(
@@ -85,7 +85,7 @@ describe('NftService', () => {
     });
 
     it('should deposit an NFT', async () => {
-      prisma.nfts.create = jest.fn().mockResolvedValue(mockedNft);
+      prisma.nfts.upsert = jest.fn().mockResolvedValue(mockedNft);
       const result = await nftService.deposit(mockUserId, mockedNftMetadata as Nft);
 
       expect(result).toBe(mockedNft);

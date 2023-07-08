@@ -32,14 +32,20 @@ export class NftService {
   async deposit(userId: string, nftMetadata: Nft): Promise<Nfts> {
     this.logger.log(`Depositing NFT with address ${nftMetadata.address.toBase58()}...`);
     try {
-      return await this.prisma.nfts.create({
-        data: {
+      return await this.prisma.nfts.upsert({
+        where: {
+          mintAddress: nftMetadata.address.toBase58(),
+        },
+        create: {
           userId,
           mintAddress: nftMetadata.address.toBase58(),
           name: nftMetadata.name,
           symbol: nftMetadata.symbol,
           url: nftMetadata.uri,
           price: 0,
+        },
+        update: {
+          deleted: false,
         },
       });
     } catch (error) {
