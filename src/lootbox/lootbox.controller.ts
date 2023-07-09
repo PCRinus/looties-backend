@@ -5,6 +5,7 @@ import type { Lootbox } from '@prisma/client';
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
+import type { AvailableLootboxItems } from '@@lootbox/lootbox.service';
 import { LootboxService } from '@@lootbox/lootbox.service';
 
 @ApiTags('Lootbox')
@@ -23,6 +24,11 @@ export class LootboxController {
   @Get(':userId')
   async getLootboxesForUser(@Param('userId') userId: string, @Query('page') page: number): Promise<Lootbox[]> {
     return await this.lootboxService.getLootboxesForUser(userId, page);
+  }
+
+  @Get(':userId/available-lootbox-items')
+  async getAvailableLootboxItems(@Param('userId') userId: string): Promise<AvailableLootboxItems> {
+    return await this.lootboxService.getAvailableLootboxItems(userId);
   }
 
   @Post(':userId/create-lootbox')
