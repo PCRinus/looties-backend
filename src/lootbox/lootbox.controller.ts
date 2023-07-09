@@ -1,11 +1,32 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import type { Lootbox } from '@prisma/client';
+
+import { AuthGuard } from '@@auth/guards/auth.guard';
+import { Public } from '@@auth/public.decorator';
+import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
+import { LootboxService } from '@@lootbox/lootbox.service';
 
 @ApiTags('Lootbox')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('lootbox')
 export class LootboxController {
-  @Get()
-  async getAll(): Promise<any> {
+  constructor(private readonly lootboxService: LootboxService) {}
+
+  @Public()
+  @Get('')
+  async getAllLootboxes(@Query('page') page: number): Promise<Lootbox[]> {
+    return await this.lootboxService.getAllLootboxes(page);
+  }
+
+  @Get(':userId')
+  async getLootboxesForUser(@Param('userId') userId: string, @Query('page') page: number): Promise<Lootbox[]> {
+    return await this.lootboxService.getLootboxesForUser(userId, page);
+  }
+
+  @Post(':userId/create-lootbox')
+  async createLootbox(@Param('userId') userId: string, @Body() body: CreateLootboxDto): Promise<string> {
     return 'lootbox';
   }
 }

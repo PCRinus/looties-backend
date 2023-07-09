@@ -33,6 +33,7 @@ model User {
   userSettings  UserSettings?
   tokens        Tokens?
   nfts          Nfts[]
+  lootboxes     Lootbox[]
 }
 
 model UserSettings {
@@ -97,6 +98,8 @@ model Lootbox {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   liveDrops   LiveDrops[]
+  User        User?       @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 model Transactions {
