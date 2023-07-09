@@ -28,6 +28,7 @@ export class RpcConnectionService implements OnModuleInit {
     try {
       this._rpcConnection = new Connection(rpcEndpoint);
     } catch (error) {
+      this._logger.error(error);
       throw new InternalServerErrorException(`Can't create RPC connection: ${error}`);
     }
   }
