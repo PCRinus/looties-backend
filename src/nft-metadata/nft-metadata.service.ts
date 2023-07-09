@@ -2,7 +2,7 @@ import type { Nft, SendAndConfirmTransactionResponse } from '@metaplex-foundatio
 import { Metaplex } from '@metaplex-foundation/js';
 import type { OnModuleInit } from '@nestjs/common';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import type { Connection, PublicKey } from '@solana/web3.js';
+import type { PublicKey } from '@solana/web3.js';
 
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 
@@ -12,12 +12,11 @@ export class NftMetadataService implements OnModuleInit {
 
   constructor(private readonly rpcConnectionService: RpcConnectionService) {}
 
-  private _connection: Connection;
   private _metaplex: Metaplex;
 
   onModuleInit() {
-    this._connection = this.rpcConnectionService.getRpcConnection();
-    this._metaplex = new Metaplex(this._connection);
+    const connection = this.rpcConnectionService.getRpcConnection();
+    this._metaplex = new Metaplex(connection);
   }
 
   async transferNft(
