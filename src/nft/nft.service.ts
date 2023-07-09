@@ -1,6 +1,6 @@
 import type { Nft } from '@metaplex-foundation/js';
 import { PublicKey } from '@metaplex-foundation/js';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import type { Nfts } from '@prisma/client';
 
 import { NftMetadataService } from '@@nft-metadata/nft-metadata.service';
@@ -17,6 +17,22 @@ export class NftService {
   private readonly logger = new Logger(NftService.name);
 
   constructor(private readonly prisma: PrismaService, private readonly nftMetadataService: NftMetadataService) {}
+
+  async getNft(id: string): Promise<Nfts> {
+    this.logger.log(`Fetching NFT with id ${id}`);
+
+    const nft = await this.prisma.nfts.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!nft) {
+      throw new NotFoundException(`NFT with id ${id} has not been found`);
+    }
+
+    return nft;
+  }
 
   async getNfts(userId: string): Promise<Nfts[]> {
     this.logger.log(`Fetching NFTs for user with id ${userId}...`);

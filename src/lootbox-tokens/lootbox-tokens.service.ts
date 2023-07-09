@@ -9,7 +9,7 @@ export class LootboxTokensService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async addTokensToLootbox(amount: Decimal, dropChance: Decimal, lootboxId: string): Promise<void> {
+  async addTokensToLootbox(lootboxId: string, amount: Decimal, dropChance: Decimal): Promise<void> {
     this._logger.log(`Adding ${amount} tokens to lootbox ${lootboxId}...`);
 
     try {

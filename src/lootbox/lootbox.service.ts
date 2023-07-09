@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import type { Lootbox, Nfts } from '@prisma/client';
 import type Decimal from 'decimal.js';
 
+import { LootboxNftsService } from '@@lootbox-nfts/lootbox-nfts.service';
+import { LootboxTokensService } from '@@lootbox-tokens/lootbox-tokens.service';
 import { NftService } from '@@nft/nft.service';
 import { PrismaService } from '@@shared/prisma.service';
 import { TokensService } from '@@tokens/tokens.service';
@@ -13,12 +15,27 @@ export type AvailableLootboxItems = {
   availableNfts: Pick<Nfts, 'id' | 'name' | 'price' | 'url'>[];
 };
 
+type LootboxTokensDo = {
+  id: string;
+  amount: Decimal;
+  dropChance: Decimal;
+};
+
+type LootboxNftDo = {
+  id: string;
+  dropChance: string;
+};
+
 @Injectable()
 export class LootboxService {
+  private readonly _logger = new Logger(LootboxService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly nftService: NftService,
+    private readonly lootboxNftService: LootboxNftsService,
     private readonly tokensService: TokensService,
+    private readonly lootboxTokensService: LootboxTokensService,
   ) {}
 
   async getAllLootboxes(page = 1): Promise<Lootbox[]> {
@@ -51,5 +68,51 @@ export class LootboxService {
       availableTokens,
       availableNfts,
     };
+  }
+
+  async createLootbox(
+    userId: string,
+    name: string,
+    price: Decimal,
+    tokens: LootboxTokensDo,
+    nft: LootboxNftDo,
+  ): Promise<void> {
+    if (!nft) {
+      throw new BadRequestException('An NFT is required to create a lootbox');
+    }
+
+    if (!tokens) {
+      this._logger.log(`No tokens were added in the lootbox`);
+    }
+
+    const { id: newLootboxId } = await this.prisma.lootbox.create({
+      data: {
+        userId,
+        name,
+        price,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await this.addNftToLootbox(userId, newLootboxId, nft.id, nft.dropChance);
+    await this.addTokensToLootbox(userId, newLootboxId, tokens.amount, tokens.dropChance);
+  }
+
+  private async addTokensToLootbox(
+    userId: string,
+    lootboxId: string,
+    amount: Decimal,
+    dropChance: Decimal,
+  ): Promise<void> {
+    await this.lootboxTokensService.addTokensToLootbox(lootboxId, amount, dropChance);
+    await this.tokensService.withdraw(userId, amount);
+  }
+
+  private async addNftToLootbox(userId: string, lootboxId: string, nftId: string, dropChance: string): Promise<void> {
+    const nft = await this.nftService.getNft(nftId);
+
+    await this.lootboxNftService.addNftToLootbox(lootboxId, { ...nft, dropChance });
   }
 }
