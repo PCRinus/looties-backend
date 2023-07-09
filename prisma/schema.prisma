@@ -84,14 +84,11 @@ model Nfts {
   symbol      String
   url         String
   price       Decimal
-  dropChance  Decimal?
   deleted     Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   User        User     @relation(fields: [userId], references: [id])
   userId      String
-  lootbox     Lootbox  @relation(fields: [lootboxId], references: [id])
-  lootboxId   String   @unique
 }
 
 model Lootbox {
@@ -106,7 +103,7 @@ model Lootbox {
   User        User?          @relation(fields: [userId], references: [id])
   userId      String?
   tokens      LootboxTokens?
-  nft         Nfts?
+  nft         LootboxNfts?
 }
 
 model LootboxTokens {
@@ -117,6 +114,20 @@ model LootboxTokens {
   updatedAt  DateTime @updatedAt
   lootbox    Lootbox  @relation(fields: [lootboxId], references: [id])
   lootboxId  String   @unique
+}
+
+model LootboxNfts {
+  id          String   @id @default(uuid())
+  mintAddress String   @unique
+  name        String   @unique
+  symbol      String
+  url         String
+  price       Decimal
+  dropChance  Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lootbox     Lootbox  @relation(fields: [lootboxId], references: [id])
+  lootboxId   String   @unique
 }
 
 model Transactions {

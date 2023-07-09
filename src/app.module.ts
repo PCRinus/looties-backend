@@ -13,6 +13,7 @@ import { GameResponsiblyModule } from './game-responsibly/game-responsibly.modul
 import { HealthModule } from './health/health.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
 import { LootboxModule } from './lootbox/lootbox.module';
+import { LootboxNftsModule } from './lootbox-nfts/lootbox-nfts.module';
 import { LootboxTokensModule } from './lootbox-tokens/lootbox-tokens.module';
 import { NftModule } from './nft/nft.module';
 import { NftMetadataModule } from './nft-metadata/nft-metadata.module';
@@ -65,6 +66,7 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
     TokensModule,
     NftModule,
     LootboxTokensModule,
+    LootboxNftsModule,
   ],
 })
 export class AppModule {}
