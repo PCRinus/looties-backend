@@ -69,15 +69,12 @@ model Profile {
 }
 
 model Tokens {
-  id         String   @id @default(uuid())
-  amount     Decimal  @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  dropChance Decimal?
-  User       User     @relation(fields: [userId], references: [id])
-  userId     String   @unique
-  lootbox    Lootbox  @relation(fields: [lootboxId], references: [id])
-  lootboxId  String   @unique
+  id        String   @id @default(uuid())
+  amount    Decimal  @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
 }
 
 model Nfts {
@@ -98,18 +95,28 @@ model Nfts {
 }
 
 model Lootbox {
-  id          String      @id @default(uuid())
+  id          String         @id @default(uuid())
   name        String
   price       Decimal
-  openedCount Int         @default(0)
-  deleted     Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  openedCount Int            @default(0)
+  deleted     Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   liveDrops   LiveDrops[]
-  User        User?       @relation(fields: [userId], references: [id])
+  User        User?          @relation(fields: [userId], references: [id])
   userId      String?
-  tokens      Tokens?
+  tokens      LootboxTokens?
   nft         Nfts?
+}
+
+model LootboxTokens {
+  id         String   @id @default(uuid())
+  amount     Decimal
+  dropChance Decimal
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  lootbox    Lootbox  @relation(fields: [lootboxId], references: [id])
+  lootboxId  String   @unique
 }
 
 model Transactions {
