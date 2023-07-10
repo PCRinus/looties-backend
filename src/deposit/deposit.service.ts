@@ -44,10 +44,10 @@ export class DepositService {
     const solAmount = this.rpcConnectionService.convertLamportsToSol(lamports);
     const tokenAmount = this.currencyService.convertSolToToken(solAmount);
 
-    await this.tokensService.deposit(userId, tokenAmount);
+    const totalAmount = await this.tokensService.deposit(userId, tokenAmount);
     await this.transactionsService.updateTransaction(newTransactionId, { status: 'APPROVED', transactionHash: txHash });
 
-    return tokenAmount;
+    return totalAmount;
   }
 
   async depositNfts(userId: string, payload: SignedNftTransactions[]): Promise<Array<Nfts>> {

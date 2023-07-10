@@ -16,7 +16,10 @@ export class WithdrawalController {
   constructor(private readonly withdrawalService: WithdrawalService, private readonly userService: UserService) {}
 
   @Post(':userId/sol')
-  async withdraw(@Param('userId') userId: string, @Body() body: WithdrawSolDto): Promise<string> {
+  async withdraw(
+    @Param('userId') userId: string,
+    @Body() body: WithdrawSolDto,
+  ): Promise<{ signature: string; updatedBalance: Decimal }> {
     const { amount } = body;
     const tokenAmount = new Decimal(amount);
 

@@ -26,11 +26,11 @@ export class TokensService {
     return tokens.amount ?? new Decimal(0);
   }
 
-  async deposit(userId: string, amount: Decimal) {
+  async deposit(userId: string, amount: Decimal): Promise<Decimal> {
     this.logger.log(`Depositing ${amount} tokens for user ${userId}...`);
 
     try {
-      await this.prisma.tokens.upsert({
+      const { amount: totalAmount } = await this.prisma.tokens.upsert({
         where: {
           userId,
         },
@@ -43,17 +43,22 @@ export class TokensService {
             increment: amount,
           },
         },
+        select: {
+          amount: true,
+        },
       });
+
+      return totalAmount;
     } catch (error) {
       throw new InternalServerErrorException(`Failed to deposit tokens for user id ${userId}: ${error}`);
     }
   }
 
-  async withdraw(userId: string, amount: Decimal) {
+  async withdraw(userId: string, amount: Decimal): Promise<Decimal> {
     this.logger.log(`Withdrawing ${amount} tokens for user ${userId}...`);
 
     try {
-      await this.prisma.tokens.update({
+      const { amount: totalAmount } = await this.prisma.tokens.update({
         where: {
           userId,
         },
@@ -62,7 +67,12 @@ export class TokensService {
             decrement: amount,
           },
         },
+        select: {
+          amount: true,
+        },
       });
+
+      return totalAmount;
     } catch (error) {
       throw new InternalServerErrorException(`Failed to withdraw tokens for user id ${userId}: ${error}`);
     }

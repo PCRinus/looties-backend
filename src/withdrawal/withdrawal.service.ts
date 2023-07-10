@@ -8,6 +8,11 @@ import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 import { TokensService } from '@@tokens/tokens.service';
 import { TransactionsService } from '@@transactions/transactions.service';
 
+type WithdrawTokenResult = {
+  signature: string;
+  updatedBalance: Decimal;
+};
+
 type WithdrawNftPayload = {
   id: string;
   mintAddress: string;
@@ -41,7 +46,7 @@ export class WithdrawalService implements OnModuleInit {
     }
   }
 
-  async withdrawTokens(userId: string, walletPublicKey: string, tokenAmount: Decimal): Promise<string> {
+  async withdrawTokens(userId: string, walletPublicKey: string, tokenAmount: Decimal): Promise<WithdrawTokenResult> {
     this.logger.log(
       `Token withdrawal request for user ${userId} with wallet ${walletPublicKey} for ${tokenAmount} tokens`,
     );
@@ -62,10 +67,10 @@ export class WithdrawalService implements OnModuleInit {
     });
     this.logger.log(`Transaction ${transactionId} updated with status APPROVED and transaction hash ${signature}`);
 
-    await this.tokensService.withdraw(userId, tokenAmount);
+    const updatedBalance = await this.tokensService.withdraw(userId, tokenAmount);
     this.logger.log(`${tokenAmount} tokens withdrawn from user ${userId} balance`);
 
-    return signature;
+    return { signature, updatedBalance };
   }
 
   private async checkIfUserCanWithdrawTokens(userId: string, tokenAmount: Decimal): Promise<void> {
