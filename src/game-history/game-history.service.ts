@@ -6,6 +6,7 @@ import { PrismaService } from '@@shared/prisma.service';
 @Injectable()
 export class GameHistoryService {
   private readonly logger = new Logger(GameHistoryService.name);
+  private readonly pageSize = 20;
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -14,6 +15,18 @@ export class GameHistoryService {
       where: {
         userId,
       },
+    });
+  }
+
+  async getGameHistoryOffsetPagination(userId: string, page: number): Promise<GameHistory[]> {
+    const skip = (page - 1) * this.pageSize;
+
+    return await this.prisma.gameHistory.findMany({
+      where: {
+        userId,
+      },
+      skip: skip,
+      take: this.pageSize,
     });
   }
 

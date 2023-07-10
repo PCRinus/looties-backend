@@ -116,8 +116,9 @@ model GameHistory {
   gameType  GameType
   date      DateTime @default(now())
   betAmount Decimal
-  user      User     @relation(fields: [userId], references: [id])
+  winning   String
   userId    String
+  user      User     @relation(fields: [userId], references: [id])
   // TODO: add winnings field (either token, or NFT name/address), maybe a foreign on the items
 }
 
