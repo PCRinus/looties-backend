@@ -57,7 +57,7 @@ export class NftService {
           mintAddress: nftMetadata.address.toBase58(),
           name: nftMetadata.name,
           symbol: nftMetadata.symbol,
-          url: nftMetadata.uri,
+          url: nftMetadata.json?.image ?? 'https://cdn-icons-png.flaticon.com/256/25/25333.png',
           price: 0,
         },
         update: {
