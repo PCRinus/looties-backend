@@ -36,6 +36,8 @@ export class GameHistoryService {
         data: {
           userId,
           betAmount,
+          //TODO
+          winning: 'test',
           gameType,
         },
       });
