@@ -36,7 +36,7 @@ export class LootboxController {
   @ApiBearerAuth()
   @Post(':userId/create-lootbox')
   async createLootbox(@Param('userId') userId: string, @Body() body: CreateLootboxDto): Promise<void> {
-    const { name, price, nft, tokens } = body;
+    const { name, price, nft, tokens, emptyBoxChance } = body;
     const lootboxPrice = new Decimal(price);
     const lootboxTokens = {
       id: tokens.id,
@@ -47,7 +47,20 @@ export class LootboxController {
       id: nft.id,
       dropChance: nft.dropChance,
     };
+    const lootboxEmptyBoxChance = new Decimal(emptyBoxChance);
 
-    await this.lootboxService.createLootbox(userId, name, lootboxPrice, lootboxTokens, lootboxNft);
+    await this.lootboxService.createLootbox(
+      userId,
+      name,
+      lootboxPrice,
+      lootboxTokens,
+      lootboxNft,
+      lootboxEmptyBoxChance,
+    );
+  }
+
+  @Post(':lootboxId/try-lootbox')
+  async tryLootbox(@Param('lootboxId') lootboxId: string): Promise<any> {
+    return await this.lootboxService.tryLootbox(lootboxId);
   }
 }

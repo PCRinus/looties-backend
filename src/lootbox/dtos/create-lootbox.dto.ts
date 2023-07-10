@@ -24,4 +24,8 @@ export class CreateLootboxDto {
 
   @IsNotEmpty()
   readonly nft: Nft;
+
+  @IsNotEmpty()
+  @IsDecimal()
+  emptyBoxChance: string;
 }

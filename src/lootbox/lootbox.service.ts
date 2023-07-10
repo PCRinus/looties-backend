@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import type { Lootbox, Nfts } from '@prisma/client';
-import type Decimal from 'decimal.js';
+import Decimal from 'decimal.js';
 
 import { LootboxNftsService } from '@@lootbox-nfts/lootbox-nfts.service';
 import { LootboxTokensService } from '@@lootbox-tokens/lootbox-tokens.service';
@@ -24,6 +24,11 @@ type LootboxTokensDo = {
 type LootboxNftDo = {
   id: string;
   dropChance: string;
+};
+
+type Winner = {
+  status: 'lost' | 'won';
+  data: 'token' | 'nft' | null;
 };
 
 @Injectable()
@@ -70,12 +75,72 @@ export class LootboxService {
     };
   }
 
+  async tryLootbox(lootboxId: string) {
+    const lootbox = await this.prisma.lootbox.findUnique({
+      where: {
+        id: lootboxId,
+      },
+      include: {
+        nft: true,
+        tokens: true,
+      },
+    });
+
+    if (!lootbox) {
+      throw new InternalServerErrorException(`Lootbox with id ${lootboxId} could not be found`);
+    }
+
+    const lootboxNft = lootbox.nft;
+    if (!lootboxNft) {
+      throw new Error();
+    }
+
+    const lootboxTokens = lootbox.tokens;
+    if (!lootboxTokens) {
+      throw new Error();
+    }
+
+    if (!lootboxTokens.dropChance && !lootboxNft.dropChance) {
+      throw new InternalServerErrorException(`Can't generate winner for lootbox ${lootboxId}`);
+    }
+
+    const winner = this.generateLootboxPrize(lootboxTokens.dropChance, lootboxNft.dropChance, lootbox.emptyBoxChance);
+
+    return winner.data === 'nft' ? lootboxNft : lootboxTokens;
+  }
+
+  private generateLootboxPrize(tokenDropChance: Decimal, nftDropChance: Decimal, emptyBoxChance: Decimal): Winner {
+    const randomWinningNumber = new Decimal(Math.random() * 100);
+    if (randomWinningNumber <= emptyBoxChance) {
+      return {
+        status: 'lost',
+        data: null,
+      };
+    }
+
+    const tokenDiff = randomWinningNumber.sub(tokenDropChance).abs();
+    const nftDiff = randomWinningNumber.sub(nftDropChance).abs();
+
+    if (tokenDiff < nftDiff) {
+      return {
+        status: 'won',
+        data: 'token',
+      };
+    }
+
+    return {
+      status: 'won',
+      data: 'nft',
+    };
+  }
+
   async createLootbox(
     userId: string,
     name: string,
     price: Decimal,
     tokens: LootboxTokensDo,
     nft: LootboxNftDo,
+    emptyBoxChance: Decimal,
   ): Promise<void> {
     if (!nft) {
       throw new BadRequestException('An NFT is required to create a lootbox');
@@ -90,6 +155,7 @@ export class LootboxService {
         userId,
         name,
         price,
+        emptyBoxChance,
       },
       select: {
         id: true,
