@@ -1,8 +1,10 @@
 import type { Nft, SendAndConfirmTransactionResponse } from '@metaplex-foundation/js';
-import { Metaplex } from '@metaplex-foundation/js';
+import { keypairIdentity, Metaplex } from '@metaplex-foundation/js';
 import type { OnModuleInit } from '@nestjs/common';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import type { PublicKey } from '@solana/web3.js';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Keypair, type PublicKey } from '@solana/web3.js';
+import { decode } from 'bs58';
 
 import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 
@@ -10,13 +12,25 @@ import { RpcConnectionService } from '@@rpc-connection/rpc-connection.service';
 export class NftMetadataService implements OnModuleInit {
   private readonly logger = new Logger(NftMetadataService.name);
 
-  constructor(private readonly rpcConnectionService: RpcConnectionService) {}
+  constructor(
+    private readonly rpcConnectionService: RpcConnectionService,
+    private readonly configService: ConfigService,
+  ) {}
 
   private _metaplex: Metaplex;
 
   onModuleInit() {
+    const houseSecret = this.configService.get<string>('HOUSE_WALLET_SECRET') ?? '';
+    if (!houseSecret) {
+      throw new InternalServerErrorException('House wallet is not defined, withdrawals can not be created');
+    }
+
+    const decodedHouseSecret = decode(houseSecret);
+    const houseKeyPair = Keypair.fromSecretKey(decodedHouseSecret);
+
     const connection = this.rpcConnectionService.getRpcConnection();
     this._metaplex = new Metaplex(connection);
+    this._metaplex.use(keypairIdentity(houseKeyPair));
   }
 
   async transferNft(
