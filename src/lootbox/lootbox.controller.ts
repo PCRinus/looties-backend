@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Lootbox } from '@prisma/client';
 import Decimal from 'decimal.js';
 
@@ -8,12 +8,13 @@ import { Public } from '@@auth/public.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
 import type { AvailableLootboxItems } from '@@lootbox/lootbox.service';
 import { LootboxService } from '@@lootbox/lootbox.service';
+import { TokensService } from '@@tokens/tokens.service';
 
 @ApiTags('Lootbox')
 @UseGuards(AuthGuard)
 @Controller('lootbox')
 export class LootboxController {
-  constructor(private readonly lootboxService: LootboxService) {}
+  constructor(private readonly lootboxService: LootboxService, private readonly tokensService: TokensService) {}
 
   @Public()
   @Get('')
@@ -48,6 +49,11 @@ export class LootboxController {
       dropChance: nft.dropChance,
     };
     const lootboxEmptyBoxChance = new Decimal(emptyBoxChance);
+
+    const availableBalance = await this.tokensService.getBalance(userId);
+    if (lootboxTokens.amount.greaterThan(availableBalance)) {
+      throw new BadRequestException(`User's balance is less than entered token amount: ${lootboxTokens.amount}`);
+    }
 
     await this.lootboxService.createLootbox(
       userId,
