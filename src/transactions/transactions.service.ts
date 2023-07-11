@@ -20,10 +20,11 @@ type UpdateTransaction = {
   nftName?: string;
 };
 
+const TRANSACTIONS_PER_PAGE = 20;
+
 @Injectable()
 export class TransactionsService {
   private readonly logger = new Logger(TransactionsService.name);
-  private readonly pageSize = 20;
 
   constructor(private readonly prismaService: PrismaService) {}
 
@@ -85,15 +86,15 @@ export class TransactionsService {
   }
 
   async getTransactionsByUserIdAndType(userId: string, type: TransactionTypes, page: number): Promise<Transactions[]> {
-    const skip = (page - 1) * this.pageSize;
+    const skip = (page - 1) * TRANSACTIONS_PER_PAGE;
 
     const transactions = await this.prismaService.transactions.findMany({
       where: {
         userId,
         type,
       },
-      skip: skip,
-      take: this.pageSize,
+      skip,
+      take: TRANSACTIONS_PER_PAGE,
     });
 
     if (!transactions) {
