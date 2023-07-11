@@ -23,6 +23,7 @@ type UpdateTransaction = {
 @Injectable()
 export class TransactionsService {
   private readonly logger = new Logger(TransactionsService.name);
+  private readonly pageSize = 20;
 
   constructor(private readonly prismaService: PrismaService) {}
 
@@ -83,12 +84,16 @@ export class TransactionsService {
     }
   }
 
-  async getTransactionsByUserIdAndType(userId: string, type: TransactionTypes): Promise<Transactions[]> {
+  async getTransactionsByUserIdAndType(userId: string, type: TransactionTypes, page: number): Promise<Transactions[]> {
+    const skip = (page - 1) * this.pageSize;
+
     const transactions = await this.prismaService.transactions.findMany({
       where: {
         userId,
         type,
       },
+      skip: skip,
+      take: this.pageSize,
     });
 
     if (!transactions) {

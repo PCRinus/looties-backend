@@ -17,10 +17,12 @@ export class TransactionsController {
 
   @Get(':userId')
   @ApiQuery({ name: 'transactionType', enum: TRANSACTION_TYPES })
+  @ApiQuery({ name: 'page', type: Number })
   async getTransactionsByUserId(
     @Param('userId') userId: string,
     @Query('transactionType') transactionType: TransactionTypes,
+    @Query('page') page: number,
   ): Promise<Transaction[]> {
-    return await this.transactionsService.getTransactionsByUserIdAndType(userId, transactionType);
+    return await this.transactionsService.getTransactionsByUserIdAndType(userId, transactionType, page);
   }
 }
