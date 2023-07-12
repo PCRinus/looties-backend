@@ -6,7 +6,7 @@ import Decimal from 'decimal.js';
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
-import type { AvailableLootboxItems } from '@@lootbox/lootbox.service';
+import type { AvailableLootboxItems, LootboxContents } from '@@lootbox/lootbox.service';
 import { LootboxService } from '@@lootbox/lootbox.service';
 import { TokensService } from '@@tokens/tokens.service';
 
@@ -32,6 +32,12 @@ export class LootboxController {
   @Get(':userId/available-lootbox-items')
   async getAvailableLootboxItems(@Param('userId') userId: string): Promise<AvailableLootboxItems> {
     return await this.lootboxService.getAvailableLootboxItems(userId);
+  }
+
+  @ApiBearerAuth()
+  @Get(':lootboxId/contents')
+  async getLootboxContents(@Param('lootboxId') lootboxId: string): Promise<LootboxContents> {
+    return await this.lootboxService.getLootboxContents(lootboxId);
   }
 
   @ApiBearerAuth()

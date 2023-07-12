@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import type { Lootbox, Nfts } from '@prisma/client';
+import type { Lootbox, LootboxNfts, LootboxTokens, Nfts } from '@prisma/client';
 import Decimal from 'decimal.js';
 
 import { LootboxNftsService } from '@@lootbox-nfts/lootbox-nfts.service';
@@ -13,6 +13,12 @@ export const LOOTBOXES_PER_PAGE = 24;
 export type AvailableLootboxItems = {
   availableTokens: Decimal;
   availableNfts: Pick<Nfts, 'id' | 'name' | 'price' | 'url'>[];
+};
+
+export type LootboxContents = {
+  tokens: LootboxTokens;
+  nft: LootboxNfts;
+  emptyBoxChance: Decimal;
 };
 
 type LootboxTokensDo = {
@@ -72,6 +78,35 @@ export class LootboxService {
     return {
       availableTokens,
       availableNfts,
+    };
+  }
+
+  async getLootboxContents(lootboxId: string): Promise<LootboxContents> {
+    const lootboxContents = await this.prisma.lootbox.findUnique({
+      where: {
+        id: lootboxId,
+      },
+      include: {
+        nft: true,
+        tokens: true,
+      },
+    });
+
+    if (!lootboxContents) {
+      throw new InternalServerErrorException(`Lootbox ${lootboxId} can't be found`);
+    }
+
+    const tokens = lootboxContents.tokens;
+    const nft = lootboxContents.nft;
+
+    if (!tokens || !nft) {
+      throw new Error();
+    }
+
+    return {
+      nft,
+      tokens,
+      emptyBoxChance: lootboxContents.emptyBoxChance,
     };
   }
 
