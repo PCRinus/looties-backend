@@ -29,6 +29,7 @@ type LootboxTokensDo = {
 
 type LootboxNftDo = {
   id: string;
+  imageUrl: string;
   dropChance: string;
 };
 
@@ -191,6 +192,7 @@ export class LootboxService {
         name,
         price,
         emptyBoxChance,
+        nftImage: nft.imageUrl,
       },
       select: {
         id: true,

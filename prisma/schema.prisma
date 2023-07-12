@@ -95,6 +95,7 @@ model Nfts {
 model Lootbox {
   id             String         @id @default(uuid())
   name           String
+  nftImage       String
   price          Decimal
   openedCount    Int            @default(0)
   deleted        Boolean        @default(false)

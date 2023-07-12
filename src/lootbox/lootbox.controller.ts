@@ -52,6 +52,7 @@ export class LootboxController {
     };
     const lootboxNft = {
       id: nft.id,
+      imageUrl: nft.imageUrl,
       dropChance: nft.dropChance,
     };
     const lootboxEmptyBoxChance = new Decimal(emptyBoxChance);

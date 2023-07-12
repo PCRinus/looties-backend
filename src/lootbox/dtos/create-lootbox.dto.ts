@@ -8,6 +8,7 @@ interface Token {
 
 interface Nft {
   id: string;
+  imageUrl: string;
   dropChance: string;
 }
 export class CreateLootboxDto {
