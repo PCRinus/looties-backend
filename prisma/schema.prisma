@@ -103,8 +103,8 @@ model Lootbox {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   liveDrops      LiveDrops[]
-  User           User?          @relation(fields: [userId], references: [id])
-  userId         String?
+  User           User          @relation(fields: [userId], references: [id])
+  userId         String
   tokens         LootboxTokens?
   nft            LootboxNfts?
 }

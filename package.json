@@ -44,6 +44,7 @@
     "@prisma/client": "^4.15.0",
     "@solana/web3.js": "^1.77.3",
     "@types/uuid": "^9.0.2",
+    "assert-never": "^1.2.1",
     "axios": "^1.4.0",
     "bs58": "^5.0.0",
     "class-transformer": "^0.5.1",

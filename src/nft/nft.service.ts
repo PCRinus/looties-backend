@@ -1,6 +1,12 @@
 import type { Nft } from '@metaplex-foundation/js';
 import { PublicKey } from '@metaplex-foundation/js';
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import type { Nfts } from '@prisma/client';
 
 import { NftMetadataService } from '@@nft-metadata/nft-metadata.service';
@@ -98,6 +104,48 @@ export class NftService {
       data: {
         reservedInLootbox: true,
       },
+    });
+  }
+
+  async withdrawFromLootbox(id: string): Promise<void> {
+    await this.prisma.nfts.update({
+      where: {
+        id,
+      },
+      data: {
+        reservedInLootbox: false,
+      },
+    });
+  }
+
+  async transferNftBetweenUsers(senderUserId: string, receiverUserId: string, nftId: string): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const nft = await tx.nfts.findUnique({
+        where: {
+          id: nftId,
+        },
+      });
+
+      if (!nft) {
+        throw new NotFoundException(`Nft ${nftId} can't be transferred, not found`);
+      }
+
+      if (nft.userId !== senderUserId) {
+        throw new BadRequestException(
+          `NFT ${nftId} can't be transferred from user ${senderUserId}, user does not own the NFT`,
+        );
+      }
+
+      await tx.nfts.update({
+        where: {
+          id: nftId,
+        },
+        data: {
+          userId: receiverUserId,
+          deleted: false,
+          reservedInLootbox: false,
+        },
+      });
     });
   }
 

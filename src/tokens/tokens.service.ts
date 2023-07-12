@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { decode } from 'bs58';
 import Decimal from 'decimal.js';
@@ -76,6 +76,39 @@ export class TokensService {
     } catch (error) {
       throw new InternalServerErrorException(`Failed to withdraw tokens for user id ${userId}: ${error}`);
     }
+  }
+
+  async transferTokensBetweenUsers(senderUserId: string, recipientUserId: string, amount: Decimal): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const { amount: payerTokens } = await tx.tokens.update({
+        where: {
+          userId: senderUserId,
+        },
+        data: {
+          amount: {
+            decrement: amount,
+          },
+        },
+        select: {
+          amount: true,
+        },
+      });
+
+      if (payerTokens.lessThan(0)) {
+        throw new BadRequestException(`Payer ${senderUserId} does not have enough balance to transfer`);
+      }
+
+      await tx.tokens.update({
+        where: {
+          userId: recipientUserId,
+        },
+        data: {
+          amount: {
+            increment: amount,
+          },
+        },
+      });
+    });
   }
 
   async signTransfer(tokens: Decimal, houseSecret: string, userWallet: string, blockhash: string): Promise<string> {

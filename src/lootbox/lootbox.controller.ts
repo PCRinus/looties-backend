@@ -6,7 +6,8 @@ import Decimal from 'decimal.js';
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
-import type { AvailableLootboxItems, LootboxContents } from '@@lootbox/lootbox.service';
+import { OpenLootboxDto } from '@@lootbox/dtos/open-lootbox.dto';
+import type { AvailableLootboxItems, LootboxContents, LootboxPrizeDo } from '@@lootbox/lootbox.service';
 import { LootboxService } from '@@lootbox/lootbox.service';
 import { TokensService } from '@@tokens/tokens.service';
 
@@ -72,8 +73,21 @@ export class LootboxController {
     );
   }
 
+  @Public()
   @Post(':lootboxId/try-lootbox')
-  async tryLootbox(@Param('lootboxId') lootboxId: string): Promise<any> {
+  async tryLootbox(@Param('lootboxId') lootboxId: string): Promise<LootboxPrizeDo> {
     return await this.lootboxService.tryLootbox(lootboxId);
+  }
+
+  @ApiBearerAuth()
+  @Post(':lootboxId/open-lootbox')
+  async openLootbox(@Param('lootboxId') lootboxId: string, @Body() body: OpenLootboxDto): Promise<LootboxPrizeDo> {
+    const { userId: openerId } = body;
+
+    const { userId: creatorId, price } = await this.lootboxService.getLootboxById(lootboxId);
+
+    const lootboxPrize = await this.lootboxService.openLootbox(openerId, { lootboxId, creatorId, price });
+
+    return lootboxPrize;
   }
 }
