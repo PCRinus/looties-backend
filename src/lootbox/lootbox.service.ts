@@ -197,7 +197,7 @@ export class LootboxService {
       },
     });
 
-    await this.addNftToLootbox(userId, newLootboxId, nft.id, nft.dropChance);
+    await this.addNftToLootbox(newLootboxId, nft.id, nft.dropChance);
     await this.addTokensToLootbox(userId, newLootboxId, tokens.amount, tokens.dropChance);
   }
 
@@ -211,9 +211,10 @@ export class LootboxService {
     await this.tokensService.withdraw(userId, amount);
   }
 
-  private async addNftToLootbox(userId: string, lootboxId: string, nftId: string, dropChance: string): Promise<void> {
+  private async addNftToLootbox(lootboxId: string, nftId: string, dropChance: string): Promise<void> {
     const nft = await this.nftService.getNft(nftId);
 
     await this.lootboxNftService.addNftToLootbox(lootboxId, { ...nft, dropChance });
+    await this.nftService.depositInLootbox(nftId);
   }
 }

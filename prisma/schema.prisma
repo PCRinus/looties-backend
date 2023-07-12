@@ -78,17 +78,18 @@ model Tokens {
 }
 
 model Nfts {
-  id          String   @id @default(uuid())
-  mintAddress String   @unique
-  name        String   @unique
-  symbol      String
-  url         String
-  price       Decimal
-  deleted     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User     @relation(fields: [userId], references: [id])
-  userId      String
+  id                String   @id @default(uuid())
+  mintAddress       String   @unique
+  name              String   @unique
+  symbol            String
+  url               String
+  price             Decimal
+  deleted           Boolean  @default(false)
+  reservedInLootbox Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  User              User     @relation(fields: [userId], references: [id])
+  userId            String
 }
 
 model Lootbox {

@@ -41,6 +41,7 @@ export class NftService {
       where: {
         userId,
         deleted: false,
+        reservedInLootbox: false,
       },
     });
   }
@@ -87,6 +88,17 @@ export class NftService {
       this.logger.error(error);
       throw new InternalServerErrorException(`Error while withdrawing NFT ${mintAddress} for user ${userId}`);
     }
+  }
+
+  async depositInLootbox(id: string): Promise<void> {
+    await this.prisma.nfts.update({
+      where: {
+        id,
+      },
+      data: {
+        reservedInLootbox: true,
+      },
+    });
   }
 
   async signTransfer(mintAddress: PublicKey | string, receiver: PublicKey | string): Promise<NftTransfer> {
