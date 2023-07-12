@@ -197,6 +197,8 @@ export class LootboxService {
   }
 
   async tryLootbox(lootboxId: string): Promise<LootboxPrizeDo> {
+    this._logger.log(`Trying lootbox ${lootboxId}...`);
+
     const lootbox = await this.prisma.lootbox.findUnique({
       where: {
         id: lootboxId,

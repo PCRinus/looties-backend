@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Logger, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Lootbox } from '@prisma/client';
 import Decimal from 'decimal.js';
@@ -15,6 +15,8 @@ import { TokensService } from '@@tokens/tokens.service';
 @UseGuards(AuthGuard)
 @Controller('lootbox')
 export class LootboxController {
+  private readonly _logger = new Logger(LootboxController.name);
+
   constructor(private readonly lootboxService: LootboxService, private readonly tokensService: TokensService) {}
 
   @Public()
@@ -76,9 +78,12 @@ export class LootboxController {
   }
 
   @Public()
-  @Post(':lootboxId/try-lootbox')
+  @Get(':lootboxId/try-lootbox')
   async tryLootbox(@Param('lootboxId') lootboxId: string): Promise<LootboxPrizeDo> {
-    return await this.lootboxService.tryLootbox(lootboxId);
+    const tryLootboxResult = await this.lootboxService.tryLootbox(lootboxId);
+    this._logger.log(tryLootboxResult);
+
+    return tryLootboxResult;
   }
 
   @ApiBearerAuth()
