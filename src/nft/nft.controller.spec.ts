@@ -53,6 +53,7 @@ describe('NftController', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           deleted: false,
+          reservedInLootbox: false,
         },
       ];
       nftService.getNfts.mockResolvedValue(mockedNftList);

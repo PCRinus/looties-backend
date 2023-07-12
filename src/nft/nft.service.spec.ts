@@ -46,6 +46,7 @@ describe('NftService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deleted: false,
+    reservedInLootbox: false,
   };
   const mockedNftList: Nfts[] = [mockedNft];
 
