@@ -37,7 +37,7 @@ export class LootboxController {
     return await this.lootboxService.getAvailableLootboxItems(userId);
   }
 
-  @ApiBearerAuth()
+  @Public()
   @Get(':lootboxId/contents')
   async getLootboxContents(@Param('lootboxId') lootboxId: string): Promise<LootboxContents> {
     return await this.lootboxService.getLootboxContents(lootboxId);
