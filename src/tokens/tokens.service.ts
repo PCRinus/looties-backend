@@ -8,11 +8,13 @@ import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
 export class TokensService {
-  private readonly logger = new Logger(TokensService.name);
+  private readonly _logger = new Logger(TokensService.name);
 
   constructor(private readonly prisma: PrismaService, private readonly rpcConnectionService: RpcConnectionService) {}
 
   async getBalance(userId: string): Promise<Decimal> {
+    this._logger.log(`Fetching tokens balance for user ${userId}`);
+
     const tokens = await this.prisma.tokens.findUnique({
       where: {
         userId,
@@ -27,7 +29,7 @@ export class TokensService {
   }
 
   async deposit(userId: string, amount: Decimal): Promise<Decimal> {
-    this.logger.log(`Depositing ${amount} tokens for user ${userId}...`);
+    this._logger.log(`Depositing ${amount} tokens for user ${userId}...`);
 
     try {
       const { amount: totalAmount } = await this.prisma.tokens.upsert({
@@ -55,7 +57,7 @@ export class TokensService {
   }
 
   async withdraw(userId: string, amount: Decimal): Promise<Decimal> {
-    this.logger.log(`Withdrawing ${amount} tokens for user ${userId}...`);
+    this._logger.log(`Withdrawing ${amount} tokens for user ${userId}...`);
 
     try {
       const { amount: totalAmount } = await this.prisma.tokens.update({
@@ -79,6 +81,7 @@ export class TokensService {
   }
 
   async transferTokensBetweenUsers(senderUserId: string, recipientUserId: string, amount: Decimal): Promise<void> {
+    this._logger.log(`Initiating transfer of ${amount} tokens from ${senderUserId} to ${recipientUserId}`);
     await this.prisma.$transaction(async (tx) => {
       const { amount: payerTokens } = await tx.tokens.update({
         where: {

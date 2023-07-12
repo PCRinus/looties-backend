@@ -20,12 +20,12 @@ type NftTransfer = {
 
 @Injectable()
 export class NftService {
-  private readonly logger = new Logger(NftService.name);
+  private readonly _logger = new Logger(NftService.name);
 
   constructor(private readonly prisma: PrismaService, private readonly nftMetadataService: NftMetadataService) {}
 
   async getNft(id: string): Promise<Nfts> {
-    this.logger.log(`Fetching NFT with id ${id}`);
+    this._logger.log(`Fetching NFT with id ${id}`);
 
     const nft = await this.prisma.nfts.findUnique({
       where: {
@@ -41,7 +41,7 @@ export class NftService {
   }
 
   async getNfts(userId: string): Promise<Nfts[]> {
-    this.logger.log(`Fetching NFTs for user with id ${userId}...`);
+    this._logger.log(`Fetching NFTs for user with id ${userId}...`);
 
     return await this.prisma.nfts.findMany({
       where: {
@@ -53,7 +53,7 @@ export class NftService {
   }
 
   async deposit(userId: string, nftMetadata: Nft): Promise<Nfts> {
-    this.logger.log(`Depositing NFT with address ${nftMetadata.address.toBase58()}...`);
+    this._logger.log(`Depositing NFT with address ${nftMetadata.address.toBase58()}...`);
     try {
       return await this.prisma.nfts.upsert({
         where: {
@@ -72,7 +72,7 @@ export class NftService {
         },
       });
     } catch (error) {
-      this.logger.error(error);
+      this._logger.error(error);
       throw new InternalServerErrorException(
         `Error while depositing NFT ${nftMetadata.address.toBase58()} for user ${userId}`,
       );
@@ -80,7 +80,7 @@ export class NftService {
   }
 
   async withdraw(userId: string, mintAddress: string): Promise<Nfts> {
-    this.logger.log(`Depositing NFT with mint id ${mintAddress} for user ${userId}...`);
+    this._logger.log(`Depositing NFT with mint id ${mintAddress} for user ${userId}...`);
     try {
       return await this.prisma.nfts.update({
         where: {
@@ -91,12 +91,13 @@ export class NftService {
         },
       });
     } catch (error) {
-      this.logger.error(error);
+      this._logger.error(error);
       throw new InternalServerErrorException(`Error while withdrawing NFT ${mintAddress} for user ${userId}`);
     }
   }
 
   async depositInLootbox(id: string): Promise<void> {
+    this._logger.log(`Depositing NFT ${id} in lootbox...`);
     await this.prisma.nfts.update({
       where: {
         id,
@@ -108,6 +109,7 @@ export class NftService {
   }
 
   async withdrawFromLootbox(id: string): Promise<void> {
+    this._logger.log(`Withdrawing NFT ${id} in lootbox...`);
     await this.prisma.nfts.update({
       where: {
         id,
@@ -119,6 +121,7 @@ export class NftService {
   }
 
   async transferNftBetweenUsers(senderUserId: string, receiverUserId: string, nftId: string): Promise<void> {
+    this._logger.log(`Transferring NFT ${nftId} from user ${senderUserId} to user ${receiverUserId}`);
     await this.prisma.$transaction(async (tx) => {
       const nft = await tx.nfts.findUnique({
         where: {
