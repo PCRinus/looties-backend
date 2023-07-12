@@ -43,7 +43,7 @@ export class LootboxController {
 
   @ApiBearerAuth()
   @Post(':userId/create-lootbox')
-  async createLootbox(@Param('userId') userId: string, @Body() body: CreateLootboxDto): Promise<void> {
+  async createLootbox(@Param('userId') userId: string, @Body() body: CreateLootboxDto): Promise<Lootbox> {
     const { name, price, nft, tokens, emptyBoxChance } = body;
     const lootboxPrice = new Decimal(price);
     const lootboxTokens = {
@@ -63,7 +63,7 @@ export class LootboxController {
       throw new BadRequestException(`User's balance is less than entered token amount: ${lootboxTokens.amount}`);
     }
 
-    await this.lootboxService.createLootbox(
+    const newLootboxId = await this.lootboxService.createLootbox(
       userId,
       name,
       lootboxPrice,
@@ -71,6 +71,8 @@ export class LootboxController {
       lootboxNft,
       lootboxEmptyBoxChance,
     );
+
+    return await this.lootboxService.getLootboxById(newLootboxId);
   }
 
   @Public()

@@ -151,7 +151,7 @@ export class LootboxService {
     tokens: LootboxTokensDo,
     nft: LootboxNftDo,
     emptyBoxChance: Decimal,
-  ): Promise<void> {
+  ): Promise<string> {
     if (!nft) {
       throw new BadRequestException('An NFT is required to create a lootbox');
     }
@@ -175,6 +175,8 @@ export class LootboxService {
 
     await this.addNftToLootbox(newLootboxId, nft.id, nft.dropChance);
     await this.addTokensToLootbox(userId, newLootboxId, tokens.amount, tokens.dropChance);
+
+    return newLootboxId;
   }
 
   private async addTokensToLootbox(
