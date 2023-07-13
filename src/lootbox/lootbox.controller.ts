@@ -26,13 +26,13 @@ export class LootboxController {
     return await this.lootboxService.getAllLootboxes(userId, page);
   }
 
-  @ApiBearerAuth()
+  @Public()
   @Get(':lootboxId')
   async getLootboxesForUser(@Param('lootboxId') lootboxId: string): Promise<Lootbox> {
     return await this.lootboxService.getLootboxById(lootboxId);
   }
 
-  @ApiBearerAuth()
+  @Public()
   @Get(':userId/available-lootbox-items')
   async getAvailableLootboxItems(@Param('userId') userId: string): Promise<AvailableLootboxItems> {
     return await this.lootboxService.getAvailableLootboxItems(userId);
@@ -42,6 +42,15 @@ export class LootboxController {
   @Get(':lootboxId/contents')
   async getLootboxContents(@Param('lootboxId') lootboxId: string): Promise<LootboxContents> {
     return await this.lootboxService.getLootboxContents(lootboxId);
+  }
+
+  @Public()
+  @Get(':lootboxId/try-lootbox')
+  async tryLootbox(@Param('lootboxId') lootboxId: string): Promise<LootboxPrizeDo> {
+    const tryLootboxResult = await this.lootboxService.tryLootbox(lootboxId);
+    this._logger.log(tryLootboxResult);
+
+    return tryLootboxResult;
   }
 
   @ApiBearerAuth()
@@ -77,15 +86,6 @@ export class LootboxController {
     );
 
     return await this.lootboxService.getLootboxById(newLootboxId);
-  }
-
-  @Public()
-  @Get(':lootboxId/try-lootbox')
-  async tryLootbox(@Param('lootboxId') lootboxId: string): Promise<LootboxPrizeDo> {
-    const tryLootboxResult = await this.lootboxService.tryLootbox(lootboxId);
-    this._logger.log(tryLootboxResult);
-
-    return tryLootboxResult;
   }
 
   @ApiBearerAuth()
