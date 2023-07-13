@@ -82,21 +82,17 @@ export class LootboxService {
     return lootbox;
   }
 
-  async getAllLootboxes(page = 1): Promise<Lootbox[]> {
-    return await this.prisma.lootbox.findMany({
+  async getAllLootboxes(userId: string, page = 1): Promise<Lootbox[]> {
+    const lootboxes = await this.prisma.lootbox.findMany({
       take: LOOTBOXES_PER_PAGE,
       skip: page * LOOTBOXES_PER_PAGE - LOOTBOXES_PER_PAGE,
     });
-  }
 
-  async getLootboxesForUser(userId: string, page = 1): Promise<Lootbox[]> {
-    return await this.prisma.lootbox.findMany({
-      where: {
-        userId,
-      },
-      take: LOOTBOXES_PER_PAGE,
-      skip: page * LOOTBOXES_PER_PAGE - LOOTBOXES_PER_PAGE,
-    });
+    if (userId) {
+      return lootboxes.filter((lootbox) => lootbox.userId === userId);
+    }
+
+    return lootboxes;
   }
 
   async deleteLootbox(lootboxId: string, creatorId: string, openerId: string): Promise<void> {

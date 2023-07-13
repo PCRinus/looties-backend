@@ -22,14 +22,14 @@ export class LootboxController {
 
   @Public()
   @Get('')
-  async getAllLootboxes(@Query('page') page: number): Promise<Lootbox[]> {
-    return await this.lootboxService.getAllLootboxes(page);
+  async getAllLootboxes(@Query('userId') userId: string, @Query('page') page: number): Promise<Lootbox[]> {
+    return await this.lootboxService.getAllLootboxes(userId, page);
   }
 
   @ApiBearerAuth()
-  @Get(':userId')
-  async getLootboxesForUser(@Param('userId') userId: string, @Query('page') page: number): Promise<Lootbox[]> {
-    return await this.lootboxService.getLootboxesForUser(userId, page);
+  @Get(':lootboxId')
+  async getLootboxesForUser(@Param('lootboxId') lootboxId: string): Promise<Lootbox> {
+    return await this.lootboxService.getLootboxById(lootboxId);
   }
 
   @ApiBearerAuth()
