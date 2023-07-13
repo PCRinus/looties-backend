@@ -6,7 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { Lootbox, LootboxNfts, LootboxTokens, Nfts } from '@prisma/client';
-import assertNever from 'assert-never';
 import Decimal from 'decimal.js';
 
 import { LootboxNftsService } from '@@lootbox-nfts/lootbox-nfts.service';
@@ -65,7 +64,7 @@ export class LootboxService {
     private readonly lootboxTokensService: LootboxTokensService,
   ) {}
 
-  async getLootboxById(lootboxId: string): Promise<Lootbox> {
+  async getLootboxById(lootboxId: string) {
     const lootbox = await this.prisma.lootbox.findUnique({
       where: {
         id: lootboxId,
@@ -98,6 +97,22 @@ export class LootboxService {
       take: LOOTBOXES_PER_PAGE,
       skip: page * LOOTBOXES_PER_PAGE - LOOTBOXES_PER_PAGE,
     });
+  }
+
+  async deleteLootbox(lootboxId: string, creatorId: string, openerId: string): Promise<void> {
+    const { nft, tokens } = await this.getLootboxContents(lootboxId);
+
+    if (nft) {
+      await this.nftService.transferNftBetweenUsers(creatorId, openerId, nft.mintAddress);
+      await this.lootboxNftService.removeNftFromLootbox(lootboxId);
+    }
+
+    if (tokens) {
+      await this.tokensService.deposit(openerId, tokens.amount);
+      await this.lootboxTokensService.removeTokensFromLootbox(lootboxId);
+    }
+
+    await this.prisma.lootbox.delete({ where: { id: lootboxId } });
   }
 
   async getAvailableLootboxItems(userId: string): Promise<AvailableLootboxItems> {
@@ -284,22 +299,8 @@ export class LootboxService {
       return lootboxPrize;
     }
 
-    const { nft, tokens } = await this.getLootboxContents(lootboxId);
+    await this.deleteLootbox(lootboxId, creatorId, openerId);
 
-    if (lootboxPrize.prize === 'NFT') {
-      await this.nftService.transferNftBetweenUsers(creatorId, openerId, nft.id);
-      await this.lootboxNftService.removeNftFromLootbox(lootboxId);
-
-      return lootboxPrize;
-    }
-
-    if (lootboxPrize.prize === 'TOKEN') {
-      await this.tokensService.deposit(openerId, tokens.amount);
-      await this.lootboxTokensService.removeTokensFromLootbox(lootboxId);
-
-      return lootboxPrize;
-    }
-
-    return assertNever(lootboxPrize.prize);
+    return lootboxPrize;
   }
 }

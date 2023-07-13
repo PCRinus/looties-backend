@@ -26,20 +26,15 @@ export class LootboxTokensService {
     }
   }
 
-  async removeTokensFromLootbox(lootboxId: string): Promise<Decimal> {
+  async removeTokensFromLootbox(lootboxId: string): Promise<void> {
     this._logger.log(`Removing tokens from lootbox ${lootboxId}...`);
 
     try {
-      const { amount } = await this.prisma.lootboxTokens.delete({
+      await this.prisma.lootboxTokens.delete({
         where: {
           lootboxId,
         },
-        select: {
-          amount: true,
-        },
       });
-
-      return amount;
     } catch (error) {
       this._logger.error(error);
       throw new InternalServerErrorException(`Removing tokens from lootbox ${lootboxId} failed`);

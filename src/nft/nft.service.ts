@@ -120,33 +120,33 @@ export class NftService {
     });
   }
 
-  async transferNftBetweenUsers(senderUserId: string, receiverUserId: string, nftId: string): Promise<void> {
-    this._logger.log(`Transferring NFT ${nftId} from user ${senderUserId} to user ${receiverUserId}`);
+  async transferNftBetweenUsers(senderUserId: string, receiverUserId: string, mintAddress: string): Promise<void> {
+    this._logger.log(`Transferring NFT with mint ${mintAddress} from user ${senderUserId} to user ${receiverUserId}`);
     await this.prisma.$transaction(async (tx) => {
       const nft = await tx.nfts.findUnique({
         where: {
-          id: nftId,
+          mintAddress,
         },
       });
 
       if (!nft) {
-        throw new NotFoundException(`Nft ${nftId} can't be transferred, not found`);
+        throw new NotFoundException(`Nft ${mintAddress} can't be transferred, not found`);
       }
 
       if (nft.userId !== senderUserId) {
         throw new BadRequestException(
-          `NFT ${nftId} can't be transferred from user ${senderUserId}, user does not own the NFT`,
+          `NFT ${mintAddress} can't be transferred from user ${senderUserId}, user does not own the NFT`,
         );
       }
 
       await tx.nfts.update({
-        where: {
-          id: nftId,
-        },
         data: {
           userId: receiverUserId,
           deleted: false,
           reservedInLootbox: false,
+        },
+        where: {
+          mintAddress,
         },
       });
     });

@@ -61,6 +61,7 @@ export class LootboxController {
     const lootboxEmptyBoxChance = new Decimal(emptyBoxChance);
 
     const availableBalance = await this.tokensService.getBalance(userId);
+    //TODO: maybe dedicated check for when balance and lootbox token amount are equal
     if (lootboxTokens.amount.greaterThan(availableBalance)) {
       throw new BadRequestException(`User's balance is less than entered token amount: ${lootboxTokens.amount}`);
     }

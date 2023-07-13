@@ -36,22 +36,17 @@ export class LootboxNftsService {
     }
   }
 
-  async removeNftFromLootbox(lootboxId: string): Promise<string> {
+  async removeNftFromLootbox(lootboxId: string): Promise<void> {
     this._logger.log(`Removing NFT from lootbox ${lootboxId}`);
 
     try {
-      const { mintAddress } = await this.prisma.lootboxNfts.delete({
+      await this.prisma.lootboxNfts.delete({
         where: {
           lootboxId,
         },
-        select: {
-          mintAddress: true,
-        },
       });
-
-      return mintAddress;
     } catch (error) {
-      this._logger.log(``);
+      this._logger.log(`Failed to delete NFT ${lootboxId}`);
       throw new InternalServerErrorException(`Failed to remove NFT from lootbox ${lootboxId}`);
     }
   }
