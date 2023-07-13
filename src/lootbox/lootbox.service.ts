@@ -17,8 +17,8 @@ import { TokensService } from '@@tokens/tokens.service';
 export const LOOTBOXES_PER_PAGE = 24;
 
 export type LootboxContents = {
-  tokens: LootboxTokens;
   nft: LootboxNfts;
+  tokens?: LootboxTokens;
   emptyBoxChance: Decimal;
 };
 
@@ -38,7 +38,7 @@ type LootboxPrize = 'NFT' | 'TOKEN' | 'EMPTY_BOX';
 
 export type LootboxPrizeDo = {
   prize: LootboxPrize;
-  data?: any;
+  data?: { id: string } & ({ url: string; name: string; price: Decimal } | { amount: Decimal });
 };
 
 type OpenLootboxDo = {
@@ -59,8 +59,22 @@ export class LootboxService {
     private readonly lootboxTokensService: LootboxTokensService,
   ) {}
 
-  async getLootboxById(lootboxId: string) {
+  async getLootboxById(lootboxId: string): Promise<Lootbox> {
     const lootbox = await this.prisma.lootbox.findUnique({
+      where: {
+        id: lootboxId,
+      },
+    });
+
+    if (!lootbox) {
+      throw new NotFoundException(`Lootbox ${lootboxId} not found`);
+    }
+
+    return lootbox;
+  }
+
+  async getLootboxWithNftAndTokensById(lootboxId: string) {
+    const lootboxWithNftAndTokens = await this.prisma.lootbox.findUnique({
       where: {
         id: lootboxId,
       },
@@ -70,11 +84,15 @@ export class LootboxService {
       },
     });
 
-    if (!lootbox) {
-      throw new NotFoundException(`Lootbox ${lootboxId} not found`);
+    if (!lootboxWithNftAndTokens) {
+      throw new NotFoundException(`Can't fetch contents for lootbox ${lootboxId}`);
     }
 
-    return lootbox;
+    if (!lootboxWithNftAndTokens.nft) {
+      throw new InternalServerErrorException(`Lootbox ${lootboxId} needs to have an NFT`);
+    }
+
+    return lootboxWithNftAndTokens;
   }
 
   async getAllLootboxes(userId: string, page = 1): Promise<Lootbox[]> {
@@ -107,31 +125,16 @@ export class LootboxService {
   }
 
   async getLootboxContents(lootboxId: string): Promise<LootboxContents> {
-    const lootboxContents = await this.prisma.lootbox.findUnique({
-      where: {
-        id: lootboxId,
-      },
-      include: {
-        nft: true,
-        tokens: true,
-      },
-    });
+    const lootboxWithNftAndTokens = await this.getLootboxWithNftAndTokensById(lootboxId);
 
-    if (!lootboxContents) {
-      throw new InternalServerErrorException(`Lootbox ${lootboxId} can't be found`);
-    }
-
-    const tokens = lootboxContents.tokens;
-    const nft = lootboxContents.nft;
-
-    if (!tokens || !nft) {
-      throw new Error();
+    if (!lootboxWithNftAndTokens.nft) {
     }
 
     return {
-      nft,
-      tokens,
-      emptyBoxChance: lootboxContents.emptyBoxChance,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      nft: lootboxWithNftAndTokens.nft!,
+      tokens: lootboxWithNftAndTokens.tokens ?? undefined,
+      emptyBoxChance: lootboxWithNftAndTokens.emptyBoxChance,
     };
   }
 
@@ -142,7 +145,7 @@ export class LootboxService {
     tokens: LootboxTokensDo,
     nft: LootboxNftDo,
     emptyBoxChance: Decimal,
-  ): Promise<string> {
+  ): Promise<Lootbox> {
     if (!nft) {
       throw new BadRequestException('An NFT is required to create a lootbox');
     }
@@ -151,7 +154,7 @@ export class LootboxService {
       this._logger.log(`No tokens were added in the lootbox`);
     }
 
-    const { id: newLootboxId } = await this.prisma.lootbox.create({
+    const newLootbox = await this.prisma.lootbox.create({
       data: {
         userId,
         name,
@@ -159,15 +162,12 @@ export class LootboxService {
         emptyBoxChance,
         nftImage: nft.imageUrl,
       },
-      select: {
-        id: true,
-      },
     });
 
-    await this.addNftToLootbox(newLootboxId, nft.id, nft.dropChance);
-    await this.addTokensToLootbox(userId, newLootboxId, tokens.amount, tokens.dropChance);
+    await this.addNftToLootbox(newLootbox.id, nft.id, nft.dropChance);
+    await this.addTokensToLootbox(userId, newLootbox.id, tokens.amount, tokens.dropChance);
 
-    return newLootboxId;
+    return newLootbox;
   }
 
   private async addTokensToLootbox(
@@ -190,20 +190,7 @@ export class LootboxService {
   async tryLootbox(lootboxId: string): Promise<LootboxPrizeDo> {
     this._logger.log(`Trying lootbox ${lootboxId}...`);
 
-    const lootbox = await this.prisma.lootbox.findUnique({
-      where: {
-        id: lootboxId,
-      },
-      include: {
-        nft: true,
-        tokens: true,
-      },
-    });
-
-    if (!lootbox) {
-      throw new InternalServerErrorException(`Lootbox with id ${lootboxId} could not be found`);
-    }
-
+    const lootbox = await this.getLootboxWithNftAndTokensById(lootboxId);
     const lootboxNft = lootbox.nft;
     const lootboxTokens = lootbox.tokens;
 

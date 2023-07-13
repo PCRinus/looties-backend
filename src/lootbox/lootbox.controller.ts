@@ -70,7 +70,7 @@ export class LootboxController {
       throw new BadRequestException(`User's balance is less than entered token amount: ${lootboxTokens.amount}`);
     }
 
-    const newLootboxId = await this.lootboxService.createLootbox(
+    return await this.lootboxService.createLootbox(
       userId,
       name,
       lootboxPrice,
@@ -78,8 +78,6 @@ export class LootboxController {
       lootboxNft,
       lootboxEmptyBoxChance,
     );
-
-    return await this.lootboxService.getLootboxById(newLootboxId);
   }
 
   @ApiBearerAuth()
