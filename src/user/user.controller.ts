@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import type { AvailableItems } from '@@user/user.service';
 import { UserService } from '@@user/user.service';
 
 type User = {
@@ -21,5 +22,10 @@ export class UserController {
   @Get(':walletPublicKey')
   async getUserById(@Param('walletPublicKey') walletPublicKey: string): Promise<User> {
     return this.userService.getUserByWalletPublicKey(walletPublicKey);
+  }
+
+  @Get(':userId/available-items')
+  async getUserItems(@Param('userId') userId: string): Promise<AvailableItems> {
+    return this.getUserItems(userId);
   }
 }

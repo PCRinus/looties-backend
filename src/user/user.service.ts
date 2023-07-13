@@ -1,13 +1,25 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import type { User } from '@prisma/client';
+import type { Nfts, User } from '@prisma/client';
+import type Decimal from 'decimal.js';
 import { generate } from 'referral-codes';
 import { v4 as uuidv4 } from 'uuid';
 
+import { NftService } from '@@nft/nft.service';
 import { PrismaService } from '@@shared/prisma.service';
+import { TokensService } from '@@tokens/tokens.service';
+
+export type AvailableItems = {
+  availableTokens: Decimal;
+  availableNfts: Pick<Nfts, 'id' | 'name' | 'price' | 'url'>[];
+};
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tokenService: TokensService,
+    private readonly nftService: NftService,
+  ) {}
 
   async getUserById(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
@@ -98,5 +110,20 @@ export class UserService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  async getAvailableItems(userId: string): Promise<AvailableItems> {
+    const availableNfts = (await this.nftService.getNfts(userId)).map((nft) => ({
+      id: nft.id,
+      name: nft.name,
+      price: nft.price,
+      url: nft.url,
+    }));
+    const availableTokens = await this.tokenService.getBalance(userId);
+
+    return {
+      availableTokens,
+      availableNfts,
+    };
   }
 }

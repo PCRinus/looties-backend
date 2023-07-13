@@ -8,7 +8,7 @@ import { Public } from '@@auth/public.decorator';
 import { User } from '@@auth/user.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
 import { OpenLootboxDto } from '@@lootbox/dtos/open-lootbox.dto';
-import type { AvailableLootboxItems, LootboxContents, LootboxPrizeDo } from '@@lootbox/lootbox.service';
+import type { LootboxContents, LootboxPrizeDo } from '@@lootbox/lootbox.service';
 import { LootboxService } from '@@lootbox/lootbox.service';
 import { TokensService } from '@@tokens/tokens.service';
 
@@ -30,12 +30,6 @@ export class LootboxController {
   @Get(':lootboxId')
   async getLootboxesForUser(@Param('lootboxId') lootboxId: string): Promise<Lootbox> {
     return await this.lootboxService.getLootboxById(lootboxId);
-  }
-
-  @Public()
-  @Get(':userId/available-lootbox-items')
-  async getAvailableLootboxItems(@Param('userId') userId: string): Promise<AvailableLootboxItems> {
-    return await this.lootboxService.getAvailableLootboxItems(userId);
   }
 
   @Public()

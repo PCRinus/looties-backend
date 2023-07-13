@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import type { Lootbox, LootboxNfts, LootboxTokens, Nfts } from '@prisma/client';
+import type { Lootbox, LootboxNfts, LootboxTokens } from '@prisma/client';
 import Decimal from 'decimal.js';
 
 import { LootboxNftsService } from '@@lootbox-nfts/lootbox-nfts.service';
@@ -15,11 +15,6 @@ import { PrismaService } from '@@shared/prisma.service';
 import { TokensService } from '@@tokens/tokens.service';
 
 export const LOOTBOXES_PER_PAGE = 24;
-
-export type AvailableLootboxItems = {
-  availableTokens: Decimal;
-  availableNfts: Pick<Nfts, 'id' | 'name' | 'price' | 'url'>[];
-};
 
 export type LootboxContents = {
   tokens: LootboxTokens;
@@ -109,21 +104,6 @@ export class LootboxService {
     }
 
     await this.prisma.lootbox.delete({ where: { id: lootboxId } });
-  }
-
-  async getAvailableLootboxItems(userId: string): Promise<AvailableLootboxItems> {
-    const availableNfts = (await this.nftService.getNfts(userId)).map((nft) => ({
-      id: nft.id,
-      name: nft.name,
-      price: nft.price,
-      url: nft.url,
-    }));
-    const availableTokens = await this.tokensService.getBalance(userId);
-
-    return {
-      availableTokens,
-      availableNfts,
-    };
   }
 
   async getLootboxContents(lootboxId: string): Promise<LootboxContents> {
