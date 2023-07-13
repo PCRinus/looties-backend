@@ -1,9 +1,7 @@
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { createMock } from '@golevelup/ts-jest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { AffiliatesService } from '@@affiliates/affiliates.service';
 import { AuthController } from '@@auth/auth.controller';
 import { AuthService } from '@@auth/auth.service';
 import { SharedModule } from '@@shared/shared.module';
@@ -16,7 +14,10 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
       controllers: [AuthController],
-      providers: [AuthService, JwtService, ConfigService, UserService, AffiliatesService],
+      providers: [
+        { provide: AuthService, useValue: createMock() },
+        { provide: UserService, useValue: createMock() },
+      ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);

@@ -1,3 +1,4 @@
+import { createMock } from '@golevelup/ts-jest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
@@ -12,7 +13,7 @@ describe('UserController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
       controllers: [UserController],
-      providers: [UserService],
+      providers: [{ provide: UserService, useValue: createMock() }],
     }).compile();
 
     controller = module.get<UserController>(UserController);
