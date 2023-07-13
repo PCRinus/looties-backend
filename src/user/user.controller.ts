@@ -26,6 +26,6 @@ export class UserController {
 
   @Get(':userId/available-items')
   async getUserItems(@Param('userId') userId: string): Promise<AvailableItems> {
-    return this.getUserItems(userId);
+    return this.userService.getAvailableItems(userId);
   }
 }
