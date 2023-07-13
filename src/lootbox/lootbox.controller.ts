@@ -5,6 +5,7 @@ import Decimal from 'decimal.js';
 
 import { AuthGuard } from '@@auth/guards/auth.guard';
 import { Public } from '@@auth/public.decorator';
+import { User } from '@@auth/user.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
 import { OpenLootboxDto } from '@@lootbox/dtos/open-lootbox.dto';
 import type { AvailableLootboxItems, LootboxContents, LootboxPrizeDo } from '@@lootbox/lootbox.service';
@@ -89,10 +90,18 @@ export class LootboxController {
 
   @ApiBearerAuth()
   @Post(':lootboxId/open-lootbox')
-  async openLootbox(@Param('lootboxId') lootboxId: string, @Body() body: OpenLootboxDto): Promise<LootboxPrizeDo> {
+  async openLootbox(
+    @Param('lootboxId') lootboxId: string,
+    @Body() body: OpenLootboxDto,
+    @User() userId: string,
+  ): Promise<LootboxPrizeDo> {
     const { userId: openerId } = body;
 
     const { userId: creatorId, price } = await this.lootboxService.getLootboxById(lootboxId);
+
+    if (userId === creatorId) {
+      throw new BadRequestException(`The user ${userId}, who has created the lootbox ${lootboxId} can't open it!`);
+    }
 
     const lootboxPrize = await this.lootboxService.openLootbox(openerId, { lootboxId, creatorId, price });
 
