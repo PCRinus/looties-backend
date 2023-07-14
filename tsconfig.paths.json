@@ -8,6 +8,7 @@
       "@@chat/*": ["./src/chat/*"],
       "@@currency/*": ["./src/currency/*"],
       "@@deposit/*": ["./src/deposit/*"],
+      "@@file-storage/*": ["./src/file-storage/*"],
       "@@game-history/*": ["./src/game-history/*"],
       "@@game-responsibly/*": ["./src/game-responsibly/*"],
       "@@inventory/*": ["./src/inventory/*"],

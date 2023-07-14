@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { CurrencyModule } from './currency/currency.module';
 import { DepositModule } from './deposit/deposit.module';
+import { FileStorageModule } from './file-storage/file-storage.module';
 import { GameResponsiblyModule } from './game-responsibly/game-responsibly.module';
 import { HealthModule } from './health/health.module';
 import { LiveDropsModule } from './live-drops/live-drops.module';
@@ -53,6 +54,7 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
         DISABLE_ERD: Joi.boolean().default(false),
         SOLANA_RPC_ENDPOINT: Joi.string(),
         HOUSE_WALLET_SECRET: Joi.string(),
+        SPACES_URL: Joi.string(),
         SPACES_ACCESS_KEY: Joi.string(),
         SPACES_SECRET_KEY: Joi.string(),
       }),
@@ -69,6 +71,7 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
     NftModule,
     LootboxTokensModule,
     LootboxNftsModule,
+    FileStorageModule,
   ],
 })
 export class AppModule {}
