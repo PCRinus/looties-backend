@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import type { Profile } from '@prisma/client';
 
+import { FileStorageService } from '@@file-storage/file-storage.service';
 import { PrismaService } from '@@shared/prisma.service';
 
 type ProfileCoreData = Pick<Profile, 'userName' | 'level' | 'xp' | 'createdAt'>;
@@ -9,7 +10,7 @@ type ProfileCoreData = Pick<Profile, 'userName' | 'level' | 'xp' | 'createdAt'>;
 export class ProfileService {
   private readonly logger = new Logger(ProfileService.name);
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService, private readonly fileStorageService: FileStorageService) {}
 
   async getProfileCore(userId: string): Promise<ProfileCoreData> {
     const profileCard = await this.prismaService.profile.findFirst({
@@ -69,5 +70,20 @@ export class ProfileService {
     } catch (error) {
       throw new InternalServerErrorException(`Failed to update username for user with id ${userId}`);
     }
+  }
+
+  async uploadAvatar(userId: string, avatar: Express.Multer.File): Promise<string> {
+    const avatarUrl = await this.fileStorageService.uploadFile(avatar);
+
+    await this.prismaService.profile.update({
+      where: {
+        userId,
+      },
+      data: {
+        avatarUrl,
+      },
+    });
+
+    return avatarUrl;
   }
 }
