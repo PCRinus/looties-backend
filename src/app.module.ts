@@ -53,6 +53,8 @@ import { WithdrawalModule } from './withdrawal/withdrawal.module';
         DISABLE_ERD: Joi.boolean().default(false),
         SOLANA_RPC_ENDPOINT: Joi.string(),
         HOUSE_WALLET_SECRET: Joi.string(),
+        SPACES_ACCESS_KEY: Joi.string(),
+        SPACES_SECRET_KEY: Joi.string(),
       }),
       expandVariables: true,
     }),
