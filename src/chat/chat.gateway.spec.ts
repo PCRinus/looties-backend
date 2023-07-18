@@ -1,3 +1,4 @@
+import { createMock } from '@golevelup/ts-jest';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
@@ -17,7 +18,14 @@ describe('ChatGateway', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
-      providers: [ChatGateway, ChatService, ConfigService, JwtService, UserSettingsService, ProfileService],
+      providers: [
+        ChatGateway,
+        ChatService,
+        ConfigService,
+        JwtService,
+        UserSettingsService,
+        { provide: ProfileService, useValue: createMock() },
+      ],
     }).compile();
 
     chatGateway = module.get<ChatGateway>(ChatGateway);

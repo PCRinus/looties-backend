@@ -1,3 +1,4 @@
+import { createMock } from '@golevelup/ts-jest';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { TestingModule } from '@nestjs/testing';
@@ -15,7 +16,7 @@ describe('ProfileController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SharedModule],
       controllers: [ProfileController],
-      providers: [ProfileService, JwtService, ConfigService, UserSettingsService],
+      providers: [{ provide: ProfileService, useValue: createMock() }, JwtService, ConfigService, UserSettingsService],
     }).compile();
 
     controller = module.get<ProfileController>(ProfileController);
