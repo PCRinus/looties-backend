@@ -19,6 +19,14 @@ const ADMIN_WALLET_KEYS: AdminUser[] = [
     walletAddress: 'GKeGVjvNDdJSmmpNU5e7TyGwVu8tt7YkiPzjQacSJLfM',
     userName: 'Andrei Admin',
   },
+  {
+    walletAddress: '4Xfg8VaxmGgP1sacd47HdHeqft1aTB2mPwDtuTb5QVfF',
+    userName: 'Emilian Admin',
+  },
+  {
+    walletAddress: '6Eh99r676peo85wM84TmrQ1tLcrqXx5wScQYUkELvqh9',
+    userName: 'Florian Admin',
+  },
 ];
 
 const seed = async () => {
