@@ -5,10 +5,20 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 
+import type { Role } from '@@auth/decorators/roles.decorator';
+
+export type JwtPayload = {
+  id: string;
+  walletAddress: string;
+  role: Role;
+  iat: number;
+  exp: number;
+};
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly reflector: Reflector,
   ) {}
@@ -20,7 +30,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request & { user: JwtPayload }>();
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -28,7 +38,8 @@ export class AuthGuard implements CanActivate {
     }
 
     const jwtSecret = this.configService.get<string>('JWT_SECRET');
-    const payload = await this.jwtService.verifyAsync(token, { secret: jwtSecret, algorithms: ['HS512'] });
+    const payload: JwtPayload = await this.jwtService.verifyAsync(token, { secret: jwtSecret, algorithms: ['HS512'] });
+
     request.user = payload;
 
     return true;

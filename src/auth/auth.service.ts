@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import base58 from 'bs58';
 import nacl from 'tweetnacl';
 
+import type { Role } from '@@auth/decorators/roles.decorator';
 import { PrismaService } from '@@shared/prisma.service';
 
 @Injectable()
@@ -33,11 +34,11 @@ export class AuthService {
     return result;
   }
 
-  async generateJwt(walletPublicKey: string, userId: string): Promise<string> {
+  async generateJwt(walletPublicKey: string, userId: string, userRole: Role): Promise<string> {
     const secret = this.configService.get<string>('JWT_SECRET');
 
     return await this.jwtService.signAsync(
-      { id: userId, walletAddress: walletPublicKey },
+      { id: userId, walletAddress: walletPublicKey, role: userRole },
       { algorithm: 'HS512', secret },
     );
   }

@@ -15,6 +15,6 @@ export class AuthController {
     const { walletPublicKey } = payload;
     const user = await this.userService.getOrCreateUserByWalletPublicKey(walletPublicKey);
 
-    return this.authService.generateJwt(user.walletAddress, user.id);
+    return this.authService.generateJwt(user.walletAddress, user.id, user.role);
   }
 }
