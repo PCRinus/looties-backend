@@ -10,6 +10,7 @@ services:
     env_file:
         - .env
     environment:
+      DISABLE_ERD: true
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@looties-postgres:5432/${POSTGRES_DB}?schema=public
     ports:
       - 3000:3000
