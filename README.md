@@ -119,3 +119,9 @@ Be aware that you need 2 cors configurations:
 - One for the websockets server
 
 There is a [cors middleware in the NestJS API setup](./src/main.ts), but you also need to configure cors in the websockets server [(chat for example)](./src/chat/chat.gateway.ts).
+
+### Digitalocean builds failing because of new Prisma types/properties
+
+DigitalOcean will cache the `node_modules` folder between builds if the `package.json` has not changed.
+
+This will sometimes make the build fail, because of new db schema properties introduced in the latest migration. To fix this, [clear the deploy cache, and rebuild](https://docs.digitalocean.com/products/app-platform/reference/buildpacks/nodejs/#clearing-the-cache).
