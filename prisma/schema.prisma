@@ -34,6 +34,7 @@ model User {
   tokens        Tokens?
   nfts          Nfts[]
   lootboxes     Lootbox[]
+  role          UserRole       @default(PLAYER)
 }
 
 model UserSettings {
@@ -189,6 +190,11 @@ model Affiliates {
   referrer            User     @relation("Referrer", fields: [referrerId], references: [id])
   referrerId          String   @unique
   redeemers           User[]   @relation("Redeemers")
+}
+
+enum UserRole {
+  PLAYER
+  ADMIN
 }
 
 enum TransactionType {
