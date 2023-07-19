@@ -4,8 +4,8 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/
 import type { Profile } from '@prisma/client';
 import { Express } from 'express';
 
+import { Public } from '@@auth/decorators/public.decorator';
 import { AuthGuard } from '@@auth/guards/auth.guard';
-import { Public } from '@@auth/public.decorator';
 import { UpdateUsernameDto } from '@@profile/dtos/update-username.dto';
 import { ProfileService } from '@@profile/profile.service';
 import { UserSettingsService } from '@@user-settings/user-settings.service';

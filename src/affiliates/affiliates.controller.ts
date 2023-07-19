@@ -6,8 +6,8 @@ import { AffiliatesService } from '@@affiliates/affiliates.service';
 import { ApplyCommissionDto } from '@@affiliates/dtos/apply-commission.dto';
 import { RedeemReferralCodeDto } from '@@affiliates/dtos/redeem-referral-code.dto';
 import { UpdateReferralCodeDto } from '@@affiliates/dtos/update-referral-code.dto';
+import { Public } from '@@auth/decorators/public.decorator';
 import { AuthGuard } from '@@auth/guards/auth.guard';
-import { Public } from '@@auth/public.decorator';
 import { UserService } from '@@user/user.service';
 
 type AffiliateStats = {

@@ -20,7 +20,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':walletPublicKey')
-  async getUserById(@Param('walletPublicKey') walletPublicKey: string): Promise<User> {
+  async getUserByWalletPublicKey(@Param('walletPublicKey') walletPublicKey: string): Promise<User> {
     return this.userService.getUserByWalletPublicKey(walletPublicKey);
   }
 

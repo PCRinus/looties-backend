@@ -3,9 +3,9 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Lootbox } from '@prisma/client';
 import Decimal from 'decimal.js';
 
+import { Public } from '@@auth/decorators/public.decorator';
+import { User } from '@@auth/decorators/user.decorator';
 import { AuthGuard } from '@@auth/guards/auth.guard';
-import { Public } from '@@auth/public.decorator';
-import { User } from '@@auth/user.decorator';
 import { CreateLootboxDto } from '@@lootbox/dtos/create-lootbox.dto';
 import { OpenLootboxDto } from '@@lootbox/dtos/open-lootbox.dto';
 import type { LootboxContents, LootboxPrizeDo } from '@@lootbox/lootbox.service';
